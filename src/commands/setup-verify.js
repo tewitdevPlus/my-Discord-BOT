@@ -20,6 +20,8 @@ module.exports = {
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
 
   async execute(interaction) {
+    await interaction.deferReply({ ephemeral: true });
+
     const channel = interaction.options.getChannel('channel');
     const role = interaction.options.getRole('role');
     const message = interaction.options.getString('message');
@@ -51,10 +53,15 @@ module.exports = {
           .setStyle(ButtonStyle.Success)
       );
 
-    await channel.send({ embeds: [verifyEmbed], components: [row] });
+    try {
+      await channel.send({ embeds: [verifyEmbed], components: [row] });
+    } catch (sendErr) {
+      return interaction.editReply({ content: `❌ บอทไม่สามารถส่งข้อความลงในห้อง <#${channel.id}> ได้: กรุณาตรวจสอบว่าบอทมีสิทธิ์ Send Messages / View Channel ในห้องนั้นหรือไม่` });
+    }
 
     const embed = new EmbedBuilder()
       .setTitle('✅ ตั้งค่าระบบ Verify สำเร็จ!')
+      .setDescription(`บอทได้ส่งแผงยืนยันตัวตนไปยังห้อง <#${channel.id}> เรียบร้อยแล้ว!`)
       .addFields(
         { name: '📺 ห้อง', value: `<#${channel.id}>`, inline: true },
         { name: '🏷️ Role', value: `<@&${role.id}>`, inline: true }
@@ -62,6 +69,6 @@ module.exports = {
       .setColor('#57F287')
       .setTimestamp();
 
-    await interaction.reply({ embeds: [embed], ephemeral: true });
+    await interaction.editReply({ embeds: [embed] });
   },
 };
