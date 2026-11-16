@@ -92,8 +92,12 @@ function getGuildSettings(guildId) {
 }
 
 function ensureGuild(guildId, guildName) {
-  upsertGuild.run(guildId, guildName);
-  return getGuild.get(guildId);
+  const existing = getGuild.get(guildId);
+  if (!existing) {
+    upsertGuild.run(guildId, guildName);
+    return getGuild.get(guildId);
+  }
+  return existing;
 }
 
 function updateGuildSettings(guildId, settings) {

@@ -418,6 +418,7 @@
       };
       const res = await apiCall('PUT', '/settings', data);
       showToast(res.success ? 'บันทึกการตั้งค่า Welcome สำเร็จ!' : 'เกิดข้อผิดพลาด', !res.success);
+      if (res.success) setTimeout(() => window.location.reload(), 1000);
     }
 
     // Save Verify
@@ -430,6 +431,7 @@
       };
       const res = await apiCall('PUT', '/settings', data);
       showToast(res.success ? 'บันทึกการตั้งค่า Verify สำเร็จ!' : 'เกิดข้อผิดพลาด', !res.success);
+      if (res.success) setTimeout(() => window.location.reload(), 1000);
     }
 
     // Resend Verify Panel
@@ -563,6 +565,7 @@
       };
       const res = await apiCall('PUT', '/settings', data);
       showToast(res.success ? 'บันทึกการตั้งค่า Log สำเร็จ!' : 'เกิดข้อผิดพลาด', !res.success);
+      if (res.success) setTimeout(() => window.location.reload(), 1000);
     }
 
     // Save Auto Role
@@ -573,6 +576,7 @@
       };
       const res = await apiCall('PUT', '/settings', data);
       showToast(res.success ? 'บันทึกการตั้งค่า Auto Role สำเร็จ!' : 'เกิดข้อผิดพลาด', !res.success);
+      if (res.success) setTimeout(() => window.location.reload(), 1000);
     }
 
     // Load Logs
