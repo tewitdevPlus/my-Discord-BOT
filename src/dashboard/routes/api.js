@@ -71,37 +71,44 @@ router.get('/guilds/:guildId/logs', checkGuildPermission, (req, res) => {
 router.post('/guilds/:guildId/verify/resend', checkGuildPermission, async (req, res) => {
   const settings = db.getGuildSettings(req.params.guildId);
   if (!settings || !settings.verify_channel) {
-    return res.status(400).json({ error: 'ยังไม่ได้ตั้งค่าห้อง Verify' });
+    return res.status(400).json({ error: 'กรุณาเลือกห้อง Verify และกด "บันทึก" ก่อนส่งหน้า Verify' });
   }
 
-  const guild = req.client.guilds.cache.get(req.params.guildId);
-  if (!guild) return res.status(404).json({ error: 'ไม่พบเซิร์ฟเวอร์' });
-
-  const channel = guild.channels.cache.get(settings.verify_channel);
-  if (!channel) return res.status(404).json({ error: 'ไม่พบห้อง Verify' });
-
-  const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
-
-  const embed = new EmbedBuilder()
-    .setTitle('✅ ยืนยันตัวตน | Verification')
-    .setDescription(settings.verify_message || 'กรุณากดปุ่มด้านล่างเพื่อยืนยันตัวตน ✅')
-    .setColor('#5865F2')
-    .setFooter({ text: guild.name, iconURL: guild.iconURL() })
-    .setTimestamp();
-
-  const row = new ActionRowBuilder()
-    .addComponents(
-      new ButtonBuilder()
-        .setCustomId('verify_button')
-        .setLabel('✅ ยืนยันตัวตน')
-        .setStyle(ButtonStyle.Success)
-    );
-
   try {
+    let guild = req.client.guilds.cache.get(req.params.guildId);
+    if (!guild) {
+      guild = await req.client.guilds.fetch(req.params.guildId).catch(() => null);
+    }
+    if (!guild) return res.status(404).json({ error: 'ไม่พบเซิร์ฟเวอร์ หรือบอทไม่ได้อยู่ในเซิร์ฟเวอร์นี้' });
+
+    let channel = guild.channels.cache.get(settings.verify_channel);
+    if (!channel) {
+      channel = await guild.channels.fetch(settings.verify_channel).catch(() => null);
+    }
+    if (!channel) return res.status(404).json({ error: 'ไม่พบห้อง Verify ในเซิร์ฟเวอร์ (อาจถูกลบไปแล้ว)' });
+
+    const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+
+    const embed = new EmbedBuilder()
+      .setTitle('✅ ยืนยันตัวตน | Verification')
+      .setDescription(settings.verify_message || 'กรุณากดปุ่มด้านล่างเพื่อยืนยันตัวตน ✅')
+      .setColor('#5865F2')
+      .setFooter({ text: guild.name, iconURL: guild.iconURL() })
+      .setTimestamp();
+
+    const row = new ActionRowBuilder()
+      .addComponents(
+        new ButtonBuilder()
+          .setCustomId('verify_button')
+          .setLabel('✅ ยืนยันตัวตน')
+          .setStyle(ButtonStyle.Success)
+      );
+
     await channel.send({ embeds: [embed], components: [row] });
     res.json({ success: true });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Verify send error:', err);
+    res.status(500).json({ error: 'บอทไม่มีสิทธิ์ส่งข้อความในห้องนี้ (Missing Permissions) กรุณาให้สิทธิ์ Administrator กับบอท' });
   }
 });
 
