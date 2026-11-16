@@ -8,7 +8,7 @@ const apiRoutes = require('./routes/api');
 
 function startDashboard(client) {
   const app = express();
-  const PORT = process.env.DASHBOARD_PORT || 3000;
+  const PORT = process.env.PORT || process.env.DASHBOARD_PORT || 3000;
 
   // View Engine
   app.set('view engine', 'ejs');
