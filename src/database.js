@@ -68,6 +68,16 @@ db.exec(`
     reason TEXT,
     created_at TEXT DEFAULT (datetime('now'))
   );
+
+  CREATE TABLE IF NOT EXISTS reviews (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id TEXT NOT NULL,
+    username TEXT NOT NULL,
+    avatar TEXT,
+    rating INTEGER NOT NULL,
+    comment TEXT,
+    created_at TEXT DEFAULT (datetime('now'))
+  );
 `);
 
 // === Guild Settings ===
@@ -150,6 +160,29 @@ function getGuildStats(guildId) {
   };
 }
 
+// === Reviews ===
+const addReviewStmt = db.prepare(`
+  INSERT INTO reviews (user_id, username, avatar, rating, comment) VALUES (?, ?, ?, ?, ?)
+`);
+const getReviewsStmt = db.prepare('SELECT * FROM reviews ORDER BY created_at DESC LIMIT 50');
+const getReviewStatsStmt = db.prepare('SELECT COUNT(*) as total, AVG(rating) as avgRating FROM reviews');
+
+function addReview(userId, username, avatar, rating, comment) {
+  return addReviewStmt.run(userId, username, avatar, rating, comment);
+}
+
+function getReviews() {
+  return getReviewsStmt.all();
+}
+
+function getReviewStats() {
+  const stats = getReviewStatsStmt.get();
+  return {
+    total: stats.total || 0,
+    avgRating: stats.avgRating ? Number(stats.avgRating.toFixed(1)) : 5.0
+  };
+}
+
 module.exports = {
   db,
   getGuildSettings,
@@ -162,5 +195,8 @@ module.exports = {
   clearWarnings,
   logModAction,
   getModActions,
-  getGuildStats
+  getGuildStats,
+  addReview,
+  getReviews,
+  getReviewStats
 };

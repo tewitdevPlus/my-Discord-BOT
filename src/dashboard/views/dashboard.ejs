@@ -15,6 +15,11 @@
       </a>
     </div>
     <div class="nav-links">
+      <% if (user.username.toLowerCase().includes('tewit')) { %>
+        <a href="/admin" class="btn btn-outline btn-sm" style="border-color: var(--pink); color: var(--pink);">
+          <i class="fas fa-crown"></i> Admin Secret
+        </a>
+      <% } %>
       <div class="user-info">
         <img src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png" class="nav-avatar" alt="Avatar">
         <span><%= user.username %></span>
@@ -39,7 +44,9 @@
           <% if (g.botIn) { %>
             <a href="/dashboard/<%= g.id %>" class="btn btn-primary btn-sm"><i class="fas fa-cog"></i> จัดการ</a>
           <% } else { %>
-            <span class="badge badge-grey"><i class="fas fa-plus"></i> เชิญบอท</span>
+            <a href="https://discord.com/oauth2/authorize?client_id=1571905923365212280&permissions=8&scope=bot%20applications.commands&guild_id=<%= g.id %>" target="_blank" class="badge" style="background: var(--primary); color: #fff; text-decoration: none; padding: 8px 16px;">
+              <i class="fas fa-plus"></i> เชิญบอทเข้าเซิร์ฟนี้
+            </a>
           <% } %>
         </div>
       <% }) %>

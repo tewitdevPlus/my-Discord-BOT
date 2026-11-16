@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — สถิติการใช้งานบอท</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-brand">
+      <span style="color: var(--pink); font-weight: 800;"><i class="fas fa-user-shield"></i> Secret Admin Portal</span>
+    </div>
+    <div class="nav-links">
+      <a href="/dashboard" class="btn btn-outline btn-sm"><i class="fas fa-arrow-left"></i> Dashboard ปกติ</a>
+      <a href="/auth/logout" class="btn btn-outline btn-sm"><i class="fas fa-sign-out-alt"></i></a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div style="background: rgba(235, 69, 158, 0.1); border: 1px solid var(--pink); border-radius: var(--radius); padding: 20px; margin-bottom: 24px;">
+      <h1 style="color: var(--pink); font-size: 1.6rem; margin-bottom: 6px;"><i class="fas fa-crown"></i> แผงควบคุมผู้พัฒนา (Developer Secret View)</h1>
+      <p style="color: var(--text-muted); font-size: 0.9rem;">หน้านี้มองเห็นเฉพาะคุณเท่านั้น แสดงรายชื่อเซิร์ฟเวอร์ทั้งหมดที่ดึงบอทของคุณไปใช้งาน พร้อมจำนวนสมาชิก</p>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <i class="fas fa-server" style="color: var(--primary);"></i>
+        <div class="stat-info">
+          <span class="stat-num"><%= totalServers %></span>
+          <span>เซิร์ฟเวอร์ทั้งหมดที่ใช้บอท</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <i class="fas fa-users" style="color: var(--success);"></i>
+        <div class="stat-info">
+          <span class="stat-num"><%= totalUsers %></span>
+          <span>ผู้ใช้งานทั้งหมดในเครือข่าย</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Servers List -->
+    <div class="card">
+      <div class="card-header">
+        <h2><i class="fas fa-list"></i> รายชื่อเซิร์ฟเวอร์ที่ติดตั้งบอท (<%= totalServers %> เซิร์ฟเวอร์)</h2>
+      </div>
+      <div class="card-body">
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <% allGuilds.forEach((g, index) => { %>
+            <div style="display: flex; align-items: center; justify-content: space-between; background: var(--bg-input); padding: 16px; border-radius: 8px; flex-wrap: wrap; gap: 10px;">
+              <div style="display: flex; align-items: center; gap: 14px;">
+                <span style="font-weight: 800; color: var(--text-muted); font-size: 1.1rem; width: 24px;">#<%= index + 1 %></span>
+                <% if (g.iconURL) { %>
+                  <img src="<%= g.iconURL %>" style="width: 48px; height: 48px; border-radius: 50%;" alt="Icon">
+                <% } else { %>
+                  <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--bg-card); display: flex; align-items: center; justify-content: center; font-weight: 700;">
+                    <%= g.name.charAt(0) %>
+                  </div>
+                <% } %>
+                <div>
+                  <h3 style="font-size: 1.05rem; margin-bottom: 2px;"><%= g.name %></h3>
+                  <small style="color: var(--text-muted);">Server ID: <code><%= g.id %></code> | Owner ID: <code><%= g.ownerId %></code></small>
+                </div>
+              </div>
+              <div style="text-align: right;">
+                <span class="badge" style="background: var(--bg-card); color: var(--success); font-size: 0.95rem; font-weight: 700;">
+                  <i class="fas fa-users"></i> <%= g.memberCount %> สมาชิก
+                </span>
+                <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">
+                  เข้าร่วมเมื่อ: <%= new Date(g.joinedAt).toLocaleDateString('th-TH') %>
+                </div>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; 2026 Admin Secret Portal — พัฒนาโดย <strong>tewit noita</strong></p>
+  </footer>
+</body>
+</html>

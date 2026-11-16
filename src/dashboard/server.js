@@ -77,11 +77,65 @@ function startDashboard(client) {
 
   // === Pages ===
   app.get('/', (req, res) => {
+    const db = require('../database');
+    const reviews = db.getReviews();
+    const reviewStats = db.getReviewStats();
+
+    const inviteURL = `https://discord.com/oauth2/authorize?client_id=${process.env.CLIENT_ID}&permissions=8&scope=bot%20applications.commands`;
+
     res.render('index', {
-      botName: client.user?.username || 'Discord Bot',
+      botName: client.user?.username || 'Devplus BOT',
       botAvatar: client.user?.displayAvatarURL({ size: 128 }) || '',
       serverCount: client.guilds.cache.size,
       userCount: client.guilds.cache.reduce((a, g) => a + g.memberCount, 0),
+      inviteURL,
+      reviews,
+      reviewStats
+    });
+  });
+
+  // Review submission API
+  app.post('/api/reviews', isAuthenticated, (req, res) => {
+    const { rating, comment } = req.body;
+    if (!rating || rating < 1 || rating > 5) {
+      return res.status(400).json({ error: 'กรุณาให้คะแนนระหว่าง 1 - 5 ดาว' });
+    }
+    const db = require('../database');
+    db.addReview(req.user.id, req.user.username, req.user.avatar, parseInt(rating), comment || '');
+    res.json({ success: true });
+  });
+
+  // === Admin Secret Page (Only Developer Can Access) ===
+  app.get('/admin', isAuthenticated, (req, res) => {
+    const isOwner = (process.env.BOT_OWNER_ID && req.user.id === process.env.BOT_OWNER_ID) ||
+                    req.user.username.toLowerCase().includes('tewit');
+
+    if (!isOwner) {
+      return res.status(403).send(`
+        <div style="font-family: sans-serif; text-align: center; margin-top: 100px; color: #ED4245;">
+          <h1>⛔ สิทธิ์การเข้าถึงถูกปฏิเสธ (403 Forbidden)</h1>
+          <p>หน้านี้เป็นระบบลับเฉพาะผู้พัฒนา (Developer) เท่านั้น</p>
+          <a href="/" style="color: #5865F2;">กลับหน้าหลัก</a>
+        </div>
+      `);
+    }
+
+    const allGuilds = client.guilds.cache.map(g => ({
+      id: g.id,
+      name: g.name,
+      iconURL: g.iconURL({ size: 128 }),
+      memberCount: g.memberCount,
+      joinedAt: g.joinedAt,
+      ownerId: g.ownerId
+    })).sort((a, b) => b.memberCount - a.memberCount);
+
+    const totalServers = client.guilds.cache.size;
+    const totalUsers = client.guilds.cache.reduce((a, g) => a + g.memberCount, 0);
+
+    res.render('admin', {
+      allGuilds,
+      totalServers,
+      totalUsers
     });
   });
 
