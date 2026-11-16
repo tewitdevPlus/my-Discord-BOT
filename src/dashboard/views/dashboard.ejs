@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — เลือกเซิร์ฟเวอร์</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-brand">
+      <a href="/" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:8px;">
+        <i class="fas fa-robot"></i> <span>Dashboard</span>
+      </a>
+    </div>
+    <div class="nav-links">
+      <div class="user-info">
+        <img src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png" class="nav-avatar" alt="Avatar">
+        <span><%= user.username %></span>
+      </div>
+      <a href="/auth/logout" class="btn btn-outline btn-sm"><i class="fas fa-sign-out-alt"></i> ออกจากระบบ</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <h1 class="page-title"><i class="fas fa-server"></i> เลือกเซิร์ฟเวอร์</h1>
+    <p class="page-desc">เลือกเซิร์ฟเวอร์ที่ต้องการจัดการ (เฉพาะเซิร์ฟเวอร์ที่คุณมีสิทธิ์จัดการ)</p>
+
+    <div class="guild-grid">
+      <% guilds.forEach(g => { %>
+        <div class="guild-card <%= g.botIn ? '' : 'guild-card-disabled' %>">
+          <% if (g.iconURL) { %>
+            <img src="<%= g.iconURL %>" alt="<%= g.name %>" class="guild-icon">
+          <% } else { %>
+            <div class="guild-icon guild-icon-placeholder"><%= g.name.charAt(0) %></div>
+          <% } %>
+          <h3 class="guild-name"><%= g.name %></h3>
+          <% if (g.botIn) { %>
+            <a href="/dashboard/<%= g.id %>" class="btn btn-primary btn-sm"><i class="fas fa-cog"></i> จัดการ</a>
+          <% } else { %>
+            <span class="badge badge-grey"><i class="fas fa-plus"></i> เชิญบอท</span>
+          <% } %>
+        </div>
+      <% }) %>
+    </div>
+  </main>
+</body>
+</html>
