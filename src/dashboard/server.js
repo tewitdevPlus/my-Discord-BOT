@@ -32,10 +32,16 @@ function startDashboard(client) {
   passport.serializeUser((user, done) => done(null, user));
   passport.deserializeUser((obj, done) => done(null, obj));
 
+  // Determine callback URL automatically if on Render/Cloud
+  const renderExternalUrl = process.env.RENDER_EXTERNAL_URL;
+  const callbackURL = renderExternalUrl 
+    ? `${renderExternalUrl}/auth/callback` 
+    : (process.env.CALLBACK_URL || 'http://localhost:3000/auth/callback');
+
   passport.use(new Strategy({
     clientID: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
-    callbackURL: process.env.CALLBACK_URL,
+    callbackURL: callbackURL,
     scope: ['identify', 'guilds'],
   }, (accessToken, refreshToken, profile, done) => {
     return done(null, profile);
