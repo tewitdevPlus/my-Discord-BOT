@@ -20,6 +20,22 @@ client.once('ready', () => {
   });
 });
 
+// ดักจับการปิดตัวของ Server (เช่น Render Restart/Spin down) ป้องกันข้อมูลหาย
+function safeShutdown(signal) {
+  console.log(`[SHUTDOWN] ได้รับสัญญาณ ${signal} กำลังบันทึก Database ก่อนปิดตัว...`);
+  try {
+    const { checkpointDatabase } = require('./database');
+    checkpointDatabase();
+    console.log('[SHUTDOWN] บันทึกข้อมูลและปิดระบบอย่างปลอดภัยเรียบร้อย');
+  } catch (err) {
+    console.error('[SHUTDOWN ERROR]:', err);
+  }
+  process.exit(0);
+}
+
+process.on('SIGINT', () => safeShutdown('SIGINT'));
+process.on('SIGTERM', () => safeShutdown('SIGTERM'));
+
 // Start Dashboard
 startDashboard(client);
 

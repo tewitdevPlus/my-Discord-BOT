@@ -50,6 +50,15 @@ db.exec(`
     updated_at TEXT DEFAULT (datetime('now'))
   );
 
+  CREATE TABLE IF NOT EXISTS ideas (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    guild_id TEXT NOT NULL,
+    user_id TEXT NOT NULL,
+    username TEXT NOT NULL,
+    content TEXT NOT NULL,
+    created_at TEXT DEFAULT (datetime('now'))
+  );
+
   CREATE TABLE IF NOT EXISTS warnings (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     guild_id TEXT NOT NULL,
@@ -171,6 +180,33 @@ const addReviewStmt = db.prepare(`
 const getReviewsStmt = db.prepare('SELECT * FROM reviews ORDER BY created_at DESC LIMIT 50');
 const getReviewStatsStmt = db.prepare('SELECT COUNT(*) as total, AVG(rating) as avgRating FROM reviews');
 
+// === Ideas ===
+const addIdeaStmt = db.prepare('INSERT INTO ideas (guild_id, user_id, username, content) VALUES (?, ?, ?, ?)');
+const getIdeasStmt = db.prepare('SELECT * FROM ideas WHERE guild_id = ? ORDER BY created_at DESC');
+const deleteIdeaStmt = db.prepare('DELETE FROM ideas WHERE id = ? AND guild_id = ?');
+
+function addIdea(guildId, userId, username, content) {
+  return addIdeaStmt.run(guildId, userId, username, content);
+}
+
+function getIdeas(guildId) {
+  return getIdeasStmt.all(guildId);
+}
+
+function deleteIdea(id, guildId) {
+  return deleteIdeaStmt.run(id, guildId);
+}
+
+function checkpointDatabase() {
+  try {
+    db.pragma('wal_checkpoint(FULL)');
+    return true;
+  } catch (err) {
+    console.error('Checkpoint DB Error:', err);
+    return false;
+  }
+}
+
 function addReview(userId, username, avatar, rating, comment) {
   return addReviewStmt.run(userId, username, avatar, rating, comment);
 }
@@ -202,5 +238,9 @@ module.exports = {
   getGuildStats,
   addReview,
   getReviews,
-  getReviewStats
+  getReviewStats,
+  addIdea,
+  getIdeas,
+  deleteIdea,
+  checkpointDatabase
 };

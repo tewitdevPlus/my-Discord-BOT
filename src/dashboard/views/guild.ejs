@@ -25,13 +25,20 @@
 
   <main class="container">
     <!-- Guild Header -->
-    <div class="guild-header">
-      <% if (guild.iconURL) { %>
-        <img src="<%= guild.iconURL %>" alt="<%= guild.name %>" class="guild-header-icon">
-      <% } %>
+    <div class="guild-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+      <div style="display: flex; align-items: center; gap: 15px;">
+        <% if (guild.iconURL) { %>
+          <img src="<%= guild.iconURL %>" alt="<%= guild.name %>" class="guild-header-icon">
+        <% } %>
+        <div>
+          <h1 class="page-title"><%= guild.name %></h1>
+          <p class="page-desc"><i class="fas fa-users"></i> <%= guild.memberCount %> สมาชิก</p>
+        </div>
+      </div>
       <div>
-        <h1 class="page-title"><%= guild.name %></h1>
-        <p class="page-desc"><i class="fas fa-users"></i> <%= guild.memberCount %> สมาชิก</p>
+        <button class="btn btn-success" id="btn-save-all" onclick="saveEverything()" style="padding: 10px 20px; font-weight: bold; box-shadow: 0 4px 14px rgba(46, 204, 113, 0.4);">
+          <i class="fas fa-save"></i> 💾 บันทึกทุกอย่างทันที (Save Everything)
+        </button>
       </div>
     </div>
 
@@ -72,6 +79,8 @@
       <button class="tab" data-tab="verify"><i class="fas fa-check-circle"></i> Verify</button>
       <button class="tab" data-tab="stats-role"><i class="fas fa-chart-line"></i> สถิติ & ยศ</button>
       <button class="tab" data-tab="styler"><i class="fas fa-paint-brush"></i> แต่งห้องเซิร์ฟเวอร์</button>
+      <button class="tab" data-tab="clone-channel"><i class="fas fa-copy"></i> สร้างห้องจากแม่แบบ</button>
+      <button class="tab" data-tab="ideas"><i class="fas fa-lightbulb"></i> คลังไอเดีย & วิธีทำ</button>
       <button class="tab" data-tab="moderation"><i class="fas fa-shield-halved"></i> Moderation</button>
       <button class="tab" data-tab="logs"><i class="fas fa-clipboard-list"></i> Logs</button>
     </div>
@@ -285,6 +294,72 @@
           <button class="btn btn-primary" id="btn-rename-channel" onclick="renameChannelAction()">
             <i class="fas fa-check"></i> บันทึกการเปลี่ยนชื่อห้อง
           </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Clone Channel Tab -->
+    <div class="tab-content" id="tab-clone-channel">
+      <div class="card">
+        <div class="card-header">
+          <h2><i class="fas fa-copy"></i> สร้างห้องใหม่ 1 ห้องโดยถอดแบบจากแม่แบบ (1:1 Clone)</h2>
+        </div>
+        <div class="card-body">
+          <p class="text-muted" style="margin-bottom: 20px;">
+            ระบบนี้จะก๊อปปี้ <strong>สิทธิ์การเข้าถึง (Permissions ทุก Role/สมาชิก), หมวดหมู่ (Category), Slowmode, NSFW และ Topic</strong> จากห้องแม่แบบที่เลือกไปยังห้องใหม่ทันที 100%
+          </p>
+          <div class="form-group">
+            <label><i class="fas fa-hashtag"></i> เลือกห้องแม่แบบที่ต้องการคัดลอกสิทธิ์</label>
+            <select id="clone_template_id" class="form-select">
+              <option value="">-- เลือกห้องแม่แบบ --</option>
+              <% guild.channels.forEach(ch => { %>
+                <option value="<%= ch.id %>">#<%= ch.name %></option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-pen"></i> ชื่อห้องใหม่ที่ต้องการสร้าง</label>
+            <input type="text" id="clone_channel_name" class="form-input" placeholder="เช่น: ห้องพูดคุย-2 หรือ vips-room">
+          </div>
+          <button class="btn btn-primary" id="btn-clone-exec" onclick="executeCloneChannel()">
+            <i class="fas fa-magic"></i> สั่งสร้างห้องทันที
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ideas & How-to Tab -->
+    <div class="tab-content" id="tab-ideas">
+      <div class="card" style="margin-bottom: 25px;">
+        <div class="card-header">
+          <h2><i class="fas fa-book"></i> วิธีทำและคู่มือการใช้งาน (How-To Guide)</h2>
+        </div>
+        <div class="card-body">
+          <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+            <h4 style="color: #2ecc71; margin-top: 0;"><i class="fas fa-shield-alt"></i> 1. ระบบบันทึกข้อมูลและป้องกันข้อมูลสูญหาย</h4>
+            <p>• <strong>ปุ่ม Save Everything ด้านบนขวา</strong>: กดเมื่อไหร่ ข้อมูลและการตั้งค่าทั้งหมดจะถูกเขียนลงดิสก์และฐานข้อมูลทันที<br>
+            • <strong>Auto-Save on Offline</strong>: บอทมีระบบดักจับการรีสตาร์ทหรือปิดตัวของเซิร์ฟเวอร์บน Cloud (Render) โดยจะทำการ Checkpoint ฐานข้อมูลก่อนปิดตัวลงเสมอ</p>
+          </div>
+          <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 8px;">
+            <h4 style="color: #3498db; margin-top: 0;"><i class="fas fa-copy"></i> 2. การสร้างห้องเลียนแบบแม่แบบ</h4>
+            <p>• <strong>ทำผ่านหน้าเว็บ</strong>: ไปที่แท็บ <em>"สร้างห้องจากแม่แบบ"</em> เลือกห้องต้นฉบับ ใส่ชื่อห้องใหม่ แล้วกดสร้างได้เลย<br>
+            • <strong>ทำผ่าน Discord</strong>: สามารถใช้ Slash Command ใน Discord ได้เช่นกัน</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2><i class="fas fa-lightbulb"></i> คลังไอเดียสำหรับเซิร์ฟเวอร์ (Ideas Keeper)</h2>
+        </div>
+        <div class="card-body">
+          <div class="form-group" style="display: flex; gap: 10px;">
+            <input type="text" id="idea_input" class="form-input" placeholder="พิมพ์ไอเดีย ฟีเจอร์ หรือสิ่งที่อยากเพิ่มในเซิร์ฟเวอร์..." style="flex: 1;">
+            <button class="btn btn-primary" onclick="submitIdea()"><i class="fas fa-plus"></i> เพิ่มไอเดีย</button>
+          </div>
+          <div id="ideas-list" style="margin-top: 20px;">
+            <p class="text-muted">กำลังโหลดรายการไอเดีย...</p>
+          </div>
         </div>
       </div>
     </div>
@@ -623,6 +698,116 @@
       showToast('ลบคำเตือนสำเร็จ!');
       loadWarnings();
     }
+
+    // Save Everything
+    async function saveEverything() {
+      const btn = document.getElementById('btn-save-all');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังบันทึก...';
+      try {
+        const res = await apiCall('POST', '/save-all', {});
+        if (res.success) {
+          showToast(res.message || 'บันทึกข้อมูลทุกอย่างเรียบร้อยแล้ว!');
+        } else {
+          showToast('เกิดข้อผิดพลาดในการบันทึก', true);
+        }
+      } catch (e) {
+        showToast('เกิดข้อผิดพลาดในการเชื่อมต่อ', true);
+      }
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-save"></i> 💾 บันทึกทุกอย่างทันที (Save Everything)';
+    }
+
+    // Clone Channel
+    async function executeCloneChannel() {
+      const templateId = document.getElementById('clone_template_id').value;
+      const channelName = document.getElementById('clone_channel_name').value.trim();
+
+      if (!templateId || !channelName) {
+        showToast('กรุณาเลือกห้องแม่แบบและกรอกชื่อห้องใหม่', true);
+        return;
+      }
+
+      const btn = document.getElementById('btn-clone-exec');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังสร้างห้อง...';
+
+      try {
+        const res = await apiCall('POST', '/clone-channel', {
+          templateChannelId: templateId,
+          newChannelName: channelName
+        });
+        if (res.success) {
+          showToast(`สร้างห้อง #${res.channelName} สำเร็จแล้ว!`);
+          document.getElementById('clone_channel_name').value = '';
+          setTimeout(() => window.location.reload(), 1500);
+        } else {
+          showToast(res.error || 'เกิดข้อผิดพลาดในการสร้างห้อง', true);
+        }
+      } catch (e) {
+        showToast('เกิดข้อผิดพลาดในการเชื่อมต่อ', true);
+      }
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-magic"></i> สั่งสร้างห้องทันที';
+    }
+
+    // Ideas
+    async function loadIdeas() {
+      const list = document.getElementById('ideas-list');
+      try {
+        const ideas = await apiCall('GET', '/ideas');
+        if (!Array.isArray(ideas) || ideas.length === 0) {
+          list.innerHTML = '<p class="text-muted">ยังไม่มีไอเดียที่ถูกบันทึกไว้</p>';
+          return;
+        }
+        list.innerHTML = ideas.map(item => `
+          <div class="log-item" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; background: rgba(255,255,255,0.02); padding: 12px; border-radius: 6px;">
+            <div>
+              <div style="font-weight: 500; font-size: 1.05rem; margin-bottom: 4px;">💡 ${item.content}</div>
+              <small class="text-muted">โดย <strong>${item.username}</strong> • ${new Date(item.created_at).toLocaleString('th-TH')}</small>
+            </div>
+            <button class="btn btn-danger btn-sm" onclick="removeIdea(${item.id})"><i class="fas fa-trash"></i></button>
+          </div>
+        `).join('');
+      } catch (e) {
+        list.innerHTML = '<p class="text-muted">โหลดไอเดียไม่สำเร็จ</p>';
+      }
+    }
+
+    async function submitIdea() {
+      const input = document.getElementById('idea_input');
+      const content = input.value.trim();
+      if (!content) {
+        showToast('กรุณากรอกไอเดีย', true);
+        return;
+      }
+      const res = await apiCall('POST', '/ideas', { content });
+      if (res.success) {
+        showToast('บันทึกไอเดียสำเร็จ!');
+        input.value = '';
+        loadIdeas();
+      } else {
+        showToast(res.error || 'บันทึกไม่สำเร็จ', true);
+      }
+    }
+
+    async function removeIdea(id) {
+      if (!confirm('ต้องการลบไอเดียนี้ใช่หรือไม่?')) return;
+      const res = await apiCall('DELETE', '/ideas/' + id);
+      if (res.success) {
+        showToast('ลบไอเดียสำเร็จ');
+        loadIdeas();
+      }
+    }
+
+    // Load ideas on tab change
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        if (tab.dataset.tab === 'ideas') {
+          loadIdeas();
+        }
+      });
+    });
   </script>
 </body>
 </html>

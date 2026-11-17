@@ -179,6 +179,88 @@ router.post('/guilds/:guildId/stats/setup', checkGuildPermission, async (req, re
   }
 });
 
+// POST save all / force checkpoint database
+router.post('/guilds/:guildId/save-all', checkGuildPermission, (req, res) => {
+  try {
+    db.checkpointDatabase();
+    res.json({ success: true, message: 'บันทึกข้อมูลและเซฟฐานข้อมูลสำเร็จเรียบร้อย ข้อมูลปลอดภัย 100%' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST clone channel
+router.post('/guilds/:guildId/clone-channel', checkGuildPermission, async (req, res) => {
+  const { templateChannelId, newChannelName } = req.body;
+  if (!templateChannelId || !newChannelName) {
+    return res.status(400).json({ error: 'กรุณาระบุห้องแม่แบบและชื่อห้องใหม่' });
+  }
+
+  const guild = req.client.guilds.cache.get(req.params.guildId);
+  if (!guild) return res.status(404).json({ error: 'ไม่พบเซิร์ฟเวอร์' });
+
+  const templateChannel = guild.channels.cache.get(templateChannelId);
+  if (!templateChannel) return res.status(404).json({ error: 'ไม่พบห้องแม่แบบที่เลือก' });
+
+  try {
+    const overwrites = templateChannel.permissionOverwrites.cache.map(p => ({
+      id: p.id,
+      allow: p.allow.bitfield,
+      deny: p.deny.bitfield,
+      type: p.type
+    }));
+
+    const newChannel = await guild.channels.create({
+      name: newChannelName.trim(),
+      type: templateChannel.type,
+      parent: templateChannel.parentId,
+      topic: templateChannel.topic || null,
+      nsfw: templateChannel.nsfw || false,
+      rateLimitPerUser: templateChannel.rateLimitPerUser || 0,
+      permissionOverwrites: overwrites
+    });
+
+    db.logModAction(guild.id, req.user.id, req.user.id, 'clone_channel', `Cloned #${templateChannel.name} -> #${newChannel.name}`);
+    res.json({ success: true, channelId: newChannel.id, channelName: newChannel.name });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET ideas
+router.get('/guilds/:guildId/ideas', checkGuildPermission, (req, res) => {
+  try {
+    const ideas = db.getIdeas(req.params.guildId);
+    res.json(ideas);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST idea
+router.post('/guilds/:guildId/ideas', checkGuildPermission, (req, res) => {
+  const { content } = req.body;
+  if (!content || !content.trim()) {
+    return res.status(400).json({ error: 'กรุณากรอกไอเดีย' });
+  }
+  try {
+    db.addIdea(req.params.guildId, req.user.id, req.user.username, content.trim());
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// DELETE idea
+router.delete('/guilds/:guildId/ideas/:id', checkGuildPermission, (req, res) => {
+  try {
+    db.deleteIdea(req.params.id, req.params.guildId);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // GET roles with member counts
 router.get('/guilds/:guildId/roles-detail', checkGuildPermission, async (req, res) => {
   const guild = req.client.guilds.cache.get(req.params.guildId);
