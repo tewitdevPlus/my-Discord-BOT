@@ -66,10 +66,23 @@ function startDashboard(client) {
   // === Auth Routes ===
   app.get('/auth/login', passport.authenticate('discord'));
 
-  app.get('/auth/callback',
-    passport.authenticate('discord', { failureRedirect: '/' }),
-    (req, res) => res.redirect('/dashboard')
-  );
+  app.get('/auth/callback', (req, res, next) => {
+    // If user arrived from bot invite link (contains guild_id parameter)
+    if (req.query.guild_id && !req.query.code) {
+      return res.redirect('/dashboard');
+    }
+
+    passport.authenticate('discord', (err, user, info) => {
+      if (err || !user) {
+        // If it was just a bot invite callback or OAuth failed gracefully, redirect to dashboard or home
+        return res.redirect('/dashboard');
+      }
+      req.logIn(user, (loginErr) => {
+        if (loginErr) return res.redirect('/');
+        return res.redirect('/dashboard');
+      });
+    })(req, res, next);
+  });
 
   app.get('/auth/logout', (req, res) => {
     req.logout(() => res.redirect('/'));
