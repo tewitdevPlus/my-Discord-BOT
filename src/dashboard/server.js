@@ -20,8 +20,21 @@ function startDashboard(client) {
   app.use(express.urlencoded({ extended: true }));
 
   // Session
+  let sessionStore;
+  if (process.env.DATABASE_URL) {
+    const pgSession = require('connect-pg-simple')(session);
+    const { pool } = require('../database');
+    sessionStore = new pgSession({
+      pool: pool,
+      tableName: 'session'
+    });
+    console.log('🐘 Session ใช้งาน PostgreSQL');
+  } else {
+    sessionStore = new SQLiteStore({ dir: path.join(__dirname, '..', '..', 'data'), db: 'sessions.db' });
+  }
+
   app.use(session({
-    store: new SQLiteStore({ dir: path.join(__dirname, '..', '..', 'data'), db: 'sessions.db' }),
+    store: sessionStore,
     secret: process.env.SESSION_SECRET || 'super-secret-key',
     resave: false,
     saveUninitialized: false,
@@ -168,7 +181,7 @@ function startDashboard(client) {
     res.render('dashboard', { guilds: mutualGuilds });
   });
 
-  app.get('/dashboard/:guildId', isAuthenticated, (req, res) => {
+  app.get('/dashboard/:guildId', isAuthenticated, async (req, res) => {
     const guild = client.guilds.cache.get(req.params.guildId);
     if (!guild) return res.redirect('/dashboard');
 
@@ -179,8 +192,8 @@ function startDashboard(client) {
     }
 
     const db = require('../database');
-    const settings = db.ensureGuild(guild.id, guild.name);
-    const stats = db.getGuildStats(guild.id);
+    const settings = await db.ensureGuild(guild.id, guild.name);
+    const stats = await db.getGuildStats(guild.id);
 
     res.render('guild', {
       guild: {
