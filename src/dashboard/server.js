@@ -146,8 +146,8 @@ function startDashboard(client) {
 
   // === Admin Secret Page (Only Developer Can Access) ===
   app.get('/admin', isAuthenticated, (req, res) => {
-    const isOwner = (process.env.BOT_OWNER_ID && req.user.id === process.env.BOT_OWNER_ID) ||
-                    req.user.username.toLowerCase().includes('tewit');
+    const isOwner = req.user.username === 'tewitplus_58868' || 
+                    (process.env.BOT_OWNER_ID && req.user.id === process.env.BOT_OWNER_ID);
 
     if (!isOwner) {
       return res.status(403).send(`
