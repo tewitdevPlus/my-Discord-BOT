@@ -102,22 +102,35 @@ function startDashboard(client) {
   });
 
   // === Pages ===
-  app.get('/', (req, res) => {
-    const db = require('../database');
-    const reviews = db.getReviews();
-    const reviewStats = db.getReviewStats();
+  app.get('/', async (req, res) => {
+    try {
+      const db = require('../database');
+      const reviews = await db.getReviews();
+      const reviewStats = await db.getReviewStats();
 
-    const inviteURL = `https://discord.com/oauth2/authorize?client_id=${process.env.CLIENT_ID}&permissions=8&scope=bot%20applications.commands`;
+      const inviteURL = `https://discord.com/oauth2/authorize?client_id=${process.env.CLIENT_ID}&permissions=8&scope=bot%20applications.commands`;
 
-    res.render('index', {
-      botName: client.user?.username || 'Devplus BOT',
-      botAvatar: client.user?.displayAvatarURL({ size: 128 }) || '',
-      serverCount: client.guilds.cache.size,
-      userCount: client.guilds.cache.reduce((a, g) => a + g.memberCount, 0),
-      inviteURL,
-      reviews,
-      reviewStats
-    });
+      res.render('index', {
+        botName: client.user?.username || 'Devplus BOT',
+        botAvatar: client.user?.displayAvatarURL({ size: 128 }) || '',
+        serverCount: client.guilds.cache.size,
+        userCount: client.guilds.cache.reduce((a, g) => a + g.memberCount, 0),
+        inviteURL,
+        reviews: Array.isArray(reviews) ? reviews : [],
+        reviewStats: reviewStats || { total: 0, avgRating: 5.0 }
+      });
+    } catch (err) {
+      console.error('Home page error:', err);
+      res.render('index', {
+        botName: client.user?.username || 'Devplus BOT',
+        botAvatar: '',
+        serverCount: 0,
+        userCount: 0,
+        inviteURL: '#',
+        reviews: [],
+        reviewStats: { total: 0, avgRating: 5.0 }
+      });
+    }
   });
 
   // Review submission API
