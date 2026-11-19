@@ -57,6 +57,7 @@ function startDashboard(client) {
     callbackURL: callbackURL,
     scope: ['identify', 'guilds'],
   }, (accessToken, refreshToken, profile, done) => {
+    profile.accessToken = accessToken;
     return done(null, profile);
   }));
 
@@ -178,9 +179,25 @@ function startDashboard(client) {
     });
   });
 
-  app.get('/dashboard', isAuthenticated, (req, res) => {
+  app.get('/dashboard', isAuthenticated, async (req, res) => {
+    // Auto-refresh guilds directly from Discord API if accessToken exists
+    if (req.user && req.user.accessToken) {
+      try {
+        const fetch = global.fetch || require('node-fetch');
+        const discordRes = await fetch('https://discord.com/api/v10/users/@me/guilds', {
+          headers: { Authorization: `Bearer ${req.user.accessToken}` }
+        });
+        if (discordRes.ok) {
+          const freshGuilds = await discordRes.json();
+          req.user.guilds = freshGuilds;
+        }
+      } catch (err) {
+        console.warn('Could not auto-refresh Discord guilds:', err.message);
+      }
+    }
+
     // Filter guilds where user has MANAGE_GUILD permission
-    const userGuilds = req.user.guilds.filter(g =>
+    const userGuilds = (req.user.guilds || []).filter(g =>
       (parseInt(g.permissions) & 0x20) === 0x20 || // MANAGE_GUILD
       (parseInt(g.permissions) & 0x8) === 0x8       // ADMINISTRATOR
     );
@@ -192,6 +209,22 @@ function startDashboard(client) {
     }));
 
     res.render('dashboard', { guilds: mutualGuilds });
+  });
+
+  // Manual refresh guilds route
+  app.get('/dashboard-refresh', isAuthenticated, async (req, res) => {
+    if (req.user && req.user.accessToken) {
+      try {
+        const fetch = global.fetch || require('node-fetch');
+        const discordRes = await fetch('https://discord.com/api/v10/users/@me/guilds', {
+          headers: { Authorization: `Bearer ${req.user.accessToken}` }
+        });
+        if (discordRes.ok) {
+          req.user.guilds = await discordRes.json();
+        }
+      } catch (err) {}
+    }
+    res.redirect('/dashboard');
   });
 
   app.get('/dashboard/:guildId', isAuthenticated, async (req, res) => {

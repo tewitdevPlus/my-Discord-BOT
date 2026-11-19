@@ -29,8 +29,17 @@
   </nav>
 
   <main class="container">
-    <h1 class="page-title"><i class="fas fa-server"></i> เลือกเซิร์ฟเวอร์</h1>
-    <p class="page-desc">เลือกเซิร์ฟเวอร์ที่ต้องการจัดการ (เฉพาะเซิร์ฟเวอร์ที่คุณมีสิทธิ์จัดการ)</p>
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+      <div>
+        <h1 class="page-title" style="margin-bottom:4px;"><i class="fas fa-server"></i> เลือกเซิร์ฟเวอร์</h1>
+        <p class="page-desc" style="margin-bottom:0;">เลือกเซิร์ฟเวอร์ที่ต้องการจัดการ (เฉพาะเซิร์ฟเวอร์ที่คุณมีสิทธิ์จัดการ)</p>
+      </div>
+      <div>
+        <a href="/dashboard-refresh" class="btn btn-outline btn-sm" style="display:inline-flex; align-items:center; gap:8px;">
+          <i class="fas fa-sync-alt"></i> อัปเดตรายการเซิร์ฟเวอร์ (Refresh)
+        </a>
+      </div>
+    </div>
 
     <div class="guild-grid">
       <% guilds.forEach(g => { %>
