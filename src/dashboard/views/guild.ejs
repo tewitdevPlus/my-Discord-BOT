@@ -4,605 +4,671 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard — <%= guild.name %></title>
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/modern-pro.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    /* Guild Page Specific Modern UI */
+    .guild-hero-banner {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 24px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 24px;
+      backdrop-filter: blur(16px);
+      box-shadow: var(--shadow-glow);
+    }
+    .guild-hero-meta {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .guild-hero-icon {
+      width: 76px;
+      height: 76px;
+      border-radius: 22px;
+      object-fit: cover;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      border: 2px solid rgba(255, 255, 255, 0.12);
+    }
+    .guild-hero-placeholder {
+      width: 76px;
+      height: 76px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, #1E293B, #334155);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: 800;
+      color: #FFF;
+      border: 2px solid rgba(255, 255, 255, 0.12);
+    }
+    .stat-badge-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .stat-badge-pill {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.88rem;
+    }
+
+    /* Content Pane Toggle */
+    .content-section {
+      display: none;
+    }
+    .content-section.active {
+      display: block;
+      animation: fadeIn 0.25s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Color picker & presets */
+    .color-input-swatch {
+      width: 48px;
+      height: 40px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      background: transparent;
+      cursor: pointer;
+      padding: 2px;
+    }
+  </style>
 </head>
 <body>
-  <nav class="navbar">
-    <div class="nav-brand">
-      <a href="/dashboard" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:8px;">
-        <i class="fas fa-arrow-left"></i> <span>กลับ</span>
-      </a>
-    </div>
-    <div class="nav-links">
-      <div class="user-info">
-        <img src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png" class="nav-avatar" alt="Avatar">
-        <span><%= user.username %></span>
+  <div class="app-container">
+    <!-- Sidebar Navigation (Same as Reference Mockup) -->
+    <aside class="app-sidebar">
+      <div class="sidebar-header">
+        <a href="/dashboard" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
+          <img src="<%= guild.iconURL || 'https://cdn.discordapp.com/embed/avatars/0.png' %>" class="sidebar-logo" alt="Guild">
+          <span class="sidebar-title" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 170px;"><%= guild.name %></span>
+        </a>
       </div>
-      <a href="/auth/logout" class="btn btn-outline btn-sm"><i class="fas fa-sign-out-alt"></i></a>
-    </div>
-  </nav>
 
-  <main class="container">
-    <!-- Guild Header -->
-    <div class="guild-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
-      <div style="display: flex; align-items: center; gap: 15px;">
-        <% if (guild.iconURL) { %>
-          <img src="<%= guild.iconURL %>" alt="<%= guild.name %>" class="guild-header-icon">
-        <% } %>
-        <div>
-          <h1 class="page-title"><%= guild.name %></h1>
-          <p class="page-desc"><i class="fas fa-users"></i> <%= guild.memberCount %> สมาชิก</p>
-        </div>
-      </div>
-      <div>
-        <button class="btn btn-success" id="btn-save-all" onclick="saveEverything()" style="padding: 10px 20px; font-weight: bold; box-shadow: 0 4px 14px rgba(46, 204, 113, 0.4);">
-          <i class="fas fa-save"></i> 💾 บันทึกทุกอย่างทันที (Save Everything)
-        </button>
-      </div>
-    </div>
-
-    <!-- Stats -->
-    <div class="stats-row">
-      <div class="stat-card">
-        <i class="fas fa-users"></i>
-        <div class="stat-info">
-          <span class="stat-num"><%= guild.memberCount %></span>
-          <span>สมาชิก</span>
-        </div>
-      </div>
-      <div class="stat-card">
-        <i class="fas fa-exclamation-triangle"></i>
-        <div class="stat-info">
-          <span class="stat-num"><%= stats.totalWarnings %></span>
-          <span>คำเตือน</span>
-        </div>
-      </div>
-      <div class="stat-card">
-        <i class="fas fa-gavel"></i>
-        <div class="stat-info">
-          <span class="stat-num"><%= stats.totalActions %></span>
-          <span>การดำเนินการ</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Toast notification -->
-    <div id="toast" class="toast hidden">
-      <i class="fas fa-check-circle"></i>
-      <span id="toast-msg">บันทึกสำเร็จ!</span>
-    </div>
-
-    <!-- Tab Navigation -->
-    <div class="tabs">
-      <button class="tab" data-tab="auto-setup" style="color: #57F287; border-color: rgba(87, 242, 135, 0.4);"><i class="fas fa-bolt"></i> Full Auto Setup</button>
-      <button class="tab" data-tab="auto-roles-creator" style="color: #F1C40F; border-color: rgba(241, 196, 15, 0.4);"><i class="fas fa-crown"></i> Auto สร้างยศ (Setup Roles)</button>
-      <button class="tab active" data-tab="welcome"><i class="fas fa-hand-sparkles"></i> Welcome</button>
-      <button class="tab" data-tab="verify"><i class="fas fa-check-circle"></i> Verify</button>
-      <button class="tab" data-tab="autorole"><i class="fas fa-user-tag"></i> Auto Role</button>
-      <button class="tab" data-tab="stats-role"><i class="fas fa-chart-line"></i> สถิติ & ยศ</button>
-      <button class="tab" data-tab="styler"><i class="fas fa-paint-brush"></i> แต่งห้องเซิร์ฟเวอร์</button>
-      <button class="tab" data-tab="clone-channel"><i class="fas fa-copy"></i> สร้างห้องจากแม่แบบ</button>
-      <button class="tab" data-tab="ideas"><i class="fas fa-lightbulb"></i> คลังไอเดีย & วิธีทำ</button>
-      <button class="tab" data-tab="moderation"><i class="fas fa-shield-halved"></i> Moderation & Logs</button>
-      <button class="tab" data-tab="danger" style="color: #ED4245; border-color: rgba(237, 66, 69, 0.4);"><i class="fas fa-biohazard"></i> โซนอันตราย (Danger)</button>
-    </div>
-
-    <!-- Full Auto Setup Tab -->
-    <div class="tab-content" id="tab-auto-setup">
-      <div class="card" style="border: 2px solid #57F287; background: rgba(87, 242, 135, 0.04);">
-        <div class="card-header" style="border-bottom: 1px solid rgba(87, 242, 135, 0.3);">
-          <h2 style="color: #57F287;"><i class="fas fa-bolt"></i> ติดตั้งระบบแบบ Full Auto Setup (คลิกเดียวครบทุกอย่าง)</h2>
-          <span class="badge" style="background: #57F287; color: #000; font-weight: bold;">แนะนำสูงสุด</span>
-        </div>
-        <div class="card-body">
-          <p class="text-muted" style="margin-bottom: 20px; font-size: 1rem; line-height: 1.6;">
-            ระบบจะทำการ <strong>สร้างยศ (Roles)</strong>, <strong>สร้างหมวดหมู่และห้องทั้งหมด</strong>, <strong>ตั้งค่าสิทธิ์อ่านอย่างเดียวและซ่อนห้อง Staff</strong>, <strong>เปิดระบบต้อนรับ (Welcome)</strong>, <strong>ส่งแผงยืนยันตัวตน (Verify)</strong>, และ <strong>ผูก Auto Role</strong> ให้อัตโนมัติทันทีในคลิกเดียว!
-          </p>
-
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 24px;">
-            <div class="theme-card" onclick="selectAutoTheme('security')" id="autotheme-security" style="border: 2px solid #2ECC71; border-radius: 8px; padding: 18px; cursor: pointer; background: rgba(46, 204, 113, 0.08);">
-              <h3 style="color: #2ECC71; font-size: 1.15rem; margin-bottom: 8px;">🛡️ 7 ระดับสิทธิ์ความปลอดภัยสูง</h3>
-              <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 12px;">Founder, Admin, Staff, VIP, Bot, Verified, Member ล็อกและซ่อนห้องเด็ดขาด ป้องกันสแปม 100%</p>
-              <span class="badge" style="background: #2ECC71; color: #fff;">มาตรฐานความปลอดภัย</span>
-            </div>
-
-            <div class="theme-card" onclick="selectAutoTheme('gaming')" id="autotheme-gaming" style="border: 2px solid var(--border); border-radius: 8px; padding: 18px; cursor: pointer;">
-              <h3 style="font-size: 1.15rem; margin-bottom: 8px;">🎮 เกมมิ่ง & ตี้เกม</h3>
-              <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 12px;">ยศ Gamer/VIP พร้อมห้องแชทเกมเมอร์ หาเพื่อนเล่นเกม และห้องเสียง Duo/Squad จำกัดคน</p>
-              <span class="badge" style="background: rgba(235,69,158,0.2); color: var(--pink);">สำหรับสายเกม</span>
-            </div>
-
-            <div class="theme-card" onclick="selectAutoTheme('community')" id="autotheme-community" style="border: 2px solid var(--border); border-radius: 8px; padding: 18px; cursor: pointer;">
-              <h3 style="font-size: 1.15rem; margin-bottom: 8px;">🌟 คอมมูนิตี้มาตรฐาน</h3>
-              <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 12px;">ยศ Founder, Admin, Member ทั่วไป สะอาด ใช้งานง่าย เหมาะกับกลุ่มเพื่อน</p>
-              <span class="badge" style="background: rgba(88,101,242,0.2); color: var(--primary);">ยอดนิยม</span>
-            </div>
+      <nav class="sidebar-nav">
+        <a href="/dashboard" class="sidebar-item" style="color: #94A3B8; margin-bottom: 8px;">
+          <div class="sidebar-item-content">
+            <i class="fas fa-arrow-left"></i>
+            <span>เปลี่ยนเซิร์ฟเวอร์</span>
           </div>
+        </a>
 
-          <input type="hidden" id="selected_auto_theme" value="security">
-
-          <div style="margin-bottom: 20px;">
-            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
-              <input type="checkbox" id="auto_with_stats" checked style="width: 18px; height: 18px;">
-              <span>ติดตั้งห้องเสียงนับสถิติเซิร์ฟเวอร์ (Server Stats) บนสุดด้วย</span>
-            </label>
+        <div class="nav-category">⚡ อัตโนมัติ (Automation)</div>
+        <div class="sidebar-item active" onclick="switchSection('auto-setup', this)">
+          <div class="sidebar-item-content">
+            <i class="fas fa-bolt" style="color: #10B981;"></i>
+            <span>Full Auto Setup</span>
           </div>
+          <span style="font-size: 0.65rem; background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 2px 6px; border-radius: 10px; font-weight: bold;">ALL-IN-1</span>
+        </div>
 
-          <button class="btn btn-success" id="btn-run-auto" onclick="runAutoSetupFromWeb()" style="padding: 12px 28px; font-size: 1.05rem; font-weight: bold; box-shadow: 0 4px 15px rgba(87, 242, 135, 0.4);">
-            <i class="fas fa-magic"></i> รันระบบ Full Auto Setup ทันที
+        <div class="sidebar-item" onclick="switchSection('auto-roles', this)">
+          <div class="sidebar-item-content">
+            <i class="fas fa-crown" style="color: #F59E0B;"></i>
+            <span>Auto สร้างชุดยศ</span>
+          </div>
+          <span style="font-size: 0.65rem; background: rgba(245, 158, 11, 0.2); color: #F59E0B; padding: 2px 6px; border-radius: 10px; font-weight: bold;">ROLES</span>
+        </div>
+
+        <div class="nav-category">👥 สมาชิก & ความปลอดภัย</div>
+        <div class="sidebar-item" onclick="switchSection('welcome', this)">
+          <div class="sidebar-item-content">
+            <i class="fas fa-hand-sparkles" style="color: #8B5CF6;"></i>
+            <span>ระบบต้อนรับ (Welcome)</span>
+          </div>
+          <span class="switch-sm"><input type="checkbox" id="nav_welcome_check" <%= settings.welcome_enabled ? 'checked' : '' %> disabled><span class="slider-sm"></span></span>
+        </div>
+
+        <div class="sidebar-item" onclick="switchSection('verify', this)">
+          <div class="sidebar-item-content">
+            <i class="fas fa-check-circle" style="color: #10B981;"></i>
+            <span>ยืนยันตัวตน (Verify)</span>
+          </div>
+          <span class="switch-sm"><input type="checkbox" id="nav_verify_check" <%= settings.verify_enabled ? 'checked' : '' %> disabled><span class="slider-sm"></span></span>
+        </div>
+
+        <div class="sidebar-item" onclick="switchSection('autorole', this)">
+          <div class="sidebar-item-content">
+            <i class="fas fa-user-tag" style="color: #38BDF8;"></i>
+            <span>แจกยศอัตโนมัติ (Auto Role)</span>
+          </div>
+          <span class="switch-sm"><input type="checkbox" id="nav_autorole_check" <%= settings.autorole_enabled ? 'checked' : '' %> disabled><span class="slider-sm"></span></span>
+        </div>
+
+        <div class="nav-category">🎨 ตกแต่ง & เครื่องมือ</div>
+        <div class="sidebar-item" onclick="switchSection('styler', this)">
+          <div class="sidebar-item-content">
+            <i class="fas fa-paint-brush" style="color: #EC4899;"></i>
+            <span>แต่งห้องเซิร์ฟเวอร์</span>
+          </div>
+        </div>
+
+        <div class="sidebar-item" onclick="switchSection('stats', this)">
+          <div class="sidebar-item-content">
+            <i class="fas fa-chart-line" style="color: #14B8A6;"></i>
+            <span>สถิติเสียง & จำนวนยศ</span>
+          </div>
+        </div>
+
+        <div class="sidebar-item" onclick="switchSection('clone', this)">
+          <div class="sidebar-item-content">
+            <i class="fas fa-copy" style="color: #F43F5E;"></i>
+            <span>คัดลอกห้อง (1:1 Clone)</span>
+          </div>
+        </div>
+
+        <div class="sidebar-item" onclick="switchSection('ideas', this)">
+          <div class="sidebar-item-content">
+            <i class="fas fa-lightbulb" style="color: #FBBF24;"></i>
+            <span>คลังไอเดีย & วิธีทำ</span>
+          </div>
+        </div>
+
+        <div class="nav-category">🛡️ การจัดการ & บันทึก</div>
+        <div class="sidebar-item" onclick="switchSection('moderation', this)">
+          <div class="sidebar-item-content">
+            <i class="fas fa-clipboard-list" style="color: #64748B;"></i>
+            <span>ประวัติ Logs & คำเตือน</span>
+          </div>
+        </div>
+
+        <div class="nav-category" style="color: #EF4444;">🚨 อันตรายสูงสุด</div>
+        <div class="sidebar-item" onclick="switchSection('danger', this)" style="color: #EF4444;">
+          <div class="sidebar-item-content">
+            <i class="fas fa-biohazard"></i>
+            <span>โซนอันตราย (Nuke)</span>
+          </div>
+        </div>
+      </nav>
+
+      <div style="padding: 16px; border-top: 1px solid var(--border-color); font-size: 0.78rem; color: var(--text-muted); text-align: center;">
+        Devplus Pro Server Engine
+      </div>
+    </aside>
+
+    <!-- Main Content Work Area -->
+    <div class="app-main">
+      <!-- Topbar -->
+      <header class="app-topbar">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <h2 style="font-size: 1.15rem; font-weight: 700;" id="currentSectionTitle">⚡ Full Auto Setup</h2>
+        </div>
+
+        <div class="topbar-user">
+          <button class="btn-go" onclick="saveEverything()" style="width: auto; padding: 7px 18px; font-size: 0.82rem;">
+            <i class="fas fa-save"></i> 💾 บันทึกทุกอย่าง
           </button>
+          <div class="user-pill">
+            <img src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png" class="user-avatar" alt="User">
+            <span class="user-name"><%= user.username %></span>
+          </div>
+          <a href="/auth/logout" style="color: var(--text-muted); font-size: 0.88rem; padding: 6px 10px;">
+            <i class="fas fa-sign-out-alt"></i>
+          </a>
         </div>
-      </div>
-    </div>
+      </header>
 
-    <!-- Auto Roles Creator Tab -->
-    <div class="tab-content" id="tab-auto-roles-creator">
-      <div class="card" style="border: 2px solid #F1C40F; background: rgba(241, 196, 15, 0.04);">
-        <div class="card-header" style="border-bottom: 1px solid rgba(241, 196, 15, 0.3);">
-          <h2 style="color: #F1C40F;"><i class="fas fa-crown"></i> ระบบ Auto สร้างยศ (Setup Roles อัตโนมัติ)</h2>
-          <span class="badge" style="background: #F1C40F; color: #000; font-weight: bold;">สร้างเฉพาะชุดยศ</span>
-        </div>
-        <div class="card-body">
-          <p class="text-muted" style="margin-bottom: 20px; font-size: 1rem; line-height: 1.6;">
-            เลือกธีมชุดยศที่ต้องการ บอทจะทำการ <strong>สร้างยศทั้งหมดพร้อมตั้งค่าสี และสิทธิ์ของแต่ละยศ</strong> ให้ทันทีอัตโนมัติ โดยไม่ไปยุ่งหรือแก้ไขห้องเดิมในเซิร์ฟเวอร์ของคุณ
-          </p>
-
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 24px;">
-            <div class="theme-card" onclick="selectRoleCreatorTheme('security')" id="roletheme-security" style="border: 2px solid #F1C40F; border-radius: 8px; padding: 18px; cursor: pointer; background: rgba(241, 196, 15, 0.08);">
-              <h3 style="color: #F1C40F; font-size: 1.15rem; margin-bottom: 8px;">🛡️ ชุดยศ 7 ระดับสิทธิ์ความปลอดภัย</h3>
-              <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 12px;">👑 FOUNDER, 🛡️ ADMIN, 🔧 STAFF, 💎 VIP, 🤖 Bot, ✅ Verified, 👥 Member</p>
-              <span class="badge" style="background: #F1C40F; color: #000;">มาตรฐานสูงสุด</span>
-            </div>
-
-            <div class="theme-card" onclick="selectRoleCreatorTheme('gaming')" id="roletheme-gaming" style="border: 2px solid var(--border); border-radius: 8px; padding: 18px; cursor: pointer;">
-              <h3 style="font-size: 1.15rem; margin-bottom: 8px;">🎮 ชุดยศสายเกมมิ่ง & ตี้เกม</h3>
-              <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 12px;">👑 Owner, 🛡️ Admin, ⚔️ Moderator, 💎 VIP, 🎮 Gamer, 🤖 Bot, 🔒 Unverified</p>
-              <span class="badge" style="background: rgba(235,69,158,0.2); color: var(--pink);">สำหรับสายเกม</span>
-            </div>
-
-            <div class="theme-card" onclick="selectRoleCreatorTheme('community')" id="roletheme-community" style="border: 2px solid var(--border); border-radius: 8px; padding: 18px; cursor: pointer;">
-              <h3 style="font-size: 1.15rem; margin-bottom: 8px;">🌟 ชุดยศคอมมูนิตี้มาตรฐาน</h3>
-              <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 12px;">👑 ผู้ก่อตั้ง, 🛡️ แอดมิน, 👮 เจ้าหน้าที่, ✨ สมาชิกพิเศษ, 👥 สมาชิก, 🤖 Bot</p>
-              <span class="badge" style="background: rgba(88,101,242,0.2); color: var(--primary);">ยอดนิยม</span>
-            </div>
-
-            <div class="theme-card" onclick="selectRoleCreatorTheme('aesthetic')" id="roletheme-aesthetic" style="border: 2px solid var(--border); border-radius: 8px; padding: 18px; cursor: pointer;">
-              <h3 style="font-size: 1.15rem; margin-bottom: 8px;">✨ ชุดยศมินิมอล & คาเฟ่</h3>
-              <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 12px;">👑 Mastermind, 🛡️ Guardian, 🌷 Supporter, ☕ Resident, 🤖 Helper Bot</p>
-              <span class="badge" style="background: rgba(87,242,135,0.2); color: var(--success);">สไตล์ชิลล์</span>
+      <main class="main-viewport">
+        <!-- Guild Top Banner -->
+        <div class="guild-hero-banner">
+          <div class="guild-hero-meta">
+            <% if (guild.iconURL) { %>
+              <img src="<%= guild.iconURL %>" alt="<%= guild.name %>" class="guild-hero-icon">
+            <% } else { %>
+              <div class="guild-hero-placeholder"><%= guild.name.charAt(0) %></div>
+            <% } %>
+            <div>
+              <h1 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 6px;"><%= guild.name %></h1>
+              <div class="stat-badge-group">
+                <span class="stat-badge-pill"><i class="fas fa-users" style="color: #38BDF8;"></i> <strong><%= guild.memberCount %></strong> สมาชิก</span>
+                <span class="stat-badge-pill"><i class="fas fa-exclamation-triangle" style="color: #F59E0B;"></i> <strong><%= stats.totalWarnings %></strong> คำเตือน</span>
+                <span class="stat-badge-pill"><i class="fas fa-gavel" style="color: #A855F7;"></i> <strong><%= stats.totalActions %></strong> บันทึก Mod</span>
+              </div>
             </div>
           </div>
+        </div>
 
-          <input type="hidden" id="selected_role_creator_theme" value="security">
+        <!-- Toast -->
+        <div id="toast" class="toast-pro" style="display: none;">
+          <i class="fas fa-check-circle" style="color: #10B981;"></i>
+          <span id="toast-msg">บันทึกสำเร็จ!</span>
+        </div>
 
-          <button class="btn btn-primary" id="btn-run-create-roles" onclick="runCreateRolesFromWeb()" style="padding: 12px 28px; font-size: 1.05rem; font-weight: bold; background: #F1C40F; color: #000; border-color: #F1C40F; box-shadow: 0 4px 15px rgba(241, 196, 15, 0.4);">
-            <i class="fas fa-crown"></i> กดสร้างชุดยศเข้าสู่เซิร์ฟเวอร์ทันที
-          </button>
-        </div>
-      </div>
-    </div>
+        <!-- ==================== 1. FULL AUTO SETUP SECTION ==================== -->
+        <div class="content-section active" id="sec-auto-setup">
+          <div class="card-pro" style="border: 1px solid rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.04);">
+            <div class="card-pro-header">
+              <div class="card-pro-title" style="color: #10B981;">
+                <i class="fas fa-bolt"></i> ติดตั้งระบบแบบ Full Auto Setup (คลิกเดียวครบทั้งเซิร์ฟเวอร์)
+              </div>
+              <span style="background: #10B981; color: #000; padding: 4px 10px; border-radius: 20px; font-weight: 800; font-size: 0.75rem;">ALL IN ONE</span>
+            </div>
+            <p style="color: var(--text-muted); margin-bottom: 22px; font-size: 0.92rem; line-height: 1.6;">
+              ระบบจะทำการสร้าง <strong>ยศ (Roles)</strong>, <strong>ห้องและหมวดหมู่ (Channels)</strong>, <strong>ล็อกสิทธิ์ Read-Only และซ่อนห้อง Staff</strong>, <strong>เปิดระบบ Welcome</strong>, <strong>ส่งปุ่มยืนยันตัวตน (Verify)</strong>, และ <strong>ผูก Auto Role</strong> ให้อัตโนมัติทันที
+            </p>
 
-    <!-- Auto Role Tab -->
-    <div class="tab-content" id="tab-autorole">
-      <div class="card">
-        <div class="card-header">
-          <h2><i class="fas fa-user-tag"></i> ระบบแจกยศอัตโนมัติ (Auto Role)</h2>
-          <label class="switch">
-            <input type="checkbox" id="autorole_enabled" <%= settings.autorole_enabled ? 'checked' : '' %>>
-            <span class="slider"></span>
-          </label>
-        </div>
-        <div class="card-body">
-          <p class="text-muted" style="margin-bottom: 20px;">
-            เมื่อมีสมาชิกใหม่กดเข้าร่วมเซิร์ฟเวอร์ บอทจะทำการมอบยศที่เลือกนี้ให้โดยอัตโนมัติทันที
-          </p>
-          <div class="form-group">
-            <label><i class="fas fa-tag"></i> เลือกยศที่จะแจกอัตโนมัติ</label>
-            <select id="autorole_id" class="form-select">
-              <option value="">-- ไม่เลือก (ปิดใช้งาน Auto Role) --</option>
-              <% guild.roles.forEach(r => { %>
-                <option value="<%= r.id %>" <%= settings.autorole_id === r.id ? 'selected' : '' %> style="color:<%= r.color %>">@<%= r.name %></option>
-              <% }) %>
-            </select>
-          </div>
-          <button class="btn btn-primary" onclick="saveAutoRole()"><i class="fas fa-save"></i> บันทึกการตั้งค่า Auto Role</button>
-        </div>
-      </div>
-    </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 24px;">
+              <div class="server-card" onclick="selectAutoTheme('security')" id="autotheme-security" style="cursor: pointer; border: 2px solid #10B981; background: rgba(16, 185, 129, 0.08); text-align: left; padding: 20px;">
+                <h3 style="color: #10B981; font-size: 1.15rem; margin-bottom: 8px;">🛡️ 7 ระดับสิทธิ์ความปลอดภัย</h3>
+                <p style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.5; margin-bottom: 12px;">Founder, Admin, Staff, VIP, Bot, Verified, Member ล็อกและซ่อนห้องเด็ดขาด ป้องกันสแปม 100%</p>
+                <span class="btn-go" style="width: auto; padding: 4px 12px; font-size: 0.75rem;">มาตรฐานความปลอดภัย</span>
+              </div>
 
-    <!-- Welcome Tab -->
-    <div class="tab-content active" id="tab-welcome">
-      <div class="card">
-        <div class="card-header">
-          <h2><i class="fas fa-hand-sparkles"></i> ระบบต้อนรับ</h2>
-          <label class="switch">
-            <input type="checkbox" id="welcome_enabled" <%= settings.welcome_enabled ? 'checked' : '' %>>
-            <span class="slider"></span>
-          </label>
-        </div>
-        <div class="card-body">
-          <div class="form-group">
-            <label><i class="fas fa-hashtag"></i> ห้องต้อนรับ</label>
-            <select id="welcome_channel" class="form-select">
-              <option value="">-- เลือกห้อง --</option>
-              <% guild.channels.forEach(ch => { %>
-                <option value="<%= ch.id %>" <%= settings.welcome_channel === ch.id ? 'selected' : '' %>>#<%= ch.name %></option>
-              <% }) %>
-            </select>
-          </div>
-          <div class="form-group">
-            <label><i class="fas fa-comment"></i> ข้อความต้อนรับ</label>
-            <textarea id="welcome_message" class="form-textarea" rows="3" placeholder="ยินดีต้อนรับ {user} เข้าสู่ {server}!"><%= settings.welcome_message || '' %></textarea>
-            <small class="form-help">ตัวแปร: {user}, {username}, {server}, {membercount}</small>
-          </div>
-          <div class="form-group">
-            <label><i class="fas fa-palette"></i> สี Embed</label>
-            <input type="color" id="welcome_color" class="form-color" value="<%= settings.welcome_color || '#5865F2' %>">
-          </div>
-          <button class="btn btn-primary" onclick="saveWelcome()"><i class="fas fa-save"></i> บันทึก</button>
-        </div>
-      </div>
-    </div>
+              <div class="server-card" onclick="selectAutoTheme('gaming')" id="autotheme-gaming" style="cursor: pointer; text-align: left; padding: 20px;">
+                <h3 style="font-size: 1.15rem; margin-bottom: 8px; color: #FFF;">🎮 เกมมิ่ง & ตี้เกม</h3>
+                <p style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.5; margin-bottom: 12px;">ห้องแชทเกมเมอร์ หาเพื่อนเล่นเกม คลิปไฮไลท์ และห้อง Duo/Squad จำกัดคน</p>
+                <span class="btn-setup" style="width: auto; padding: 4px 12px; font-size: 0.75rem;">สำหรับสายเกม</span>
+              </div>
 
-    <!-- Verify Tab -->
-    <div class="tab-content" id="tab-verify">
-      <div class="card">
-        <div class="card-header">
-          <h2><i class="fas fa-check-circle"></i> ระบบยืนยันตัวตน</h2>
-          <label class="switch">
-            <input type="checkbox" id="verify_enabled" <%= settings.verify_enabled ? 'checked' : '' %>>
-            <span class="slider"></span>
-          </label>
-        </div>
-        <div class="card-body">
-          <div class="form-group">
-            <label><i class="fas fa-hashtag"></i> ห้อง Verify</label>
-            <select id="verify_channel" class="form-select">
-              <option value="">-- เลือกห้อง --</option>
-              <% guild.channels.forEach(ch => { %>
-                <option value="<%= ch.id %>" <%= settings.verify_channel === ch.id ? 'selected' : '' %>>#<%= ch.name %></option>
-              <% }) %>
-            </select>
-          </div>
-          <div class="form-group">
-            <label><i class="fas fa-tag"></i> Role ที่ได้รับเมื่อ Verify</label>
-            <select id="verify_role" class="form-select">
-              <option value="">-- เลือก Role --</option>
-              <% guild.roles.forEach(r => { %>
-                <option value="<%= r.id %>" <%= settings.verify_role === r.id ? 'selected' : '' %> style="color:<%= r.color %>">@<%= r.name %></option>
-              <% }) %>
-            </select>
-          </div>
-          <div class="form-group">
-            <label><i class="fas fa-comment"></i> ข้อความบนหน้า Verify</label>
-            <textarea id="verify_message" class="form-textarea" rows="3" placeholder="กรุณากดปุ่มด้านล่างเพื่อยืนยันตัวตน"><%= settings.verify_message || '' %></textarea>
-          </div>
-          <div class="btn-group">
-            <button class="btn btn-primary" onclick="saveVerify()"><i class="fas fa-save"></i> บันทึก</button>
-            <button class="btn btn-outline" onclick="resendVerify()"><i class="fas fa-paper-plane"></i> ส่งหน้า Verify ใหม่</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Stats & Roles Tab -->
-    <div class="tab-content" id="tab-stats-role">
-      <div class="card">
-        <div class="card-header">
-          <h2><i class="fas fa-chart-line"></i> ระบบนับสถิติบนห้องเสียง (Server Stats Counters)</h2>
-        </div>
-        <div class="card-body">
-          <p class="text-muted" style="margin-bottom: 20px;">
-            สร้างห้องเสียงแบบล็อกไว้บนสุดของเซิร์ฟเวอร์ เพื่อแสดงสถิติจำนวนสมาชิก, คนออนไลน์, บอท และยศพิเศษแบบอัปเดตอัตโนมัติ
-          </p>
-
-          <div class="form-group">
-            <label><i class="fas fa-crown"></i> ยศพิเศษที่ต้องการนับจำนวน (ไม่บังคับ)</label>
-            <select id="stats_role_select" class="form-select">
-              <option value="">-- ไม่ต้องนับยศพิเศษ (นับเฉพาะ สมาชิก, ออนไลน์, บอท) --</option>
-              <% guild.roles.forEach(r => { %>
-                <option value="<%= r.id %>" style="color:<%= r.color %>">@<%= r.name %></option>
-              <% }) %>
-            </select>
-          </div>
-
-          <button class="btn btn-primary" id="btn-setup-stats" onclick="setupStatsAction()">
-            <i class="fas fa-plus-circle"></i> ติดตั้งระบบนับสถิติทันที
-          </button>
-        </div>
-      </div>
-
-      <div class="card" style="margin-top: 24px;">
-        <div class="card-header">
-          <h2><i class="fas fa-users-cog"></i> รายละเอียดยศ & จำนวนคนในแต่ละยศ</h2>
-          <button class="btn btn-outline btn-sm" onclick="loadRolesDetail()"><i class="fas fa-sync"></i> รีเฟรช</button>
-        </div>
-        <div class="card-body">
-          <div id="roles-detail-list" class="logs-list">
-            <p class="text-muted">คลิกเพื่อโหลดข้อมูล...</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Styler Tab -->
-    <div class="tab-content" id="tab-styler">
-      <div class="card">
-        <div class="card-header">
-          <h2><i class="fas fa-paint-brush"></i> ระบบตกแต่ง & สร้างห้องอัตโนมัติ</h2>
-        </div>
-        <div class="card-body">
-          <p class="text-muted" style="margin-bottom: 20px;">
-            เลือกธีมโครงสร้างห้องที่ต้องการ บอทจะทำการสร้าง Category, Text Channels และ Voice Channels พร้อมทั้ง Emoji, ตัวคั่น <code>┃</code> และตั้งค่าสิทธิ์อ่านอย่างเดียว (Read-only) ให้อัตโนมัติทันที
-          </p>
-
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 24px;">
-            <div class="theme-card" onclick="selectTheme('community')" id="theme-community" style="border: 2px solid var(--border); border-radius: 8px; padding: 16px; cursor: pointer; transition: all 0.2s;">
-              <h3 style="font-size: 1.1rem; margin-bottom: 8px;">🌟 คอมมูนิตี้มาตรฐาน</h3>
-              <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 12px;">เหมาะสำหรับกลุ่มเพื่อน ทั่วไป มีห้อง Welcome, Rules, General และห้องเสียง</p>
-              <span class="badge" style="background: rgba(88,101,242,0.2); color: var(--primary);">ยอดนิยม</span>
+              <div class="server-card" onclick="selectAutoTheme('community')" id="autotheme-community" style="cursor: pointer; text-align: left; padding: 20px;">
+                <h3 style="font-size: 1.15rem; margin-bottom: 8px; color: #FFF;">🌟 คอมมูนิตี้มาตรฐาน</h3>
+                <p style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.5; margin-bottom: 12px;">ยศ Founder, Admin, Member ทั่วไป สบายตา ใช้งานง่าย เหมาะกับกลุ่มเพื่อน</p>
+                <span class="btn-setup" style="width: auto; padding: 4px 12px; font-size: 0.75rem; background: #38BDF8;">ยอดนิยม</span>
+              </div>
             </div>
 
-            <div class="theme-card" onclick="selectTheme('gaming')" id="theme-gaming" style="border: 2px solid var(--border); border-radius: 8px; padding: 16px; cursor: pointer; transition: all 0.2s;">
-              <h3 style="font-size: 1.1rem; margin-bottom: 8px;">🎮 เกมมิ่ง & ตี้เกม</h3>
-              <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 12px;">มีห้องหาเพื่อนเล่นเกม คลิปไฮไลท์ และห้อง Duo/Squad จำกัดจำนวนคน</p>
-              <span class="badge" style="background: rgba(235,69,158,0.2); color: var(--pink);">สำหรับสายเกม</span>
+            <input type="hidden" id="selected_auto_theme" value="security">
+
+            <div style="margin-bottom: 22px;">
+              <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; color: #FFF; font-size: 0.9rem;">
+                <input type="checkbox" id="auto_with_stats" checked style="width: 18px; height: 18px; accent-color: var(--accent-emerald);">
+                <span>ติดตั้งห้องเสียงนับสถิติเซิร์ฟเวอร์ (Server Stats Counters) ด้านบนสุดด้วย</span>
+              </label>
             </div>
 
-            <div class="theme-card" onclick="selectTheme('aesthetic')" id="theme-aesthetic" style="border: 2px solid var(--border); border-radius: 8px; padding: 16px; cursor: pointer; transition: all 0.2s;">
-              <h3 style="font-size: 1.1rem; margin-bottom: 8px;">✨ มินิมอล & คาเฟ่</h3>
-              <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 12px;">สไตล์มินิมอล น่ารัก สบายตา โทนคาเฟ่และพูดคุยทำงาน</p>
-              <span class="badge" style="background: rgba(87,242,135,0.2); color: var(--success);">สไตล์ชิลล์</span>
+            <button class="btn-go" id="btn-run-auto" onclick="runAutoSetupFromWeb()" style="width: auto; padding: 12px 28px; font-size: 1rem;">
+              <i class="fas fa-magic"></i> กดรันระบบ Full Auto Setup ทันที
+            </button>
+          </div>
+        </div>
+
+        <!-- ==================== 2. AUTO ROLES CREATOR ==================== -->
+        <div class="content-section" id="sec-auto-roles">
+          <div class="card-pro" style="border: 1px solid rgba(245, 158, 11, 0.4); background: rgba(245, 158, 11, 0.04);">
+            <div class="card-pro-header">
+              <div class="card-pro-title" style="color: #F59E0B;">
+                <i class="fas fa-crown"></i> ระบบ Auto สร้างชุดยศ (Setup Roles อัตโนมัติ)
+              </div>
+              <span style="background: #F59E0B; color: #000; padding: 4px 10px; border-radius: 20px; font-weight: 800; font-size: 0.75rem;">ROLES ONLY</span>
+            </div>
+            <p style="color: var(--text-muted); margin-bottom: 22px; font-size: 0.92rem; line-height: 1.6;">
+              บอทจะสร้างชุดยศพร้อมตั้งค่าสีและสิทธิ์ให้อัตโนมัติทันที <strong>โดยไม่แก้ไขหรือลบห้องเดิม</strong> ในเซิร์ฟเวอร์ของคุณ
+            </p>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 24px;">
+              <div class="server-card" onclick="selectRoleCreatorTheme('security')" id="roletheme-security" style="cursor: pointer; border: 2px solid #F59E0B; background: rgba(245, 158, 11, 0.08); text-align: left; padding: 20px;">
+                <h3 style="color: #F59E0B; font-size: 1.15rem; margin-bottom: 8px;">🛡️ 7 ระดับสิทธิ์ความปลอดภัย</h3>
+                <p style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.5;">👑 FOUNDER, 🛡️ ADMIN, 🔧 STAFF, 💎 VIP, 🤖 Bot, ✅ Verified, 👥 Member</p>
+              </div>
+
+              <div class="server-card" onclick="selectRoleCreatorTheme('gaming')" id="roletheme-gaming" style="cursor: pointer; text-align: left; padding: 20px;">
+                <h3 style="font-size: 1.15rem; margin-bottom: 8px; color: #FFF;">🎮 ชุดยศสายเกมมิ่ง & ตี้เกม</h3>
+                <p style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.5;">👑 Owner, 🛡️ Admin, ⚔️ Moderator, 💎 VIP, 🎮 Gamer, 🤖 Bot, 🔒 Unverified</p>
+              </div>
+
+              <div class="server-card" onclick="selectRoleCreatorTheme('community')" id="roletheme-community" style="cursor: pointer; text-align: left; padding: 20px;">
+                <h3 style="font-size: 1.15rem; margin-bottom: 8px; color: #FFF;">🌟 ชุดยศคอมมูนิตี้มาตรฐาน</h3>
+                <p style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.5;">👑 ผู้ก่อตั้ง, 🛡️ แอดมิน, 👮 เจ้าหน้าที่, ✨ สมาชิกพิเศษ, 👥 สมาชิก, 🤖 Bot</p>
+              </div>
+
+              <div class="server-card" onclick="selectRoleCreatorTheme('aesthetic')" id="roletheme-aesthetic" style="cursor: pointer; text-align: left; padding: 20px;">
+                <h3 style="font-size: 1.15rem; margin-bottom: 8px; color: #FFF;">✨ ชุดยศมินิมอล & คาเฟ่</h3>
+                <p style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.5;">👑 Mastermind, 🛡️ Guardian, 🌷 Supporter, ☕ Resident, 🤖 Helper</p>
+              </div>
+            </div>
+
+            <input type="hidden" id="selected_role_creator_theme" value="security">
+
+            <button class="btn-setup" id="btn-run-create-roles" onclick="runCreateRolesFromWeb()" style="width: auto; padding: 12px 28px; font-size: 1rem;">
+              <i class="fas fa-crown"></i> กดสร้างชุดยศเข้าสู่เซิร์ฟเวอร์ทันที
+            </button>
+          </div>
+        </div>
+
+        <!-- ==================== 3. WELCOME SYSTEM ==================== -->
+        <div class="content-section" id="sec-welcome">
+          <div class="card-pro">
+            <div class="card-pro-header">
+              <div class="card-pro-title"><i class="fas fa-hand-sparkles" style="color: #8B5CF6;"></i> ระบบต้อนรับสมาชิกใหม่ (Welcome System)</div>
+              <label class="switch-sm"><input type="checkbox" id="welcome_enabled" <%= settings.welcome_enabled ? 'checked' : '' %>><span class="slider-sm"></span></label>
+            </div>
+
+            <div class="form-group-pro">
+              <label class="form-label-pro"><i class="fas fa-hashtag"></i> ห้องสำหรับส่งข้อความต้อนรับ</label>
+              <select id="welcome_channel" class="form-control-pro">
+                <option value="">-- เลือกห้อง --</option>
+                <% guild.channels.forEach(ch => { %>
+                  <option value="<%= ch.id %>" <%= settings.welcome_channel === ch.id ? 'selected' : '' %>>#<%= ch.name %></option>
+                <% }) %>
+              </select>
+            </div>
+
+            <div class="form-group-pro">
+              <label class="form-label-pro"><i class="fas fa-comment-dots"></i> ข้อความต้อนรับ</label>
+              <textarea id="welcome_message" class="form-control-pro" rows="3"><%= settings.welcome_message || '' %></textarea>
+              <small style="color: var(--text-muted); font-size: 0.8rem; margin-top: 4px; display: block;">ตัวแปร: {user}, {username}, {server}, {membercount}</small>
+            </div>
+
+            <div class="form-group-pro">
+              <label class="form-label-pro"><i class="fas fa-palette"></i> สี Embed</label>
+              <div style="display: flex; gap: 10px; align-items: center;">
+                <input type="color" id="welcome_color" value="<%= settings.welcome_color || '#5865F2' %>" class="color-input-swatch">
+                <span style="color: var(--text-muted); font-size: 0.85rem;">คลิกเพื่อเลือกสีแถบข้างการ์ดต้อนรับ</span>
+              </div>
+            </div>
+
+            <button class="btn-go" onclick="saveWelcome()" style="width: auto; padding: 10px 24px;"><i class="fas fa-save"></i> บันทึกการตั้งค่า Welcome</button>
+          </div>
+        </div>
+
+        <!-- ==================== 4. VERIFY SYSTEM ==================== -->
+        <div class="content-section" id="sec-verify">
+          <div class="card-pro">
+            <div class="card-pro-header">
+              <div class="card-pro-title"><i class="fas fa-check-circle" style="color: #10B981;"></i> ระบบยืนยันตัวตน (Verification Gate)</div>
+              <label class="switch-sm"><input type="checkbox" id="verify_enabled" <%= settings.verify_enabled ? 'checked' : '' %>><span class="slider-sm"></span></label>
+            </div>
+
+            <div class="form-group-pro">
+              <label class="form-label-pro"><i class="fas fa-hashtag"></i> ห้องสำหรับวางแผง Verify</label>
+              <select id="verify_channel" class="form-control-pro">
+                <option value="">-- เลือกห้อง --</option>
+                <% guild.channels.forEach(ch => { %>
+                  <option value="<%= ch.id %>" <%= settings.verify_channel === ch.id ? 'selected' : '' %>>#<%= ch.name %></option>
+                <% }) %>
+              </select>
+            </div>
+
+            <div class="form-group-pro">
+              <label class="form-label-pro"><i class="fas fa-tag"></i> ยศที่จะได้รับเมื่อกดยืนยันตัวตนสำเร็จ</label>
+              <select id="verify_role" class="form-control-pro">
+                <option value="">-- เลือก Role --</option>
+                <% guild.roles.forEach(r => { %>
+                  <option value="<%= r.id %>" <%= settings.verify_role === r.id ? 'selected' : '' %>>@<%= r.name %></option>
+                <% }) %>
+              </select>
+            </div>
+
+            <div class="form-group-pro">
+              <label class="form-label-pro"><i class="fas fa-comment-dots"></i> ข้อความบนหน้าต่าง Verify</label>
+              <textarea id="verify_message" class="form-control-pro" rows="3"><%= settings.verify_message || '' %></textarea>
+            </div>
+
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+              <button class="btn-go" onclick="saveVerify()" style="width: auto; padding: 10px 24px;"><i class="fas fa-save"></i> บันทึกการตั้งค่า</button>
+              <button class="btn-setup" onclick="resendVerifyPanel()" style="width: auto; padding: 10px 24px;"><i class="fas fa-paper-plane"></i> ส่งปุ่มยืนยันลงห้องทันที</button>
             </div>
           </div>
-
-          <input type="hidden" id="selected_theme" value="community">
-
-          <div style="background: var(--bg-input); padding: 16px; border-radius: 8px; margin-bottom: 20px;">
-            <h4 style="margin-bottom: 8px;"><i class="fas fa-info-circle"></i> สิ่งที่จะได้รับ:</h4>
-            <ul style="padding-left: 20px; font-size: 0.9rem; color: var(--text-muted); line-height: 1.6;">
-              <li>สร้างชื่อห้องพร้อมไอคอนและเส้นคั่น <code>┃</code> สวยงามเป็นระเบียบ</li>
-              <li>ล็อกห้องข้อมูล (เช่น กฎระเบียบ, ประกาศ) ให้เป็น Read-only สำหรับสมาชิกทั่วไป</li>
-              <li>สร้างห้องสำหรับทีมงาน (Staff) และซ่อนไม่ให้สมาชิกทั่วไปมองเห็น</li>
-            </ul>
-          </div>
-
-          <button class="btn btn-primary" id="btn-apply-template" onclick="applyTemplateAction()">
-            <i class="fas fa-magic"></i> กดสร้างห้องและตกแต่งเซิร์ฟเวอร์ทันที
-          </button>
         </div>
-      </div>
 
-      <!-- Quick Single Channel Decorator -->
-      <div class="card" style="margin-top: 24px;">
-        <div class="card-header">
-          <h2><i class="fas fa-edit"></i> ตกแต่งทีละห้องด้วยแม่แบบสำเร็จรูป</h2>
-        </div>
-        <div class="card-body">
-          <p class="text-muted" style="margin-bottom: 20px;">
-            เลือกห้องที่ต้องการเปลี่ยนชื่อ แล้วคลิกแม่แบบชื่อห้องสำเร็จรูปด้านล่างเพื่อเปลี่ยนทันที
-          </p>
+        <!-- ==================== 5. AUTO ROLE ==================== -->
+        <div class="content-section" id="sec-autorole">
+          <div class="card-pro">
+            <div class="card-pro-header">
+              <div class="card-pro-title"><i class="fas fa-user-tag" style="color: #38BDF8;"></i> ระบบแจกยศอัตโนมัติ (Auto Role on Member Join)</div>
+              <label class="switch-sm"><input type="checkbox" id="autorole_enabled" <%= settings.autorole_enabled ? 'checked' : '' %>><span class="slider-sm"></span></label>
+            </div>
+            <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.88rem;">เมื่อสมาชิกใหม่ก้าวเข้าสู่เซิร์ฟเวอร์ บอทจะมอบยศนี้ให้โดยอัตโนมัติทันที</p>
 
-          <div class="form-group">
-            <label><i class="fas fa-hashtag"></i> เลือกห้องที่ต้องการตกแต่ง</label>
-            <select id="single_channel_select" class="form-select">
-              <option value="">-- เลือกห้องที่ต้องการตกแต่ง --</option>
-              <% guild.channels.forEach(ch => { %>
-                <option value="<%= ch.id %>">#<%= ch.name %></option>
-              <% }) %>
-            </select>
-          </div>
+            <div class="form-group-pro">
+              <label class="form-label-pro"><i class="fas fa-tag"></i> เลือกยศที่ต้องการแจก</label>
+              <select id="autorole_id" class="form-control-pro">
+                <option value="">-- เลือกยศ --</option>
+                <% guild.roles.forEach(r => { %>
+                  <option value="<%= r.id %>" <%= settings.autorole_id === r.id ? 'selected' : '' %>>@<%= r.name %></option>
+                <% }) %>
+              </select>
+            </div>
 
-          <div class="form-group">
-            <label><i class="fas fa-font"></i> ชื่อห้องใหม่ (คลิกแม่แบบด้านล่างหรือพิมพ์เอง)</label>
-            <input type="text" id="single_channel_name" class="form-select" placeholder="เช่น 💬┃คุยทั่วไป">
-          </div>
-
-          <label style="font-weight: 600; margin-bottom: 8px; display: block; font-size: 0.9rem;">
-            <i class="fas fa-list-ul"></i> แม่แบบชื่อห้องยอดนิยม (คลิกเพื่อนำไปใช้):
-          </label>
-          <div id="presets-container" style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px;">
-            <span class="badge" style="cursor: pointer; background: var(--bg-input); padding: 8px 14px;" onclick="setPresetName('📌┃welcome')">📌┃welcome</span>
-            <span class="badge" style="cursor: pointer; background: var(--bg-input); padding: 8px 14px;" onclick="setPresetName('📜┃rules-กฎระเบียบ')">📜┃rules-กฎระเบียบ</span>
-            <span class="badge" style="cursor: pointer; background: var(--bg-input); padding: 8px 14px;" onclick="setPresetName('📢┃announcements')">📢┃announcements</span>
-            <span class="badge" style="cursor: pointer; background: var(--bg-input); padding: 8px 14px;" onclick="setPresetName('✅┃verify-ยืนยันตัวตน')">✅┃verify-ยืนยันตัวตน</span>
-            <span class="badge" style="cursor: pointer; background: var(--bg-input); padding: 8px 14px;" onclick="setPresetName('💬┃พูดคุยทั่วไป')">💬┃พูดคุยทั่วไป</span>
-            <span class="badge" style="cursor: pointer; background: var(--bg-input); padding: 8px 14px;" onclick="setPresetName('📷┃รูปภาพและมีม')">📷┃รูปภาพและมีม</span>
-            <span class="badge" style="cursor: pointer; background: var(--bg-input); padding: 8px 14px;" onclick="setPresetName('🤖┃คำสั่งบอท')">🤖┃คำสั่งบอท</span>
-            <span class="badge" style="cursor: pointer; background: var(--bg-input); padding: 8px 14px;" onclick="setPresetName('🎯┃หาตี้เล่นเกม')">🎯┃หาตี้เล่นเกม</span>
-            <span class="badge" style="cursor: pointer; background: var(--bg-input); padding: 8px 14px;" onclick="setPresetName('💡┃เสนอแนะ-suggestion')">💡┃เสนอแนะ-suggestion</span>
-            <span class="badge" style="cursor: pointer; background: var(--bg-input); padding: 8px 14px;" onclick="setPresetName('🔊┃ห้องนั่งเล่น 1')">🔊┃ห้องนั่งเล่น 1</span>
-            <span class="badge" style="cursor: pointer; background: var(--bg-input); padding: 8px 14px;" onclick="setPresetName('🎵┃ฟังเพลง')">🎵┃ฟังเพลง</span>
-            <span class="badge" style="cursor: pointer; background: var(--bg-input); padding: 8px 14px;" onclick="setPresetName('🌙┃AFK-ไม่อยู่')">🌙┃AFK-ไม่อยู่</span>
-          </div>
-
-          <button class="btn btn-primary" id="btn-rename-channel" onclick="renameChannelAction()">
-            <i class="fas fa-check"></i> บันทึกการเปลี่ยนชื่อห้อง
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Clone Channel Tab -->
-    <div class="tab-content" id="tab-clone-channel">
-      <div class="card">
-        <div class="card-header">
-          <h2><i class="fas fa-copy"></i> สร้างห้องใหม่ 1 ห้องโดยถอดแบบจากแม่แบบ (1:1 Clone)</h2>
-        </div>
-        <div class="card-body">
-          <p class="text-muted" style="margin-bottom: 20px;">
-            ระบบนี้จะก๊อปปี้ <strong>สิทธิ์การเข้าถึง (Permissions ทุก Role/สมาชิก), หมวดหมู่ (Category), Slowmode, NSFW และ Topic</strong> จากห้องแม่แบบที่เลือกไปยังห้องใหม่ทันที 100%
-          </p>
-          <div class="form-group">
-            <label><i class="fas fa-hashtag"></i> เลือกห้องแม่แบบที่ต้องการคัดลอกสิทธิ์</label>
-            <select id="clone_template_id" class="form-select">
-              <option value="">-- เลือกห้องแม่แบบ --</option>
-              <% guild.channels.forEach(ch => { %>
-                <option value="<%= ch.id %>">#<%= ch.name %></option>
-              <% }) %>
-            </select>
-          </div>
-          <div class="form-group">
-            <label><i class="fas fa-pen"></i> ชื่อห้องใหม่ที่ต้องการสร้าง</label>
-            <input type="text" id="clone_channel_name" class="form-input" placeholder="เช่น: ห้องพูดคุย-2 หรือ vips-room">
-          </div>
-          <button class="btn btn-primary" id="btn-clone-exec" onclick="executeCloneChannel()">
-            <i class="fas fa-magic"></i> สั่งสร้างห้องทันที
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Ideas & How-to Tab -->
-    <div class="tab-content" id="tab-ideas">
-      <div class="card" style="margin-bottom: 25px;">
-        <div class="card-header">
-          <h2><i class="fas fa-book"></i> วิธีทำและคู่มือการใช้งาน (How-To Guide)</h2>
-        </div>
-        <div class="card-body">
-          <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-            <h4 style="color: #2ecc71; margin-top: 0;"><i class="fas fa-shield-alt"></i> 1. ระบบบันทึกข้อมูลและป้องกันข้อมูลสูญหาย</h4>
-            <p>• <strong>ปุ่ม Save Everything ด้านบนขวา</strong>: กดเมื่อไหร่ ข้อมูลและการตั้งค่าทั้งหมดจะถูกเขียนลงดิสก์และฐานข้อมูลทันที<br>
-            • <strong>Auto-Save on Offline</strong>: บอทมีระบบดักจับการรีสตาร์ทหรือปิดตัวของเซิร์ฟเวอร์บน Cloud (Render) โดยจะทำการ Checkpoint ฐานข้อมูลก่อนปิดตัวลงเสมอ</p>
-          </div>
-          <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 8px;">
-            <h4 style="color: #3498db; margin-top: 0;"><i class="fas fa-copy"></i> 2. การสร้างห้องเลียนแบบแม่แบบ</h4>
-            <p>• <strong>ทำผ่านหน้าเว็บ</strong>: ไปที่แท็บ <em>"สร้างห้องจากแม่แบบ"</em> เลือกห้องต้นฉบับ ใส่ชื่อห้องใหม่ แล้วกดสร้างได้เลย<br>
-            • <strong>ทำผ่าน Discord</strong>: สามารถใช้ Slash Command ใน Discord ได้เช่นกัน</p>
+            <button class="btn-go" onclick="saveAutoRole()" style="width: auto; padding: 10px 24px;"><i class="fas fa-save"></i> บันทึก Auto Role</button>
           </div>
         </div>
-      </div>
 
-      <div class="card">
-        <div class="card-header">
-          <h2><i class="fas fa-lightbulb"></i> คลังไอเดียสำหรับเซิร์ฟเวอร์ (Ideas Keeper)</h2>
-        </div>
-        <div class="card-body">
-          <div class="form-group" style="display: flex; gap: 10px;">
-            <input type="text" id="idea_input" class="form-input" placeholder="พิมพ์ไอเดีย ฟีเจอร์ หรือสิ่งที่อยากเพิ่มในเซิร์ฟเวอร์..." style="flex: 1;">
-            <button class="btn btn-primary" onclick="submitIdea()"><i class="fas fa-plus"></i> เพิ่มไอเดีย</button>
-          </div>
-          <div id="ideas-list" style="margin-top: 20px;">
-            <p class="text-muted">กำลังโหลดรายการไอเดีย...</p>
-          </div>
-        </div>
-      </div>
-    </div>
+        <!-- ==================== 6. STYLER ==================== -->
+        <div class="content-section" id="sec-styler">
+          <div class="card-pro">
+            <div class="card-pro-header">
+              <div class="card-pro-title"><i class="fas fa-paint-brush" style="color: #EC4899;"></i> ระบบตกแต่ง & สร้างห้องสำเร็จรูป</div>
+            </div>
+            <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.88rem;">สร้างหมวดหมู่และห้องสวยงามพร้อมเส้นคั่น <code>┃</code> และสิทธิ์ Read-only อัตโนมัติ</p>
 
-    <!-- Moderation Tab -->
-    <div class="tab-content" id="tab-moderation">
-      <div class="card">
-        <div class="card-header">
-          <h2><i class="fas fa-clipboard-list"></i> ระบบ Log</h2>
-          <label class="switch">
-            <input type="checkbox" id="log_enabled" <%= settings.log_enabled ? 'checked' : '' %>>
-            <span class="slider"></span>
-          </label>
-        </div>
-        <div class="card-body">
-          <div class="form-group">
-            <label><i class="fas fa-hashtag"></i> ห้อง Log</label>
-            <select id="log_channel" class="form-select">
-              <option value="">-- เลือกห้อง --</option>
-              <% guild.channels.forEach(ch => { %>
-                <option value="<%= ch.id %>" <%= settings.log_channel === ch.id ? 'selected' : '' %>>#<%= ch.name %></option>
-              <% }) %>
-            </select>
-          </div>
-          <button class="btn btn-primary" onclick="saveLog()"><i class="fas fa-save"></i> บันทึก</button>
-        </div>
-      </div>
-    </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 24px;">
+              <div class="server-card" onclick="selectTheme('community')" id="theme-community" style="cursor: pointer; border: 2px solid var(--accent-primary); text-align: left; padding: 18px;">
+                <h3 style="color: #FFF; font-size: 1.05rem; margin-bottom: 6px;">🌟 คอมมูนิตี้มาตรฐาน</h3>
+                <p style="color: var(--text-muted); font-size: 0.82rem;">เหมาะสำหรับทั่วไป มีห้องต้อนรับ กฎ แชท และห้องเสียง</p>
+              </div>
+              <div class="server-card" onclick="selectTheme('gaming')" id="theme-gaming" style="cursor: pointer; text-align: left; padding: 18px;">
+                <h3 style="color: #FFF; font-size: 1.05rem; margin-bottom: 6px;">🎮 เกมมิ่ง & ตี้เกม</h3>
+                <p style="color: var(--text-muted); font-size: 0.82rem;">ห้องหาตี้เกม คลิปไฮไลท์ และห้อง Duo/Squad</p>
+              </div>
+              <div class="server-card" onclick="selectTheme('aesthetic')" id="theme-aesthetic" style="cursor: pointer; text-align: left; padding: 18px;">
+                <h3 style="color: #FFF; font-size: 1.05rem; margin-bottom: 6px;">✨ มินิมอล & คาเฟ่</h3>
+                <p style="color: var(--text-muted); font-size: 0.82rem;">โทนคาเฟ่ น่ารัก เรียบหรู ชิลล์ๆ</p>
+              </div>
+            </div>
 
-    <!-- Logs Tab -->
-    <div class="tab-content" id="tab-logs">
-      <div class="card">
-        <div class="card-header">
-          <h2><i class="fas fa-history"></i> ประวัติการดำเนินการ</h2>
-          <button class="btn btn-outline btn-sm" onclick="loadLogs()"><i class="fas fa-sync"></i> รีเฟรช</button>
-        </div>
-        <div class="card-body">
-          <div id="logs-list" class="logs-list">
-            <p class="text-muted">กำลังโหลด...</p>
+            <input type="hidden" id="selected_theme" value="community">
+            <button class="btn-go" onclick="applyTemplateAction()" style="width: auto; padding: 10px 24px;"><i class="fas fa-magic"></i> สร้างห้องตามธีมทันที</button>
           </div>
-        </div>
-      </div>
 
-      <div class="card" style="margin-top:20px;">
-        <div class="card-header">
-          <h2><i class="fas fa-exclamation-triangle"></i> คำเตือน</h2>
-          <button class="btn btn-outline btn-sm" onclick="loadWarnings()"><i class="fas fa-sync"></i> รีเฟรช</button>
-        </div>
-        <div class="card-body">
-          <div id="warnings-list" class="logs-list">
-            <p class="text-muted">กำลังโหลด...</p>
+          <!-- Quick Single Channel Decorator -->
+          <div class="card-pro" style="margin-top: 24px;">
+            <div class="card-pro-header">
+              <div class="card-pro-title"><i class="fas fa-edit"></i> ตกแต่งทีละห้องด้วยแม่แบบสำเร็จรูป</div>
+            </div>
+            <div class="form-group-pro">
+              <label class="form-label-pro">เลือกห้องที่ต้องการตกแต่ง</label>
+              <select id="single_channel_select" class="form-control-pro">
+                <option value="">-- เลือกห้อง --</option>
+                <% guild.channels.forEach(ch => { %>
+                  <option value="<%= ch.id %>">#<%= ch.name %></option>
+                <% }) %>
+              </select>
+            </div>
+            <div class="form-group-pro">
+              <label class="form-label-pro">ชื่อห้องใหม่</label>
+              <input type="text" id="single_channel_name" class="form-control-pro" placeholder="เช่น 💬┃คุยทั่วไป">
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px;">
+              <span class="stat-badge-pill" style="cursor: pointer;" onclick="setPresetName('📌┃welcome')">📌┃welcome</span>
+              <span class="stat-badge-pill" style="cursor: pointer;" onclick="setPresetName('📜┃rules-กฎระเบียบ')">📜┃rules-กฎระเบียบ</span>
+              <span class="stat-badge-pill" style="cursor: pointer;" onclick="setPresetName('📢┃announcements')">📢┃announcements</span>
+              <span class="stat-badge-pill" style="cursor: pointer;" onclick="setPresetName('✅┃verify-ยืนยันตัวตน')">✅┃verify-ยืนยันตัวตน</span>
+              <span class="stat-badge-pill" style="cursor: pointer;" onclick="setPresetName('💬┃พูดคุยทั่วไป')">💬┃พูดคุยทั่วไป</span>
+              <span class="stat-badge-pill" style="cursor: pointer;" onclick="setPresetName('📷┃รูปภาพและมีม')">📷┃รูปภาพและมีม</span>
+              <span class="stat-badge-pill" style="cursor: pointer;" onclick="setPresetName('🔊┃ห้องนั่งเล่น 1')">🔊┃ห้องนั่งเล่น 1</span>
+              <span class="stat-badge-pill" style="cursor: pointer;" onclick="setPresetName('🎵┃ฟังเพลง')">🎵┃ฟังเพลง</span>
+            </div>
+            <button class="btn-go" onclick="renameChannelAction()" style="width: auto; padding: 10px 24px;"><i class="fas fa-check"></i> บันทึกชื่อห้องใหม่</button>
           </div>
         </div>
-      </div>
-    </div>
-    <!-- Danger Zone Tab -->
-    <div class="tab-content" id="tab-danger">
-      <div class="card" style="border: 2px solid #ED4245; background: rgba(237, 66, 69, 0.05);">
-        <div class="card-header" style="border-bottom: 1px solid rgba(237, 66, 69, 0.3);">
-          <h2 style="color: #ED4245;"><i class="fas fa-radiation"></i> โซนอันตรายขั้นสูงสุด: ล้างเซิร์ฟเวอร์ (Nuke Server)</h2>
-          <span class="badge" style="background: #ED4245; color: #fff;">Owner Only</span>
+
+        <!-- ==================== 7. STATS & ROLES ==================== -->
+        <div class="content-section" id="sec-stats">
+          <div class="card-pro">
+            <div class="card-pro-header">
+              <div class="card-pro-title"><i class="fas fa-chart-line" style="color: #14B8A6;"></i> ระบบนับสถิติบนห้องเสียง (Server Stats Counters)</div>
+            </div>
+            <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.88rem;">สร้าง Voice Channel บนสุด แสดงจำนวนสมาชิก, คนออนไลน์ และบอท แบบเรียลไทม์</p>
+            <div class="form-group-pro">
+              <label class="form-label-pro">ยศพิเศษที่ต้องการนับจำนวน (ไม่บังคับ)</label>
+              <select id="stats_role_select" class="form-control-pro">
+                <option value="">-- ไม่นับยศพิเศษ (นับเฉพาะ สมาชิก, ออนไลน์, บอท) --</option>
+                <% guild.roles.forEach(r => { %>
+                  <option value="<%= r.id %>">@<%= r.name %></option>
+                <% }) %>
+              </select>
+            </div>
+            <button class="btn-go" onclick="setupStatsAction()" style="width: auto; padding: 10px 24px;"><i class="fas fa-plus-circle"></i> ติดตั้งระบบนับสถิติทันที</button>
+          </div>
+
+          <div class="card-pro" style="margin-top: 24px;">
+            <div class="card-pro-header">
+              <div class="card-pro-title"><i class="fas fa-users-cog"></i> จำนวนคนในแต่ละยศ</div>
+              <button class="btn-setup" onclick="loadRolesDetail()" style="width: auto; padding: 6px 14px; font-size: 0.8rem;"><i class="fas fa-sync"></i> รีเฟรช</button>
+            </div>
+            <div id="roles-detail-list">
+              <p style="color: var(--text-muted);">คลิกเพื่อโหลดข้อมูล...</p>
+            </div>
+          </div>
         </div>
-        <div class="card-body">
-          <p style="color: #ED4245; font-size: 1.05rem; font-weight: bold;">
-            ⚠️ คำเตือน: ระบบนี้จะทำการลบห้อง หมวดหมู่ และยศทั้งหมดที่บอทมีสิทธิ์ลบอย่างถาวร ไม่สามารถกู้คืนได้!
-          </p>
-          <p style="color: var(--text-muted); line-height: 1.6;">
-            เพื่อความปลอดภัยสูงสุด ระบบบนหน้าเว็บจะมี <strong>การยืนยัน 3 ขั้นตอน</strong>:
-            <br>• รอบที่ 1: ตรวจสอบความยินยอม
-            <br>• รอบที่ 2: ยืนยันผลกระทบที่จะเกิดขึ้น
-            <br>• รอบที่ 3: ระบบจะสร้าง <strong>โจทย์คณิตศาสตร์แบบสุ่ม</strong> ให้คุณคำนวณ หากตอบถูกระบบถึงจะทำการลบ!
-          </p>
-          <div style="margin-top: 25px;">
-            <button class="btn btn-danger" onclick="startNukeProcess()" style="background: #ED4245; border-color: #ED4245; padding: 12px 24px; font-size: 1rem; font-weight: bold; box-shadow: 0 4px 15px rgba(237, 66, 69, 0.4);">
+
+        <!-- ==================== 8. CLONE CHANNEL ==================== -->
+        <div class="content-section" id="sec-clone">
+          <div class="card-pro">
+            <div class="card-pro-header">
+              <div class="card-pro-title"><i class="fas fa-copy" style="color: #F43F5E;"></i> คัดลอกห้องแบบ 1:1 (พร้อมสิทธิ์และการตั้งค่า)</div>
+            </div>
+            <div class="form-group-pro">
+              <label class="form-label-pro">เลือกห้องแม่แบบ</label>
+              <select id="clone_template_channel" class="form-control-pro">
+                <option value="">-- เลือกห้องแม่แบบ --</option>
+                <% guild.channels.forEach(ch => { %>
+                  <option value="<%= ch.id %>">#<%= ch.name %></option>
+                <% }) %>
+              </select>
+            </div>
+            <div class="form-group-pro">
+              <label class="form-label-pro">ชื่อห้องใหม่ที่ต้องการสร้าง</label>
+              <input type="text" id="clone_new_channel_name" class="form-control-pro" placeholder="เช่น 💬┃คุยทั่วไป-2">
+            </div>
+            <button class="btn-go" onclick="cloneChannelAction()" style="width: auto; padding: 10px 24px;"><i class="fas fa-copy"></i> สร้างห้องใหม่ทันที</button>
+          </div>
+        </div>
+
+        <!-- ==================== 9. IDEAS KEEPER ==================== -->
+        <div class="content-section" id="sec-ideas">
+          <div class="card-pro">
+            <div class="card-pro-header">
+              <div class="card-pro-title"><i class="fas fa-lightbulb" style="color: #FBBF24;"></i> สมุดบันทึกไอเดียพัฒนาเซิร์ฟเวอร์</div>
+            </div>
+            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+              <input type="text" id="idea_input" class="form-control-pro" placeholder="พิมพ์ไอเดีย ฟีเจอร์ หรือสิ่งที่อยากเพิ่มในเซิร์ฟเวอร์..." style="flex: 1;">
+              <button class="btn-go" onclick="submitIdea()" style="width: auto; padding: 10px 20px;"><i class="fas fa-plus"></i> เพิ่มไอเดีย</button>
+            </div>
+            <div id="ideas-list">
+              <p style="color: var(--text-muted);">กำลังโหลดรายการไอเดีย...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================== 10. MODERATION & LOGS ==================== -->
+        <div class="content-section" id="sec-moderation">
+          <div class="card-pro">
+            <div class="card-pro-header">
+              <div class="card-pro-title"><i class="fas fa-clipboard-list"></i> ระบบบันทึก Log การลงโทษ</div>
+              <label class="switch-sm"><input type="checkbox" id="log_enabled" <%= settings.log_enabled ? 'checked' : '' %>><span class="slider-sm"></span></label>
+            </div>
+            <div class="form-group-pro">
+              <label class="form-label-pro">ห้อง Log</label>
+              <select id="log_channel" class="form-control-pro">
+                <option value="">-- เลือกห้อง --</option>
+                <% guild.channels.forEach(ch => { %>
+                  <option value="<%= ch.id %>" <%= settings.log_channel === ch.id ? 'selected' : '' %>>#<%= ch.name %></option>
+                <% }) %>
+              </select>
+            </div>
+            <button class="btn-go" onclick="saveLog()" style="width: auto; padding: 10px 24px;"><i class="fas fa-save"></i> บันทึกห้อง Log</button>
+          </div>
+
+          <div class="card-pro" style="margin-top: 24px;">
+            <div class="card-pro-header">
+              <div class="card-pro-title"><i class="fas fa-history"></i> ประวัติการดำเนินการ (Audit Logs)</div>
+              <button class="btn-setup" onclick="loadLogs()" style="width: auto; padding: 6px 14px; font-size: 0.8rem;"><i class="fas fa-sync"></i> รีเฟรช</button>
+            </div>
+            <div id="logs-list" class="logs-list">
+              <p style="color: var(--text-muted);">กำลังโหลดประวัติ...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================== 11. DANGER ZONE ==================== -->
+        <div class="content-section" id="sec-danger">
+          <div class="card-pro" style="border: 2px solid #EF4444; background: rgba(239, 68, 68, 0.05);">
+            <div class="card-pro-header" style="border-bottom: 1px solid rgba(239, 68, 68, 0.3);">
+              <div class="card-pro-title" style="color: #EF4444;">
+                <i class="fas fa-radiation"></i> โซนอันตรายขั้นสูงสุด: ล้างเซิร์ฟเวอร์ (Nuke Server)
+              </div>
+              <span style="background: #EF4444; color: #FFF; padding: 4px 10px; border-radius: 20px; font-weight: 800; font-size: 0.75rem;">OWNER ONLY</span>
+            </div>
+            <p style="color: #EF4444; font-weight: bold; margin-bottom: 12px; font-size: 1rem;">
+              ⚠️ คำเตือน: ระบบนี้จะทำการลบห้อง หมวดหมู่ และยศทั้งหมดที่บอทมีสิทธิ์ลบอย่างถาวร ไม่สามารถกู้คืนได้!
+            </p>
+            <p style="color: var(--text-muted); line-height: 1.6; font-size: 0.9rem; margin-bottom: 24px;">
+              ระบบจะมี <strong>การยืนยัน 3 ขั้นตอน</strong>:<br>
+              • รอบที่ 1: ตรวจสอบความยินยอม<br>
+              • รอบที่ 2: ยืนยันผลกระทบระดับวิกฤต<br>
+              • รอบที่ 3: ระบบจะสร้าง <strong>โจทย์คณิตศาสตร์แบบสุ่ม</strong> ให้คุณคำนวณ หากตอบถูกระบบถึงจะทำการลบ!
+            </p>
+            <button class="btn-setup" onclick="startNukeProcess()" style="background: #EF4444; width: auto; padding: 12px 28px; font-size: 1rem;">
               <i class="fas fa-bomb"></i> เริ่มต้นกระบวนการล้างเซิร์ฟเวอร์ (Nuke Server)
             </button>
           </div>
         </div>
-      </div>
-    </div>
-  </main>
+      </main>
 
-  <footer class="footer">
-    <p>&copy; 2026 <%= guild.name %> Dashboard — พัฒนาโดย <strong>tewit noita</strong> (<a href="https://github.com/tewitdevPlus" target="_blank" style="color: var(--primary);">@tewitdevPlus</a>)</p>
-  </footer>
+      <footer style="margin-top: auto; padding: 24px; text-align: center; font-size: 0.82rem; color: var(--text-muted); border-top: 1px solid var(--border-color);">
+        &copy; 2026 <%= guild.name %> Dashboard — พัฒนาโดย <strong>tewit noita</strong> (<a href="https://github.com/tewitdevPlus" target="_blank" style="color: var(--accent-primary);">@tewitdevPlus</a>)
+      </footer>
+    </div>
+  </div>
 
   <script>
     const GUILD_ID = '<%= guild.id %>';
 
-    // Tabs
-    document.querySelectorAll('.tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        tab.classList.add('active');
-        document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+    // Sidebar Section Switcher (Like Reference Mockup)
+    function switchSection(secId, el) {
+      document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
+      document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
 
-        if (tab.dataset.tab === 'logs') {
-          loadLogs();
-          loadWarnings();
-        }
-        if (tab.dataset.tab === 'stats-role') {
-          loadRolesDetail();
-        }
-      });
-    });
+      el.classList.add('active');
+      const targetSec = document.getElementById('sec-' + secId);
+      if (targetSec) targetSec.classList.add('active');
 
-    // Toast
+      const titleMap = {
+        'auto-setup': '⚡ Full Auto Setup',
+        'auto-roles': '👑 Auto สร้างชุดยศ',
+        'welcome': '👋 ระบบต้อนรับ (Welcome)',
+        'verify': '✅ ยืนยันตัวตน (Verify)',
+        'autorole': '👥 แจกยศอัตโนมัติ (Auto Role)',
+        'styler': '🎨 แต่งห้องเซิร์ฟเวอร์',
+        'stats': '📊 สถิติเสียง & จำนวนยศ',
+        'clone': '📋 คัดลอกห้อง (1:1 Clone)',
+        'ideas': '💡 คลังไอเดีย & วิธีทำ',
+        'moderation': '🛡️ ประวัติ Logs & คำเตือน',
+        'danger': '☣️ โซนอันตราย (Danger)'
+      };
+      document.getElementById('currentSectionTitle').textContent = titleMap[secId] || 'Dashboard';
+
+      if (secId === 'moderation') loadLogs();
+      if (secId === 'stats') loadRolesDetail();
+      if (secId === 'ideas') loadIdeas();
+    }
+
     function showToast(msg, isError) {
       const toast = document.getElementById('toast');
       const toastMsg = document.getElementById('toast-msg');
       toastMsg.textContent = msg;
-      toast.className = 'toast' + (isError ? ' toast-error' : '');
-      setTimeout(() => toast.classList.add('hidden'), 3000);
+      toast.style.display = 'flex';
+      toast.style.borderColor = isError ? 'rgba(239, 68, 68, 0.5)' : 'rgba(16, 185, 129, 0.5)';
+      setTimeout(() => { toast.style.display = 'none'; }, 3000);
     }
 
-    // API helper
     async function apiCall(method, path, body) {
       const res = await fetch('/api/guilds/' + GUILD_ID + path, {
         method,
@@ -612,341 +678,16 @@
       return res.json();
     }
 
-    // Save Welcome
-    async function saveWelcome() {
-      const data = {
-        welcome_enabled: document.getElementById('welcome_enabled').checked ? 1 : 0,
-        welcome_channel: document.getElementById('welcome_channel').value,
-        welcome_message: document.getElementById('welcome_message').value,
-        welcome_color: document.getElementById('welcome_color').value,
-      };
-      const res = await apiCall('PUT', '/settings', data);
-      showToast(res.success ? 'บันทึกการตั้งค่า Welcome สำเร็จ!' : 'เกิดข้อผิดพลาด', !res.success);
-      if (res.success) setTimeout(() => window.location.reload(), 1000);
-    }
-
-    // Save Verify
-    async function saveVerify() {
-      const data = {
-        verify_enabled: document.getElementById('verify_enabled').checked ? 1 : 0,
-        verify_channel: document.getElementById('verify_channel').value,
-        verify_role: document.getElementById('verify_role').value,
-        verify_message: document.getElementById('verify_message').value,
-      };
-      const res = await apiCall('PUT', '/settings', data);
-      showToast(res.success ? 'บันทึกการตั้งค่า Verify สำเร็จ!' : 'เกิดข้อผิดพลาด', !res.success);
-      if (res.success) setTimeout(() => window.location.reload(), 1000);
-    }
-
-    // Resend Verify Panel
-    async function resendVerify() {
-      const res = await apiCall('POST', '/verify/resend');
-      showToast(res.success ? 'ส่งหน้า Verify ใหม่สำเร็จ!' : res.error || 'เกิดข้อผิดพลาด', !res.success);
-    }
-
-    // Single channel preset
-    function setPresetName(name) {
-      document.getElementById('single_channel_name').value = name;
-    }
-
-    async function renameChannelAction() {
-      const channelId = document.getElementById('single_channel_select').value;
-      const name = document.getElementById('single_channel_name').value.trim();
-
-      if (!channelId) return showToast('กรุณาเลือกห้องที่ต้องการตกแต่ง', true);
-      if (!name) return showToast('กรุณาระบุชื่อห้องใหม่', true);
-
-      const btn = document.getElementById('btn-rename-channel');
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังเปลี่ยนชื่อ...';
-
-      try {
-        const res = await apiCall('POST', `/channels/${channelId}/rename`, { name });
-        if (res.success) {
-          showToast(`เปลี่ยนชื่อห้องเป็น "${res.newName}" สำเร็จ!`);
-          setTimeout(() => window.location.reload(), 1500);
-        } else {
-          showToast(res.error || 'เกิดข้อผิดพลาด', true);
-          btn.disabled = false;
-          btn.innerHTML = '<i class="fas fa-check"></i> บันทึกการเปลี่ยนชื่อห้อง';
-        }
-      } catch (e) {
-        showToast('เกิดข้อผิดพลาดในการเชื่อมต่อ', true);
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-check"></i> บันทึกการเปลี่ยนชื่อห้อง';
-      }
-    }
-
-    // Setup Server Stats Action
-    async function setupStatsAction() {
-      const roleId = document.getElementById('stats_role_select').value;
-      const btn = document.getElementById('btn-setup-stats');
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังสร้างห้องสถิติ...';
-
-      try {
-        const res = await apiCall('POST', '/stats/setup', { roleId: roleId || null });
-        if (res.success) {
-          showToast('ติดตั้ง Server Stats สำเร็จ!');
-          setTimeout(() => window.location.reload(), 1500);
-        } else {
-          showToast(res.error || 'เกิดข้อผิดพลาด', true);
-          btn.disabled = false;
-          btn.innerHTML = '<i class="fas fa-plus-circle"></i> ติดตั้งระบบนับสถิติทันที';
-        }
-      } catch (e) {
-        showToast('เกิดข้อผิดพลาดในการเชื่อมต่อ', true);
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-plus-circle"></i> ติดตั้งระบบนับสถิติทันที';
-      }
-    }
-
-    // Load Roles Detail
-    async function loadRolesDetail() {
-      const list = document.getElementById('roles-detail-list');
-      list.innerHTML = '<p class="text-muted">กำลังโหลดข้อมูลยศ...</p>';
-      try {
-        const roles = await apiCall('GET', '/roles-detail');
-        if (!Array.isArray(roles) || roles.length === 0) {
-          list.innerHTML = '<p class="text-muted">ไม่พบข้อมูลยศ</p>';
-          return;
-        }
-        list.innerHTML = roles.map(r => `
-          <div class="log-item" style="justify-content: space-between;">
-            <div style="display: flex; align-items: center; gap: 10px;">
-              <span style="display:inline-block; width: 14px; height: 14px; border-radius: 50%; background: ${r.color || '#99aab5'};"></span>
-              <strong style="color: ${r.color || 'inherit'}; font-size: 1rem;">@${r.name}</strong>
-            </div>
-            <div>
-              <span class="badge" style="background: var(--bg-card); font-size: 0.9rem;">👥 ${r.memberCount} คน</span>
-            </div>
-          </div>
-        `).join('');
-      } catch (e) {
-        list.innerHTML = '<p class="text-muted">เกิดข้อผิดพลาดในการโหลดข้อมูล</p>';
-      }
-    }
-
-    // Theme Selection
-    function selectTheme(key) {
-      document.getElementById('selected_theme').value = key;
-      document.querySelectorAll('.theme-card').forEach(c => c.style.borderColor = 'var(--border)');
-      const selected = document.getElementById('theme-' + key);
-      if (selected) selected.style.borderColor = 'var(--primary)';
-    }
-    selectTheme('community');
-
-    async function applyTemplateAction() {
-      const theme = document.getElementById('selected_theme').value;
-      if (!confirm('ยืนยันที่จะสร้างห้องและตกแต่งเซิร์ฟเวอร์ด้วยธีมนี้? (บอทจะสร้างห้องเพิ่มให้ใหม่)')) return;
-
-      const btn = document.getElementById('btn-apply-template');
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังสร้างห้อง...';
-
-      try {
-        const res = await apiCall('POST', '/template/apply', { theme });
-        if (res.success) {
-          showToast(`สร้างห้องและตกแต่งด้วย ${res.result.templateName} สำเร็จ!`);
-          setTimeout(() => window.location.reload(), 2000);
-        } else {
-          showToast(res.error || 'เกิดข้อผิดพลาด', true);
-          btn.disabled = false;
-          btn.innerHTML = '<i class="fas fa-magic"></i> กดสร้างห้องและตกแต่งเซิร์ฟเวอร์ทันที';
-        }
-      } catch (e) {
-        showToast('เกิดข้อผิดพลาดในการเชื่อมต่อ', true);
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-magic"></i> กดสร้างห้องและตกแต่งเซิร์ฟเวอร์ทันที';
-      }
-    }
-
-    // Save Log
-    async function saveLog() {
-      const data = {
-        log_enabled: document.getElementById('log_enabled').checked ? 1 : 0,
-        log_channel: document.getElementById('log_channel').value,
-      };
-      const res = await apiCall('PUT', '/settings', data);
-      showToast(res.success ? 'บันทึกการตั้งค่า Log สำเร็จ!' : 'เกิดข้อผิดพลาด', !res.success);
-      if (res.success) setTimeout(() => window.location.reload(), 1000);
-    }
-
-    // Save Auto Role
-    async function saveAutoRole() {
-      const data = {
-        autorole_enabled: document.getElementById('autorole_enabled').checked ? 1 : 0,
-        autorole_id: document.getElementById('autorole_id').value,
-      };
-      const res = await apiCall('PUT', '/settings', data);
-      showToast(res.success ? 'บันทึกการตั้งค่า Auto Role สำเร็จ!' : 'เกิดข้อผิดพลาด', !res.success);
-      if (res.success) setTimeout(() => window.location.reload(), 1000);
-    }
-
-    // Load Logs
-    async function loadLogs() {
-      const logs = await apiCall('GET', '/logs');
-      const list = document.getElementById('logs-list');
-      if (!Array.isArray(logs) || logs.length === 0) {
-        list.innerHTML = '<p class="text-muted">ไม่มีประวัติ</p>';
-        return;
-      }
-      list.innerHTML = logs.map(l => `
-        <div class="log-item">
-          <span class="log-action log-action-${l.action}">${l.action.toUpperCase()}</span>
-          <span>User: ${l.user_id} | โดย: ${l.moderator_id}</span>
-          <span class="log-reason">${l.reason || '-'}</span>
-          <span class="log-time">${new Date(l.created_at).toLocaleString('th-TH')}</span>
-        </div>
-      `).join('');
-    }
-
-    // Load Warnings
-    async function loadWarnings() {
-      const warnings = await apiCall('GET', '/warnings');
-      const list = document.getElementById('warnings-list');
-      if (!Array.isArray(warnings) || warnings.length === 0) {
-        list.innerHTML = '<p class="text-muted">ไม่มีคำเตือน</p>';
-        return;
-      }
-      list.innerHTML = warnings.map(w => `
-        <div class="log-item">
-          <span class="log-action log-action-warn">WARN #${w.id}</span>
-          <span>User: ${w.user_id}</span>
-          <span class="log-reason">${w.reason}</span>
-          <span class="log-time">${new Date(w.created_at).toLocaleString('th-TH')}</span>
-          <button class="btn btn-danger btn-sm" onclick="deleteWarning(${w.id})"><i class="fas fa-trash"></i></button>
-        </div>
-      `).join('');
-    }
-
-    // Delete Warning
-    async function deleteWarning(id) {
-      if (!confirm('ต้องการลบคำเตือนนี้?')) return;
-      await apiCall('DELETE', '/warnings/' + id);
-      showToast('ลบคำเตือนสำเร็จ!');
-      loadWarnings();
-    }
-
-    // Save Everything
-    async function saveEverything() {
-      const btn = document.getElementById('btn-save-all');
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังบันทึก...';
-      try {
-        const res = await apiCall('POST', '/save-all', {});
-        if (res.success) {
-          showToast(res.message || 'บันทึกข้อมูลทุกอย่างเรียบร้อยแล้ว!');
-        } else {
-          showToast('เกิดข้อผิดพลาดในการบันทึก', true);
-        }
-      } catch (e) {
-        showToast('เกิดข้อผิดพลาดในการเชื่อมต่อ', true);
-      }
-      btn.disabled = false;
-      btn.innerHTML = '<i class="fas fa-save"></i> 💾 บันทึกทุกอย่างทันที (Save Everything)';
-    }
-
-    // Clone Channel
-    async function executeCloneChannel() {
-      const templateId = document.getElementById('clone_template_id').value;
-      const channelName = document.getElementById('clone_channel_name').value.trim();
-
-      if (!templateId || !channelName) {
-        showToast('กรุณาเลือกห้องแม่แบบและกรอกชื่อห้องใหม่', true);
-        return;
-      }
-
-      const btn = document.getElementById('btn-clone-exec');
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังสร้างห้อง...';
-
-      try {
-        const res = await apiCall('POST', '/clone-channel', {
-          templateChannelId: templateId,
-          newChannelName: channelName
-        });
-        if (res.success) {
-          showToast(`สร้างห้อง #${res.channelName} สำเร็จแล้ว!`);
-          document.getElementById('clone_channel_name').value = '';
-          setTimeout(() => window.location.reload(), 1500);
-        } else {
-          showToast(res.error || 'เกิดข้อผิดพลาดในการสร้างห้อง', true);
-        }
-      } catch (e) {
-        showToast('เกิดข้อผิดพลาดในการเชื่อมต่อ', true);
-      }
-      btn.disabled = false;
-      btn.innerHTML = '<i class="fas fa-magic"></i> สั่งสร้างห้องทันที';
-    }
-
-    // Ideas
-    async function loadIdeas() {
-      const list = document.getElementById('ideas-list');
-      try {
-        const ideas = await apiCall('GET', '/ideas');
-        if (!Array.isArray(ideas) || ideas.length === 0) {
-          list.innerHTML = '<p class="text-muted">ยังไม่มีไอเดียที่ถูกบันทึกไว้</p>';
-          return;
-        }
-        list.innerHTML = ideas.map(item => `
-          <div class="log-item" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; background: rgba(255,255,255,0.02); padding: 12px; border-radius: 6px;">
-            <div>
-              <div style="font-weight: 500; font-size: 1.05rem; margin-bottom: 4px;">💡 ${item.content}</div>
-              <small class="text-muted">โดย <strong>${item.username}</strong> • ${new Date(item.created_at).toLocaleString('th-TH')}</small>
-            </div>
-            <button class="btn btn-danger btn-sm" onclick="removeIdea(${item.id})"><i class="fas fa-trash"></i></button>
-          </div>
-        `).join('');
-      } catch (e) {
-        list.innerHTML = '<p class="text-muted">โหลดไอเดียไม่สำเร็จ</p>';
-      }
-    }
-
-    async function submitIdea() {
-      const input = document.getElementById('idea_input');
-      const content = input.value.trim();
-      if (!content) {
-        showToast('กรุณากรอกไอเดีย', true);
-        return;
-      }
-      const res = await apiCall('POST', '/ideas', { content });
-      if (res.success) {
-        showToast('บันทึกไอเดียสำเร็จ!');
-        input.value = '';
-        loadIdeas();
-      } else {
-        showToast(res.error || 'บันทึกไม่สำเร็จ', true);
-      }
-    }
-
-    async function removeIdea(id) {
-      if (!confirm('ต้องการลบไอเดียนี้ใช่หรือไม่?')) return;
-      const res = await apiCall('DELETE', '/ideas/' + id);
-      if (res.success) {
-        showToast('ลบไอเดียสำเร็จ');
-        loadIdeas();
-      }
-    }
-
-    // Load ideas on tab change
-    document.querySelectorAll('.tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        if (tab.dataset.tab === 'ideas') {
-          loadIdeas();
-        }
-      });
-    });
-    // Auto Setup Theme Selection
+    // Auto Setup Handlers
     function selectAutoTheme(theme) {
-      document.querySelectorAll('#tab-auto-setup .theme-card').forEach(el => {
-        el.style.borderColor = 'var(--border)';
-        el.style.background = 'transparent';
+      document.querySelectorAll('#sec-auto-setup .server-card').forEach(c => {
+        c.style.borderColor = 'var(--border-color)';
+        c.style.background = 'var(--bg-card)';
       });
-      const selected = document.getElementById('autotheme-' + theme);
-      if (selected) {
-        selected.style.borderColor = '#57F287';
-        selected.style.background = 'rgba(87, 242, 135, 0.08)';
+      const el = document.getElementById('autotheme-' + theme);
+      if (el) {
+        el.style.borderColor = '#10B981';
+        el.style.background = 'rgba(16, 185, 129, 0.08)';
       }
       document.getElementById('selected_auto_theme').value = theme;
     }
@@ -954,10 +695,7 @@
     async function runAutoSetupFromWeb() {
       const theme = document.getElementById('selected_auto_theme').value;
       const withStats = document.getElementById('auto_with_stats').checked;
-
-      if (!confirm('ยืนยันที่จะให้บอทเริ่มสร้างยศ ห้อง และติดตั้งระบบความปลอดภัยแบบ Full Auto ทันทีหรือไม่?')) {
-        return;
-      }
+      if (!confirm('ยืนยันที่จะให้บอทเริ่มสร้างยศ ห้อง และติดตั้งระบบความปลอดภัยแบบ Full Auto ทันทีหรือไม่?')) return;
 
       const btn = document.getElementById('btn-run-auto');
       btn.disabled = true;
@@ -971,25 +709,25 @@
         } else {
           alert('❌ เกิดข้อผิดพลาด: ' + (res.error || 'ไม่สามารถติดตั้งได้'));
           btn.disabled = false;
-          btn.innerHTML = '<i class="fas fa-magic"></i> รันระบบ Full Auto Setup ทันที';
+          btn.innerHTML = '<i class="fas fa-magic"></i> กดรันระบบ Full Auto Setup ทันที';
         }
       } catch (err) {
         alert('❌ เกิดข้อผิดพลาด: ' + err.message);
         btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-magic"></i> รันระบบ Full Auto Setup ทันที';
+        btn.innerHTML = '<i class="fas fa-magic"></i> กดรันระบบ Full Auto Setup ทันที';
       }
     }
 
-    // Roles Creator Selection & Execution
+    // Auto Roles Handlers
     function selectRoleCreatorTheme(theme) {
-      document.querySelectorAll('#tab-auto-roles-creator .theme-card').forEach(el => {
-        el.style.borderColor = 'var(--border)';
-        el.style.background = 'transparent';
+      document.querySelectorAll('#sec-auto-roles .server-card').forEach(c => {
+        c.style.borderColor = 'var(--border-color)';
+        c.style.background = 'var(--bg-card)';
       });
-      const selected = document.getElementById('roletheme-' + theme);
-      if (selected) {
-        selected.style.borderColor = '#F1C40F';
-        selected.style.background = 'rgba(241, 196, 15, 0.08)';
+      const el = document.getElementById('roletheme-' + theme);
+      if (el) {
+        el.style.borderColor = '#F59E0B';
+        el.style.background = 'rgba(245, 158, 11, 0.08)';
       }
       document.getElementById('selected_role_creator_theme').value = theme;
     }
@@ -1019,17 +757,206 @@
       }
     }
 
-    // 3-Stage Nuke Process on Web Dashboard
+    // Save Handlers
+    async function saveWelcome() {
+      const data = {
+        welcome_enabled: document.getElementById('welcome_enabled').checked ? 1 : 0,
+        welcome_channel: document.getElementById('welcome_channel').value,
+        welcome_message: document.getElementById('welcome_message').value,
+        welcome_color: document.getElementById('welcome_color').value,
+      };
+      const res = await apiCall('PUT', '/settings', data);
+      showToast(res.success ? 'บันทึกการตั้งค่า Welcome สำเร็จ!' : 'เกิดข้อผิดพลาด', !res.success);
+    }
+
+    async function saveVerify() {
+      const data = {
+        verify_enabled: document.getElementById('verify_enabled').checked ? 1 : 0,
+        verify_channel: document.getElementById('verify_channel').value,
+        verify_role: document.getElementById('verify_role').value,
+        verify_message: document.getElementById('verify_message').value,
+      };
+      const res = await apiCall('PUT', '/settings', data);
+      showToast(res.success ? 'บันทึกการตั้งค่า Verify สำเร็จ!' : 'เกิดข้อผิดพลาด', !res.success);
+    }
+
+    async function resendVerifyPanel() {
+      await saveVerify();
+      showToast('กำลังส่งแผงยืนยันตัวตน...');
+      const res = await apiCall('POST', '/verify/resend', {});
+      showToast(res.success ? 'ส่งหน้าต่าง Verify สำเร็จ!' : (res.error || 'เกิดข้อผิดพลาด'), !res.success);
+    }
+
+    async function saveAutoRole() {
+      const data = {
+        autorole_enabled: document.getElementById('autorole_enabled').checked ? 1 : 0,
+        autorole_id: document.getElementById('autorole_id').value,
+      };
+      const res = await apiCall('PUT', '/settings', data);
+      showToast(res.success ? 'บันทึกการตั้งค่า Auto Role สำเร็จ!' : 'เกิดข้อผิดพลาด', !res.success);
+    }
+
+    async function saveLog() {
+      const data = {
+        log_enabled: document.getElementById('log_enabled').checked ? 1 : 0,
+        log_channel: document.getElementById('log_channel').value,
+      };
+      const res = await apiCall('PUT', '/settings', data);
+      showToast(res.success ? 'บันทึกการตั้งค่า Log สำเร็จ!' : 'เกิดข้อผิดพลาด', !res.success);
+    }
+
+    async function saveEverything() {
+      showToast('💾 กำลังบันทึกการตั้งค่าทั้งหมด...');
+      await saveWelcome();
+      await saveVerify();
+      await saveAutoRole();
+      await saveLog();
+      showToast('✅ บันทึกทุกอย่างเรียบร้อยแล้ว!');
+    }
+
+    // Styler & Templates
+    function selectTheme(theme) {
+      document.querySelectorAll('#sec-styler .server-card').forEach(c => {
+        c.style.borderColor = 'var(--border-color)';
+      });
+      const el = document.getElementById('theme-' + theme);
+      if (el) el.style.borderColor = 'var(--accent-primary)';
+      document.getElementById('selected_theme').value = theme;
+    }
+
+    async function applyTemplateAction() {
+      const theme = document.getElementById('selected_theme').value;
+      if (!confirm('ระบบจะทำการสร้างห้องและหมวดหมู่ตามธีมที่เลือก ยืนยันหรือไม่?')) return;
+      showToast('กำลังสร้างห้องตามธีม...');
+      const res = await apiCall('POST', '/apply-template', { theme });
+      if (res.success) {
+        alert('🎉 ตกแต่งเซิร์ฟเวอร์สำเร็จ! สร้างทั้งหมด ' + res.result.count + ' ห้อง');
+        window.location.reload();
+      } else {
+        alert('❌ เกิดข้อผิดพลาด: ' + (res.error || 'ไม่สามารถสร้างห้องได้'));
+      }
+    }
+
+    function setPresetName(name) {
+      document.getElementById('single_channel_name').value = name;
+    }
+
+    async function renameChannelAction() {
+      const channelId = document.getElementById('single_channel_select').value;
+      const newName = document.getElementById('single_channel_name').value.trim();
+      if (!channelId || !newName) return alert('กรุณาเลือกห้องและใส่ชื่อใหม่');
+      showToast('กำลังเปลี่ยนชื่อห้อง...');
+      const res = await apiCall('POST', '/rename-channel', { channelId, newName });
+      if (res.success) {
+        showToast('เปลี่ยนชื่อห้องสำเร็จ!');
+        setTimeout(() => window.location.reload(), 1000);
+      } else {
+        alert('เกิดข้อผิดพลาด: ' + res.error);
+      }
+    }
+
+    async function setupStatsAction() {
+      const roleId = document.getElementById('stats_role_select').value;
+      if (!confirm('ยืนยันที่จะติดตั้งห้องสถิติเสียงบนสุดของเซิร์ฟเวอร์หรือไม่?')) return;
+      showToast('กำลังติดตั้งระบบสถิติ...');
+      const res = await apiCall('POST', '/stats/setup', { roleId });
+      if (res.success) {
+        alert('📊 ติดตั้ง Server Stats สำเร็จ!');
+        window.location.reload();
+      } else {
+        alert('❌ เกิดข้อผิดพลาด: ' + res.error);
+      }
+    }
+
+    async function cloneChannelAction() {
+      const templateChannelId = document.getElementById('clone_template_channel').value;
+      const newChannelName = document.getElementById('clone_new_channel_name').value;
+      if (!templateChannelId || !newChannelName) return alert('กรุณาเลือกห้องแม่แบบและระบุชื่อห้องใหม่');
+      showToast('กำลังโคลนห้อง...');
+      const res = await apiCall('POST', '/clone-channel', { templateChannelId, newChannelName });
+      if (res.success) {
+        alert('🎉 คัดลอกห้องสำเร็จ!');
+        window.location.reload();
+      } else {
+        alert('❌ เกิดข้อผิดพลาด: ' + res.error);
+      }
+    }
+
+    async function loadRolesDetail() {
+      const container = document.getElementById('roles-detail-list');
+      container.innerHTML = '<p style="color:var(--text-muted)">กำลังโหลด...</p>';
+      const roles = await apiCall('GET', '/roles-detail');
+      if (Array.isArray(roles)) {
+        container.innerHTML = roles.map(r => `
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--bg-input); border-radius:8px; margin-bottom:8px;">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span style="width:12px; height:12px; border-radius:50%; background:${r.color || '#99AAB5'};"></span>
+              <strong>${r.name}</strong>
+            </div>
+            <span class="stat-badge-pill">${r.memberCount} คน</span>
+          </div>
+        `).join('');
+      }
+    }
+
+    async function loadLogs() {
+      const list = document.getElementById('logs-list');
+      const logs = await apiCall('GET', '/logs');
+      if (Array.isArray(logs) && logs.length > 0) {
+        list.innerHTML = logs.map(l => `
+          <div style="display:flex; justify-content:space-between; padding:10px 14px; background:var(--bg-input); border-radius:8px; margin-bottom:8px; font-size:0.85rem;">
+            <div><strong>${l.action}</strong>: ${l.reason || 'ไม่มีเหตุผล'}</div>
+            <div style="color:var(--text-muted); font-size:0.8rem;">${l.created_at || ''}</div>
+          </div>
+        `).join('');
+      } else {
+        list.innerHTML = '<p style="color:var(--text-muted)">ยังไม่มีประวัติการดำเนินการ</p>';
+      }
+    }
+
+    async function loadIdeas() {
+      const list = document.getElementById('ideas-list');
+      const ideas = await apiCall('GET', '/ideas');
+      if (Array.isArray(ideas) && ideas.length > 0) {
+        list.innerHTML = ideas.map(idea => `
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 16px; background:var(--bg-input); border-radius:8px; margin-bottom:8px;">
+            <div>
+              <div style="font-size:0.92rem; color:#FFF;">${idea.content}</div>
+              <small style="color:var(--text-muted);">โดย ${idea.username} • ${idea.created_at || ''}</small>
+            </div>
+            <button onclick="removeIdea(${idea.id})" style="background:transparent; border:none; color:#EF4444; cursor:pointer;"><i class="fas fa-trash"></i></button>
+          </div>
+        `).join('');
+      } else {
+        list.innerHTML = '<p style="color:var(--text-muted)">ยังไม่มีไอเดียที่บันทึก</p>';
+      }
+    }
+
+    async function submitIdea() {
+      const input = document.getElementById('idea_input');
+      const content = input.value.trim();
+      if (!content) return;
+      const res = await apiCall('POST', '/ideas', { content });
+      if (res.success) {
+        input.value = '';
+        loadIdeas();
+      }
+    }
+
+    async function removeIdea(id) {
+      if (!confirm('ต้องการลบไอเดียนี้ใช่หรือไม่?')) return;
+      const res = await apiCall('DELETE', '/ideas/' + id);
+      if (res.success) loadIdeas();
+    }
+
+    // 3-Stage Nuke Process
     async function startNukeProcess() {
-      // รอบที่ 1: ตรวจสอบความยินยอม
       const step1 = confirm('⚠️ [คำเตือนรอบที่ 1 / 3]\nคุณกำลังจะเปิดใช้งานระบบ "ล้างเซิร์ฟเวอร์ (Nuke Server)"!\nห้องและยศทั้งหมดจะถูกลบถาวร\n\nคุณแน่ใจจริงหรือไม่ว่าจะไปต่อ?');
       if (!step1) return;
 
-      // รอบที่ 2: ยืนยันผลกระทบ
       const step2 = confirm('🚨 [คำเตือนรอบที่ 2 / 3 ยืนยันครั้งสุดท้าย]\nการกระทำนี้ไม่สามารถย้อนคืนได้เด็ดขาด! ข้อมูลทั้งหมดจะหายไปทันที\n\nกดยืนยันเพื่อเข้าสู่ด่านคำนวณรหัสลับในรอบที่ 3?');
       if (!step2) return;
 
-      // รอบที่ 3: คำนวณเลขสุ่ม
       const num1 = Math.floor(Math.random() * 80) + 20;
       const num2 = Math.floor(Math.random() * 80) + 10;
       const expected = num1 + num2;
@@ -1042,7 +969,6 @@
         return;
       }
 
-      // ส่งคำสั่งไปยัง API หลังผ่านทั้ง 3 ด่าน
       showToast('☣️ รหัสถูกต้อง! กำลังเริ่มล้างเซิร์ฟเวอร์...');
       try {
         const res = await apiCall('POST', '/nuke', {

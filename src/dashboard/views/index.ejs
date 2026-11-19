@@ -3,204 +3,376 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= botName %> — Dashboard</title>
-  <link rel="stylesheet" href="/css/style.css">
+  <title><%= botName %> — ระบบจัดการ Discord ครบวงจร</title>
+  <link rel="stylesheet" href="/css/modern-pro.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    /* Specific Home Styles for Modern Landing */
+    .landing-hero {
+      text-align: center;
+      padding: 70px 20px 40px;
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .landing-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 36px;
+      box-shadow: 0 0 40px rgba(139, 92, 246, 0.5), 0 0 80px rgba(88, 101, 242, 0.25);
+      margin-bottom: 24px;
+      border: 3px solid rgba(255, 255, 255, 0.15);
+      animation: float 4s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    .landing-title {
+      font-size: 3rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #FFFFFF 30%, #A855F7 70%, #38BDF8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+    }
+    .landing-subtitle {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+    .hero-stats-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 28px;
+      padding: 12px 32px;
+      background: rgba(22, 27, 38, 0.7);
+      border: 1px solid var(--border-color);
+      border-radius: 40px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      margin-bottom: 36px;
+    }
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .stat-num-val {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #FFF;
+    }
+    .stat-label-val {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+    .hero-btn-row {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 60px;
+    }
+    .btn-hero-primary {
+      padding: 14px 34px;
+      border-radius: 30px;
+      background: linear-gradient(135deg, #5865F2, #8B5CF6);
+      color: #FFF;
+      font-size: 1rem;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 8px 25px rgba(88, 101, 242, 0.4);
+      transition: all 0.25s;
+    }
+    .btn-hero-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(88, 101, 242, 0.6);
+      color: #FFF;
+    }
+    .btn-hero-secondary {
+      padding: 14px 34px;
+      border-radius: 30px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-color);
+      color: #FFF;
+      font-size: 1rem;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      backdrop-filter: blur(10px);
+      transition: all 0.25s;
+    }
+    .btn-hero-secondary:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+      color: #FFF;
+    }
+    /* Feature Grid */
+    .feature-grid-pro {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      max-width: 1100px;
+      margin: 0 auto 60px;
+      padding: 0 20px;
+    }
+    .feature-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 26px 20px;
+      text-align: left;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s;
+      box-shadow: var(--shadow-glow);
+    }
+    .feature-box:hover {
+      border-color: rgba(139, 92, 246, 0.4);
+      transform: translateY(-4px);
+    }
+    .feature-icon-badge {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      margin-bottom: 18px;
+    }
+  </style>
 </head>
 <body>
-  <nav class="navbar">
-    <div class="nav-brand">
-      <% if (botAvatar) { %><img src="<%= botAvatar %>" alt="Bot" class="nav-avatar"><% } %>
-      <span><%= botName %></span>
+  <!-- Pro Top Navbar -->
+  <header class="app-topbar" style="background: rgba(11, 14, 20, 0.7);">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <% if (botAvatar) { %>
+        <img src="<%= botAvatar %>" style="width: 36px; height: 36px; border-radius: 10px; box-shadow: 0 0 12px rgba(88, 101, 242, 0.5);" alt="Bot">
+      <% } %>
+      <span style="font-weight: 800; font-size: 1.2rem; letter-spacing: -0.01em;"><%= botName %></span>
     </div>
-    <div class="nav-links">
+
+    <div class="topbar-user">
       <% if (user) { %>
-        <a href="/dashboard" class="btn btn-primary"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-        <a href="/auth/logout" class="btn btn-outline"><i class="fas fa-sign-out-alt"></i> ออกจากระบบ</a>
+        <a href="/dashboard" class="btn-hero-primary" style="padding: 8px 20px; font-size: 0.88rem;">
+          <i class="fas fa-th-large"></i> Dashboard
+        </a>
+        <a href="/auth/logout" style="color: var(--text-muted); font-size: 0.88rem; padding: 6px 12px;">
+          <i class="fas fa-sign-out-alt"></i> ออกจากระบบ
+        </a>
       <% } else { %>
-        <a href="/auth/login" class="btn btn-primary"><i class="fab fa-discord"></i> เข้าสู่ระบบด้วย Discord</a>
+        <a href="/auth/login" class="btn-hero-primary" style="padding: 8px 22px; font-size: 0.88rem;">
+          <i class="fab fa-discord"></i> เข้าสู่ระบบ
+        </a>
       <% } %>
     </div>
-  </nav>
+  </header>
 
-  <main class="hero">
-    <div class="hero-content">
-      <% if (botAvatar) { %><img src="<%= botAvatar %>" alt="Bot" class="hero-avatar"><% } %>
-      <h1><%= botName %></h1>
-      <p class="hero-desc">Discord Bot สำหรับจัดการเซิร์ฟเวอร์ครบวงจร<br>Verify • Welcome • Moderation • Dashboard</p>
-      <div class="stats">
-        <div class="stat">
-          <i class="fas fa-server"></i>
-          <span class="stat-num"><%= serverCount %></span>
-          <span>Servers</span>
+  <!-- Hero Section -->
+  <main>
+    <section class="landing-hero">
+      <% if (botAvatar) { %>
+        <img src="<%= botAvatar %>" alt="Bot Logo" class="landing-avatar">
+      <% } %>
+
+      <h1 class="landing-title"><%= botName %></h1>
+      <p class="landing-subtitle">
+        ยกระดับ Discord Server ของคุณด้วยระบบอัตโนมัติครบวงจร<br>
+        Full Auto Setup • 7-Tier Security • Verify Gate • Welcome • Modern Dashboard
+      </p>
+
+      <!-- Stats Bar -->
+      <div class="hero-stats-pill">
+        <div class="stat-item">
+          <i class="fas fa-server" style="color: #38BDF8; font-size: 1.1rem;"></i>
+          <div>
+            <div class="stat-num-val"><%= serverCount %></div>
+            <div class="stat-label-val">Servers</div>
+          </div>
         </div>
-        <div class="stat">
-          <i class="fas fa-users"></i>
-          <span class="stat-num"><%= userCount %></span>
-          <span>Users</span>
+        <div style="width: 1px; height: 30px; background: var(--border-color);"></div>
+        <div class="stat-item">
+          <i class="fas fa-users" style="color: #A855F7; font-size: 1.1rem;"></i>
+          <div>
+            <div class="stat-num-val"><%= userCount %></div>
+            <div class="stat-label-val">Users</div>
+          </div>
         </div>
       </div>
-      <div class="hero-actions">
+
+      <!-- Action Buttons -->
+      <div class="hero-btn-row">
         <% if (user) { %>
-          <a href="/dashboard" class="btn btn-primary btn-lg"><i class="fas fa-tachometer-alt"></i> ไปที่ Dashboard</a>
+          <a href="/dashboard" class="btn-hero-primary">
+            <i class="fas fa-tachometer-alt"></i> ไปที่ Dashboard
+          </a>
         <% } else { %>
-          <a href="/auth/login" class="btn btn-primary btn-lg"><i class="fab fa-discord"></i> เข้าสู่ระบบด้วย Discord</a>
+          <a href="/auth/login" class="btn-hero-primary">
+            <i class="fab fa-discord"></i> เข้าสู่ระบบด้วย Discord
+          </a>
         <% } %>
-        <a href="<%= inviteURL %>" target="_blank" class="btn btn-outline btn-lg" style="margin-left: 10px;">
+        <a href="<%= inviteURL %>" target="_blank" class="btn-hero-secondary">
           <i class="fas fa-plus-circle"></i> เชิญบอทเข้าเซิร์ฟเวอร์
         </a>
       </div>
-    </div>
+    </section>
 
-    <div class="features">
-      <div class="feature-card">
-        <i class="fas fa-check-circle"></i>
-        <h3>ระบบ Verify</h3>
-        <p>ยืนยันตัวตนสมาชิกใหม่ด้วยปุ่มกด รับ Role อัตโนมัติ</p>
+    <!-- Key Features Grid -->
+    <section class="feature-grid-pro">
+      <div class="feature-box">
+        <div class="feature-icon-badge" style="background: rgba(16, 185, 129, 0.15); color: #10B981;">
+          <i class="fas fa-bolt"></i>
+        </div>
+        <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 8px;">Full Auto Setup</h3>
+        <p style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.6;">
+          คลิกเดียวสร้างยศ ห้อง หมวดหมู่ ล็อกสิทธิ์ และผูกระบบต้อนรับกับยืนยันตัวตนพร้อมใช้ทันที
+        </p>
       </div>
-      <div class="feature-card">
-        <i class="fas fa-hand-sparkles"></i>
-        <h3>ระบบ Welcome</h3>
-        <p>ส่งข้อความต้อนรับอัตโนมัติ ปรับแต่งได้ตามต้องการ</p>
-      </div>
-      <div class="feature-card">
-        <i class="fas fa-shield-halved"></i>
-        <h3>จัดการเซิร์ฟเวอร์</h3>
-        <p>Ban, Kick, Mute, Warn พร้อมระบบ Log</p>
-      </div>
-      <div class="feature-card">
-        <i class="fas fa-globe"></i>
-        <h3>Web Dashboard</h3>
-        <p>จัดการทุกอย่างผ่านเว็บ ง่ายและสะดวก</p>
-      </div>
-    </div>
 
-    <!-- Review Section -->
-    <div style="max-width: 900px; margin: 60px auto 0; padding: 0 16px;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
+      <div class="feature-box">
+        <div class="feature-icon-badge" style="background: rgba(56, 189, 248, 0.15); color: #38BDF8;">
+          <i class="fas fa-shield-alt"></i>
+        </div>
+        <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 8px;">7-Tier Security</h3>
+        <p style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.6;">
+          จัดระเบียบ 7 ระดับสิทธิ์ Founder, Admin, Staff, VIP, Bot, Verified, Member ซ่อนห้องสแปม 100%
+        </p>
+      </div>
+
+      <div class="feature-box">
+        <div class="feature-icon-badge" style="background: rgba(168, 85, 247, 0.15); color: #A855F7;">
+          <i class="fas fa-user-check"></i>
+        </div>
+        <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 8px;">Verify & Welcome</h3>
+        <p style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.6;">
+          แผงกดยืนยันตัวตนรับยศอัตโนมัติ และการ์ดต้อนรับสมาชิกใหม่แบบ Embed สวยงาม
+        </p>
+      </div>
+
+      <div class="feature-box">
+        <div class="feature-icon-badge" style="background: rgba(244, 63, 94, 0.15); color: #F43F5E;">
+          <i class="fas fa-paint-brush"></i>
+        </div>
+        <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 8px;">Server Styler & Clone</h3>
+        <p style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.6;">
+          ตกแต่งห้องด้วยธีมเกมมิ่ง คอมมูนิตี้ คาเฟ่ พร้อมระบบโคลนห้อง 1:1 และเคาน์เตอร์สถิติ
+        </p>
+      </div>
+    </section>
+
+    <!-- Reviews Section -->
+    <section style="max-width: 1000px; margin: 40px auto 80px; padding: 0 20px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 14px;">
         <div>
-          <h2 style="font-size: 1.8rem; margin-bottom: 4px;"><i class="fas fa-star" style="color: #FEE75C;"></i> รีวิวและการให้คะแนน</h2>
-          <p class="text-muted">คะแนนเฉลี่ย <%= reviewStats.avgRating %> / 5.0 ดาว (ทั้งหมด <%= reviewStats.total %> รีวิว)</p>
+          <h2 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 4px;">
+            <i class="fas fa-star" style="color: #F59E0B;"></i> รีวิวและการให้คะแนน
+          </h2>
+          <p style="color: var(--text-muted); font-size: 0.88rem;">
+            คะแนนเฉลี่ย <%= reviewStats.avgRating %> / 5.0 ดาว (ทั้งหมด <%= reviewStats.total %> รีวิว)
+          </p>
         </div>
         <% if (user) { %>
-          <button class="btn btn-primary" onclick="openReviewModal()"><i class="fas fa-pen"></i> เขียนรีวิวของคุณ</button>
+          <button class="btn-hero-primary" onclick="openReviewModal()" style="padding: 10px 22px; font-size: 0.88rem; cursor: pointer; border: none;">
+            <i class="fas fa-pen"></i> เขียนรีวิวของคุณ
+          </button>
         <% } else { %>
-          <a href="/auth/login" class="btn btn-outline"><i class="fab fa-discord"></i> เข้าสู่ระบบเพื่อเขียนรีวิว</a>
+          <a href="/auth/login" class="btn-hero-secondary" style="padding: 10px 22px; font-size: 0.88rem;">
+            <i class="fab fa-discord"></i> เข้าสู่ระบบเพื่อเขียนรีวิว
+          </a>
         <% } %>
       </div>
 
-      <!-- Reviews Grid -->
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px;">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
         <% if (reviews.length === 0) { %>
-          <div style="grid-column: 1/-1; text-align: center; padding: 30px; background: var(--bg-card); border-radius: var(--radius); border: 1px solid var(--border);">
-            <p class="text-muted">ยังไม่มีรีวิว ร่วมเป็นคนแรกที่ให้คะแนนและรีวิวบอทตัวนี้!</p>
+          <div style="grid-column: 1/-1; text-align: center; padding: 36px; background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
+            <p style="color: var(--text-muted);">ยังไม่มีรีวิว ร่วมเป็นคนแรกที่ให้คะแนนและรีวิวบอทตัวนี้!</p>
           </div>
         <% } else { %>
           <% reviews.forEach(r => { %>
-            <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; display: flex; flex-direction: column; gap: 10px;">
-              <div style="display: flex; align-items: center; justify-content: space-between;">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                  <% if (r.avatar) { %>
-                    <img src="https://cdn.discordapp.com/avatars/<%= r.user_id %>/<%= r.avatar %>.png" style="width: 36px; height: 36px; border-radius: 50%;" alt="User">
-                  <% } else { %>
-                    <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: bold;">
-                      <%= r.username.charAt(0) %>
-                    </div>
-                  <% } %>
-                  <div>
-                    <h4 style="font-size: 0.95rem;"><%= r.username %></h4>
-                    <small style="color: var(--text-muted);"><%= new Date(r.created_at).toLocaleDateString('th-TH') %></small>
+            <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow-glow);">
+              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                <img src="<%= r.avatar ? `https://cdn.discordapp.com/avatars/${r.user_id}/${r.avatar}.png` : 'https://cdn.discordapp.com/embed/avatars/0.png' %>" style="width: 38px; height: 38px; border-radius: 50%;" alt="Avatar">
+                <div>
+                  <div style="font-weight: 700; font-size: 0.92rem;"><%= r.username %></div>
+                  <div style="color: #F59E0B; font-size: 0.8rem;">
+                    <% for(let i=0; i<r.rating; i++) { %>★<% } %><% for(let i=r.rating; i<5; i++) { %>☆<% } %>
                   </div>
                 </div>
-                <div style="color: #FEE75C; font-size: 0.9rem;">
-                  <% for(let i = 1; i <= 5; i++) { %>
-                    <i class="<%= i <= r.rating ? 'fas' : 'far' %> fa-star"></i>
-                  <% } %>
-                </div>
               </div>
-              <p style="font-size: 0.9rem; color: var(--text); line-height: 1.5; margin-top: 4px;">
-                <%= r.comment || 'ไม่มีความคิดเห็นเพิ่มเติม' %>
-              </p>
+              <p style="color: #CBD5E1; font-size: 0.88rem; line-height: 1.5;"><%= r.comment || 'ไม่มีความคิดเห็นเพิ่มเติม' %></p>
             </div>
           <% }) %>
         <% } %>
       </div>
-    </div>
+    </section>
+  </main>
 
-    <!-- Review Modal Dialog -->
-    <div id="review-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center;">
-      <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 30px; max-width: 450px; width: 90%;">
-        <h3 style="margin-bottom: 12px;"><i class="fas fa-star" style="color: #FEE75C;"></i> ให้คะแนนบอท</h3>
-        
-        <div style="margin-bottom: 16px;">
-          <label style="display: block; font-weight: 600; margin-bottom: 8px;">เลือกระดับคะแนน (1 - 5 ดาว):</label>
-          <div style="display: flex; gap: 8px; font-size: 1.6rem; color: #FEE75C; cursor: pointer;" id="star-selector">
-            <i class="fas fa-star" data-val="1" onclick="setRating(1)"></i>
-            <i class="fas fa-star" data-val="2" onclick="setRating(2)"></i>
-            <i class="fas fa-star" data-val="3" onclick="setRating(3)"></i>
-            <i class="fas fa-star" data-val="4" onclick="setRating(4)"></i>
-            <i class="fas fa-star" data-val="5" onclick="setRating(5)"></i>
-          </div>
-          <input type="hidden" id="review-rating" value="5">
-        </div>
-
-        <div style="margin-bottom: 20px;">
-          <label style="display: block; font-weight: 600; margin-bottom: 8px;">ความคิดเห็น (รีวิว):</label>
-          <textarea id="review-comment" class="form-textarea" rows="4" placeholder="บอกความรู้สึกหรือประสบการณ์การใช้งานบอท..."></textarea>
-        </div>
-
-        <div style="display: flex; justify-content: flex-end; gap: 10px;">
-          <button class="btn btn-outline" onclick="closeReviewModal()">ยกเลิก</button>
-          <button class="btn btn-primary" onclick="submitReviewAction()">ส่งรีวิว</button>
-        </div>
+  <!-- Review Modal -->
+  <div id="reviewModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); z-index: 1000; align-items: center; justify-content: center;">
+    <div style="background: #161B26; border: 1px solid var(--border-color); border-radius: var(--radius-lg); width: 90%; max-width: 450px; padding: 26px; box-shadow: var(--shadow-glow);">
+      <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 16px;">⭐ เขียนรีวิวให้ Devplus BOT</h3>
+      <div style="margin-bottom: 16px;">
+        <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px;">ให้คะแนนดาว:</label>
+        <select id="reviewRating" style="width: 100%; padding: 10px; background: #0F131C; border: 1px solid var(--border-color); border-radius: 8px; color: #FFF;">
+          <option value="5">⭐⭐⭐⭐⭐ 5 ดาว (ยอดเยี่ยมมาก)</option>
+          <option value="4">⭐⭐⭐⭐ 4 ดาว (ดีมาก)</option>
+          <option value="3">⭐⭐⭐ 3 ดาว (ปานกลาง)</option>
+          <option value="2">⭐⭐ 2 ดาว (พอใช้)</option>
+          <option value="1">⭐ 1 ดาว (ต้องปรับปรุง)</option>
+        </select>
+      </div>
+      <div style="margin-bottom: 20px;">
+        <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px;">ความคิดเห็น:</label>
+        <textarea id="reviewComment" rows="3" style="width: 100%; padding: 10px; background: #0F131C; border: 1px solid var(--border-color); border-radius: 8px; color: #FFF; outline: none;" placeholder="บอกเล่าความรู้สึกและฟีเจอร์ที่ชอบ..."></textarea>
+      </div>
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button onclick="closeReviewModal()" style="padding: 10px 18px; border-radius: 20px; background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); cursor: pointer;">ยกเลิก</button>
+        <button onclick="submitReview()" style="padding: 10px 22px; border-radius: 20px; background: var(--accent-primary); border: none; color: #FFF; font-weight: 700; cursor: pointer;">ส่งรีวิว</button>
       </div>
     </div>
-  </main>
+  </div>
+
+  <footer style="padding: 30px; text-align: center; font-size: 0.85rem; color: var(--text-muted); border-top: 1px solid var(--border-color);">
+    &copy; 2026 Devplus BOT — พัฒนาโดย <strong>tewit noita</strong> (<a href="https://github.com/tewitdevPlus" target="_blank" style="color: var(--accent-primary);">@tewitdevPlus</a>)
+  </footer>
 
   <script>
     function openReviewModal() {
-      document.getElementById('review-modal').style.display = 'flex';
+      document.getElementById('reviewModal').style.display = 'flex';
     }
     function closeReviewModal() {
-      document.getElementById('review-modal').style.display = 'none';
+      document.getElementById('reviewModal').style.display = 'none';
     }
-    function setRating(val) {
-      document.getElementById('review-rating').value = val;
-      const stars = document.querySelectorAll('#star-selector i');
-      stars.forEach((s, idx) => {
-        if (idx < val) {
-          s.className = 'fas fa-star';
-        } else {
-          s.className = 'far fa-star';
-        }
+    async function submitReview() {
+      const rating = document.getElementById('reviewRating').value;
+      const comment = document.getElementById('reviewComment').value.trim();
+
+      const res = await fetch('/api/reviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rating, comment })
       });
-    }
-
-    async function submitReviewAction() {
-      const rating = document.getElementById('review-rating').value;
-      const comment = document.getElementById('review-comment').value;
-
-      try {
-        const res = await fetch('/api/reviews', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ rating, comment })
-        });
-        const data = await res.json();
-        if (data.success) {
-          alert('ขอบคุณสำหรับคะแนนและรีวิวของคุณ!');
-          window.location.reload();
-        } else {
-          alert(data.error || 'เกิดข้อผิดพลาด');
-        }
-      } catch (e) {
-        alert('เกิดข้อผิดพลาดในการส่งข้อมูล');
+      const data = await res.json();
+      if (data.success) {
+        alert('ขอบคุณสำหรับรีวิวของคุณ!');
+        window.location.reload();
+      } else {
+        alert('เกิดข้อผิดพลาด: ' + (data.error || 'ไม่สามารถส่งรีวิวได้'));
       }
     }
   </script>
-
-  <footer class="footer">
-    <p>&copy; 2026 <%= botName %> — พัฒนาโดย <strong>tewit noita</strong> (<a href="https://github.com/tewitdevPlus" target="_blank" style="color: var(--primary);">@tewitdevPlus</a>)</p>
-  </footer>
 </body>
 </html>
