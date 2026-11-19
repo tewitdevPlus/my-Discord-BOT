@@ -109,7 +109,7 @@
         </a>
 
         <div class="nav-category">⚡ อัตโนมัติ (Automation)</div>
-        <div class="sidebar-item active" onclick="switchSection('auto-setup', this)">
+        <div class="sidebar-item active" data-section="auto-setup" onclick="switchSection('auto-setup', this)">
           <div class="sidebar-item-content">
             <i class="fas fa-bolt" style="color: #10B981;"></i>
             <span>Full Auto Setup</span>
@@ -117,7 +117,7 @@
           <span style="font-size: 0.65rem; background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 2px 6px; border-radius: 10px; font-weight: bold;">ALL-IN-1</span>
         </div>
 
-        <div class="sidebar-item" onclick="switchSection('auto-roles', this)">
+        <div class="sidebar-item" data-section="auto-roles" onclick="switchSection('auto-roles', this)">
           <div class="sidebar-item-content">
             <i class="fas fa-crown" style="color: #F59E0B;"></i>
             <span>Auto สร้างชุดยศ</span>
@@ -126,7 +126,7 @@
         </div>
 
         <div class="nav-category">👥 สมาชิก & ความปลอดภัย</div>
-        <div class="sidebar-item" onclick="switchSection('welcome', this)">
+        <div class="sidebar-item" data-section="welcome" onclick="switchSection('welcome', this)">
           <div class="sidebar-item-content">
             <i class="fas fa-hand-sparkles" style="color: #8B5CF6;"></i>
             <span>ระบบต้อนรับ (Welcome)</span>
@@ -134,7 +134,7 @@
           <span class="switch-sm"><input type="checkbox" id="nav_welcome_check" <%= settings.welcome_enabled ? 'checked' : '' %> disabled><span class="slider-sm"></span></span>
         </div>
 
-        <div class="sidebar-item" onclick="switchSection('verify', this)">
+        <div class="sidebar-item" data-section="verify" onclick="switchSection('verify', this)">
           <div class="sidebar-item-content">
             <i class="fas fa-check-circle" style="color: #10B981;"></i>
             <span>ยืนยันตัวตน (Verify)</span>
@@ -142,7 +142,7 @@
           <span class="switch-sm"><input type="checkbox" id="nav_verify_check" <%= settings.verify_enabled ? 'checked' : '' %> disabled><span class="slider-sm"></span></span>
         </div>
 
-        <div class="sidebar-item" onclick="switchSection('autorole', this)">
+        <div class="sidebar-item" data-section="autorole" onclick="switchSection('autorole', this)">
           <div class="sidebar-item-content">
             <i class="fas fa-user-tag" style="color: #38BDF8;"></i>
             <span>แจกยศอัตโนมัติ (Auto Role)</span>
@@ -151,28 +151,28 @@
         </div>
 
         <div class="nav-category">🎨 ตกแต่ง & เครื่องมือ</div>
-        <div class="sidebar-item" onclick="switchSection('styler', this)">
+        <div class="sidebar-item" data-section="styler" onclick="switchSection('styler', this)">
           <div class="sidebar-item-content">
             <i class="fas fa-paint-brush" style="color: #EC4899;"></i>
             <span>แต่งห้องเซิร์ฟเวอร์</span>
           </div>
         </div>
 
-        <div class="sidebar-item" onclick="switchSection('stats', this)">
+        <div class="sidebar-item" data-section="stats" onclick="switchSection('stats', this)">
           <div class="sidebar-item-content">
             <i class="fas fa-chart-line" style="color: #14B8A6;"></i>
             <span>สถิติเสียง & จำนวนยศ</span>
           </div>
         </div>
 
-        <div class="sidebar-item" onclick="switchSection('clone', this)">
+        <div class="sidebar-item" data-section="clone" onclick="switchSection('clone', this)">
           <div class="sidebar-item-content">
             <i class="fas fa-copy" style="color: #F43F5E;"></i>
             <span>คัดลอกห้อง (1:1 Clone)</span>
           </div>
         </div>
 
-        <div class="sidebar-item" onclick="switchSection('ideas', this)">
+        <div class="sidebar-item" data-section="ideas" onclick="switchSection('ideas', this)">
           <div class="sidebar-item-content">
             <i class="fas fa-lightbulb" style="color: #FBBF24;"></i>
             <span>คลังไอเดีย & วิธีทำ</span>
@@ -180,7 +180,7 @@
         </div>
 
         <div class="nav-category">🛡️ การจัดการ & บันทึก</div>
-        <div class="sidebar-item" onclick="switchSection('moderation', this)">
+        <div class="sidebar-item" data-section="moderation" onclick="switchSection('moderation', this)">
           <div class="sidebar-item-content">
             <i class="fas fa-clipboard-list" style="color: #64748B;"></i>
             <span>ประวัติ Logs & คำเตือน</span>
@@ -188,7 +188,7 @@
         </div>
 
         <div class="nav-category" style="color: #EF4444;">🚨 อันตรายสูงสุด</div>
-        <div class="sidebar-item" onclick="switchSection('danger', this)" style="color: #EF4444;">
+        <div class="sidebar-item" data-section="danger" onclick="switchSection('danger', this)" style="color: #EF4444;">
           <div class="sidebar-item-content">
             <i class="fas fa-biohazard"></i>
             <span>โซนอันตราย (Nuke)</span>
@@ -240,6 +240,43 @@
                 <span class="stat-badge-pill"><i class="fas fa-gavel" style="color: #A855F7;"></i> <strong><%= stats.totalActions %></strong> บันทึก Mod</span>
               </div>
             </div>
+          </div>
+        </div>
+
+        <!-- Horizontal Pill Tabs Navigation (CEO KAITAN Style & Fast Switching) -->
+        <div class="horizontal-tabs-container">
+          <div class="tab-pill active" data-section="auto-setup" onclick="switchSection('auto-setup', this)">
+            <i class="fas fa-bolt" style="color: #10B981;"></i> Full Auto Setup
+          </div>
+          <div class="tab-pill" data-section="auto-roles" onclick="switchSection('auto-roles', this)">
+            <i class="fas fa-crown" style="color: #F59E0B;"></i> (Setup Roles)
+          </div>
+          <div class="tab-pill" data-section="welcome" onclick="switchSection('welcome', this)">
+            <i class="fas fa-hand-sparkles" style="color: #8B5CF6;"></i> 👋 Welcome
+          </div>
+          <div class="tab-pill" data-section="verify" onclick="switchSection('verify', this)">
+            <i class="fas fa-check-circle" style="color: #10B981;"></i> ✅ Verify
+          </div>
+          <div class="tab-pill" data-section="autorole" onclick="switchSection('autorole', this)">
+            <i class="fas fa-user-tag" style="color: #38BDF8;"></i> 👥 Auto Role
+          </div>
+          <div class="tab-pill" data-section="stats" onclick="switchSection('stats', this)">
+            <i class="fas fa-chart-line" style="color: #14B8A6;"></i> 📈 สถิติ & ยศ
+          </div>
+          <div class="tab-pill" data-section="styler" onclick="switchSection('styler', this)">
+            <i class="fas fa-paint-brush" style="color: #EC4899;"></i> 🖌️ แต่งห้องเซิร์ฟเวอร์
+          </div>
+          <div class="tab-pill" data-section="clone" onclick="switchSection('clone', this)">
+            <i class="fas fa-copy" style="color: #F43F5E;"></i> 📋 คัดลอกห้อง
+          </div>
+          <div class="tab-pill" data-section="ideas" onclick="switchSection('ideas', this)">
+            <i class="fas fa-lightbulb" style="color: #FBBF24;"></i> 💡 คลังไอเดีย
+          </div>
+          <div class="tab-pill" data-section="moderation" onclick="switchSection('moderation', this)">
+            <i class="fas fa-clipboard-list" style="color: #64748B;"></i> 🛡️ Logs & คำเตือน
+          </div>
+          <div class="tab-pill" data-section="danger" onclick="switchSection('danger', this)" style="color: #EF4444;">
+            <i class="fas fa-biohazard"></i> 🚨 Nuke Zone
           </div>
         </div>
 
@@ -633,10 +670,13 @@
 
     // Sidebar Section Switcher (Like Reference Mockup)
     function switchSection(secId, el) {
-      document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
+      document.querySelectorAll('.sidebar-item, .tab-pill').forEach(item => item.classList.remove('active'));
       document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
 
-      el.classList.add('active');
+      // Highlight active in both sidebar and top horizontal tabs
+      document.querySelectorAll(`[data-section="${secId}"]`).forEach(item => item.classList.add('active'));
+      if (el) el.classList.add('active');
+
       const targetSec = document.getElementById('sec-' + secId);
       if (targetSec) targetSec.classList.add('active');
 
