@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../../database');
+const { executeFullAutoSetup } = require('../../auto-setup');
 
 // Check guild permission middleware
 function checkGuildPermission(req, res, next) {
@@ -279,6 +280,22 @@ router.get('/guilds/:guildId/roles-detail', checkGuildPermission, async (req, re
       }));
     res.json(roles);
   } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST Full Auto Setup
+router.post('/guilds/:guildId/auto-setup', checkGuildPermission, async (req, res) => {
+  const { theme, withStats } = req.body;
+  const guild = req.client.guilds.cache.get(req.params.guildId);
+  if (!guild) return res.status(404).json({ error: 'ไม่พบเซิร์ฟเวอร์ หรือบอทไม่ได้อยู่ในเซิร์ฟเวอร์นี้' });
+
+  try {
+    const result = await executeFullAutoSetup(guild, theme || 'gaming', { withStats: withStats ?? true });
+    db.logModAction(guild.id, req.user.id, req.user.id, 'auto_setup_web', `Executed Full Auto Setup via Dashboard with theme ${theme || 'gaming'}`);
+    res.json({ success: true, result });
+  } catch (err) {
+    console.error('Auto setup API error:', err);
     res.status(500).json({ error: err.message });
   }
 });
