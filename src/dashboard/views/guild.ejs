@@ -76,6 +76,7 @@
     <!-- Tab Navigation -->
     <div class="tabs">
       <button class="tab" data-tab="auto-setup" style="color: #57F287; border-color: rgba(87, 242, 135, 0.4);"><i class="fas fa-bolt"></i> Full Auto Setup</button>
+      <button class="tab" data-tab="auto-roles-creator" style="color: #F1C40F; border-color: rgba(241, 196, 15, 0.4);"><i class="fas fa-crown"></i> Auto สร้างยศ (Setup Roles)</button>
       <button class="tab active" data-tab="welcome"><i class="fas fa-hand-sparkles"></i> Welcome</button>
       <button class="tab" data-tab="verify"><i class="fas fa-check-circle"></i> Verify</button>
       <button class="tab" data-tab="autorole"><i class="fas fa-user-tag"></i> Auto Role</button>
@@ -130,6 +131,53 @@
 
           <button class="btn btn-success" id="btn-run-auto" onclick="runAutoSetupFromWeb()" style="padding: 12px 28px; font-size: 1.05rem; font-weight: bold; box-shadow: 0 4px 15px rgba(87, 242, 135, 0.4);">
             <i class="fas fa-magic"></i> รันระบบ Full Auto Setup ทันที
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Auto Roles Creator Tab -->
+    <div class="tab-content" id="tab-auto-roles-creator">
+      <div class="card" style="border: 2px solid #F1C40F; background: rgba(241, 196, 15, 0.04);">
+        <div class="card-header" style="border-bottom: 1px solid rgba(241, 196, 15, 0.3);">
+          <h2 style="color: #F1C40F;"><i class="fas fa-crown"></i> ระบบ Auto สร้างยศ (Setup Roles อัตโนมัติ)</h2>
+          <span class="badge" style="background: #F1C40F; color: #000; font-weight: bold;">สร้างเฉพาะชุดยศ</span>
+        </div>
+        <div class="card-body">
+          <p class="text-muted" style="margin-bottom: 20px; font-size: 1rem; line-height: 1.6;">
+            เลือกธีมชุดยศที่ต้องการ บอทจะทำการ <strong>สร้างยศทั้งหมดพร้อมตั้งค่าสี และสิทธิ์ของแต่ละยศ</strong> ให้ทันทีอัตโนมัติ โดยไม่ไปยุ่งหรือแก้ไขห้องเดิมในเซิร์ฟเวอร์ของคุณ
+          </p>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 24px;">
+            <div class="theme-card" onclick="selectRoleCreatorTheme('security')" id="roletheme-security" style="border: 2px solid #F1C40F; border-radius: 8px; padding: 18px; cursor: pointer; background: rgba(241, 196, 15, 0.08);">
+              <h3 style="color: #F1C40F; font-size: 1.15rem; margin-bottom: 8px;">🛡️ ชุดยศ 7 ระดับสิทธิ์ความปลอดภัย</h3>
+              <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 12px;">👑 FOUNDER, 🛡️ ADMIN, 🔧 STAFF, 💎 VIP, 🤖 Bot, ✅ Verified, 👥 Member</p>
+              <span class="badge" style="background: #F1C40F; color: #000;">มาตรฐานสูงสุด</span>
+            </div>
+
+            <div class="theme-card" onclick="selectRoleCreatorTheme('gaming')" id="roletheme-gaming" style="border: 2px solid var(--border); border-radius: 8px; padding: 18px; cursor: pointer;">
+              <h3 style="font-size: 1.15rem; margin-bottom: 8px;">🎮 ชุดยศสายเกมมิ่ง & ตี้เกม</h3>
+              <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 12px;">👑 Owner, 🛡️ Admin, ⚔️ Moderator, 💎 VIP, 🎮 Gamer, 🤖 Bot, 🔒 Unverified</p>
+              <span class="badge" style="background: rgba(235,69,158,0.2); color: var(--pink);">สำหรับสายเกม</span>
+            </div>
+
+            <div class="theme-card" onclick="selectRoleCreatorTheme('community')" id="roletheme-community" style="border: 2px solid var(--border); border-radius: 8px; padding: 18px; cursor: pointer;">
+              <h3 style="font-size: 1.15rem; margin-bottom: 8px;">🌟 ชุดยศคอมมูนิตี้มาตรฐาน</h3>
+              <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 12px;">👑 ผู้ก่อตั้ง, 🛡️ แอดมิน, 👮 เจ้าหน้าที่, ✨ สมาชิกพิเศษ, 👥 สมาชิก, 🤖 Bot</p>
+              <span class="badge" style="background: rgba(88,101,242,0.2); color: var(--primary);">ยอดนิยม</span>
+            </div>
+
+            <div class="theme-card" onclick="selectRoleCreatorTheme('aesthetic')" id="roletheme-aesthetic" style="border: 2px solid var(--border); border-radius: 8px; padding: 18px; cursor: pointer;">
+              <h3 style="font-size: 1.15rem; margin-bottom: 8px;">✨ ชุดยศมินิมอล & คาเฟ่</h3>
+              <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 12px;">👑 Mastermind, 🛡️ Guardian, 🌷 Supporter, ☕ Resident, 🤖 Helper Bot</p>
+              <span class="badge" style="background: rgba(87,242,135,0.2); color: var(--success);">สไตล์ชิลล์</span>
+            </div>
+          </div>
+
+          <input type="hidden" id="selected_role_creator_theme" value="security">
+
+          <button class="btn btn-primary" id="btn-run-create-roles" onclick="runCreateRolesFromWeb()" style="padding: 12px 28px; font-size: 1.05rem; font-weight: bold; background: #F1C40F; color: #000; border-color: #F1C40F; box-shadow: 0 4px 15px rgba(241, 196, 15, 0.4);">
+            <i class="fas fa-crown"></i> กดสร้างชุดยศเข้าสู่เซิร์ฟเวอร์ทันที
           </button>
         </div>
       </div>
@@ -929,6 +977,45 @@
         alert('❌ เกิดข้อผิดพลาด: ' + err.message);
         btn.disabled = false;
         btn.innerHTML = '<i class="fas fa-magic"></i> รันระบบ Full Auto Setup ทันที';
+      }
+    }
+
+    // Roles Creator Selection & Execution
+    function selectRoleCreatorTheme(theme) {
+      document.querySelectorAll('#tab-auto-roles-creator .theme-card').forEach(el => {
+        el.style.borderColor = 'var(--border)';
+        el.style.background = 'transparent';
+      });
+      const selected = document.getElementById('roletheme-' + theme);
+      if (selected) {
+        selected.style.borderColor = '#F1C40F';
+        selected.style.background = 'rgba(241, 196, 15, 0.08)';
+      }
+      document.getElementById('selected_role_creator_theme').value = theme;
+    }
+
+    async function runCreateRolesFromWeb() {
+      const theme = document.getElementById('selected_role_creator_theme').value;
+      if (!confirm('ต้องการให้บอทสร้างชุดยศตามธีมที่เลือกเข้าสู่เซิร์ฟเวอร์หรือไม่?')) return;
+
+      const btn = document.getElementById('btn-run-create-roles');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังสร้างยศ...';
+
+      try {
+        const res = await apiCall('POST', '/roles-setup', { theme });
+        if (res.success) {
+          alert('👑 สร้างชุดยศอัตโนมัติสำเร็จเรียบร้อย! คุณสามารถนำยศไปใช้งานต่อได้ทันที');
+          window.location.reload();
+        } else {
+          alert('❌ เกิดข้อผิดพลาด: ' + (res.error || 'ไม่สามารถสร้างยศได้'));
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-crown"></i> กดสร้างชุดยศเข้าสู่เซิร์ฟเวอร์ทันที';
+        }
+      } catch (err) {
+        alert('❌ เกิดข้อผิดพลาด: ' + err.message);
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-crown"></i> กดสร้างชุดยศเข้าสู่เซิร์ฟเวอร์ทันที';
       }
     }
 

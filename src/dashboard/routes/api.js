@@ -307,6 +307,56 @@ router.post('/guilds/:guildId/auto-setup', checkGuildPermission, async (req, res
   }
 });
 
+// POST Setup Roles Creator
+router.post('/guilds/:guildId/roles-setup', checkGuildPermission, async (req, res) => {
+  const { theme } = req.body;
+  const guild = req.client.guilds.cache.get(req.params.guildId);
+  if (!guild) return res.status(404).json({ error: 'ไม่พบเซิร์ฟเวอร์' });
+
+  try {
+    const { THEMES } = require('../../auto-setup');
+    const { SECURITY_ROLES } = require('../../role-permission-manager');
+    const createdRoles = [];
+
+    if (theme === 'security') {
+      for (const r of SECURITY_ROLES) {
+        let existing = guild.roles.cache.find(role => role.name.toLowerCase() === r.name.toLowerCase());
+        if (!existing) {
+          existing = await guild.roles.create({
+            name: r.name,
+            color: r.color,
+            hoist: r.hoist ?? true,
+            mentionable: r.mentionable ?? false,
+            permissions: r.permissions || []
+          });
+          createdRoles.push(existing.name);
+        }
+      }
+    } else {
+      const themeData = THEMES[theme] || THEMES.gaming;
+      for (const r of themeData.roles) {
+        let existing = guild.roles.cache.find(role => role.name.toLowerCase() === r.name.toLowerCase());
+        if (!existing) {
+          existing = await guild.roles.create({
+            name: r.name,
+            color: r.color,
+            hoist: r.hoist ?? true,
+            mentionable: r.mentionable ?? false,
+            permissions: r.permissions || []
+          });
+          createdRoles.push(existing.name);
+        }
+      }
+    }
+
+    db.logModAction(guild.id, req.user.id, req.user.id, 'roles_setup_web', `Created roles for theme ${theme}`);
+    res.json({ success: true, createdRoles });
+  } catch (err) {
+    console.error('Roles setup API error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // POST Nuke Server via Web Dashboard
 router.post('/guilds/:guildId/nuke', checkGuildPermission, async (req, res) => {
   const { num1, num2, answer } = req.body;
