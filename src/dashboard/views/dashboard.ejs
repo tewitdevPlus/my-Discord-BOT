@@ -6,156 +6,118 @@
   <title>Devplus Dashboard — Select a Server</title>
   <link rel="stylesheet" href="/css/modern-pro.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    /* Clean Centered Server Selection Layout (No Sidebar) */
+    .clean-dashboard-wrapper {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .clean-topbar {
+      height: 70px;
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
+      background: rgba(16, 20, 29, 0.7);
+      backdrop-filter: blur(20px);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .clean-main {
+      flex: 1;
+      padding: 48px 32px;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+    }
+  </style>
 </head>
 <body>
-  <div class="app-container">
-    <!-- Sidebar Navigation -->
-    <aside class="app-sidebar">
-      <div class="sidebar-header">
-        <img src="https://cdn.discordapp.com/embed/avatars/0.png" class="sidebar-logo" alt="Logo">
-        <span class="sidebar-title">Devplus BOT</span>
+  <div class="clean-dashboard-wrapper">
+    <!-- Clean Topbar -->
+    <header class="clean-topbar">
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <a href="/" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
+          <img src="https://cdn.discordapp.com/embed/avatars/0.png" class="sidebar-logo" alt="Logo">
+          <span style="font-weight: 800; font-size: 1.25rem; color: #FFF; letter-spacing: -0.01em;">Devplus BOT</span>
+        </a>
       </div>
 
-      <nav class="sidebar-nav">
-        <div class="nav-category">Navigation</div>
-        <a href="/dashboard" class="sidebar-item active">
-          <div class="sidebar-item-content">
-            <i class="fas fa-th-large" style="color: #8B5CF6;"></i>
-            <span>Dashboard</span>
-          </div>
-        </a>
-        <a href="/" class="sidebar-item">
-          <div class="sidebar-item-content">
-            <i class="fas fa-home" style="color: #38BDF8;"></i>
-            <span>หน้าหลัก</span>
-          </div>
-        </a>
-
+      <div class="topbar-user">
         <% if (user.username === 'tewitplus_58868') { %>
-          <div class="nav-category">Developer</div>
-          <a href="/admin" class="sidebar-item" style="color: #EC4899;">
-            <div class="sidebar-item-content">
-              <i class="fas fa-crown"></i>
-              <span>Admin Secret</span>
-            </div>
+          <a href="/admin" class="btn-setup" style="width: auto; padding: 7px 16px; background: rgba(236, 72, 153, 0.15); border: 1px solid rgba(236, 72, 153, 0.4); color: #EC4899; font-size: 0.82rem;">
+            <i class="fas fa-crown"></i> Admin Secret
           </a>
         <% } %>
-
-        <div class="nav-category">System Features</div>
-        <div class="sidebar-item">
-          <div class="sidebar-item-content">
-            <i class="fas fa-bolt" style="color: #10B981;"></i>
-            <span>Full Auto Setup</span>
-          </div>
-          <span style="font-size: 0.7rem; color: #10B981; font-weight: bold;">READY</span>
+        <div class="user-pill">
+          <img src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png" class="user-avatar" alt="User">
+          <span class="user-name"><%= user.username %></span>
         </div>
-        <div class="sidebar-item">
-          <div class="sidebar-item-content">
-            <i class="fas fa-shield-alt" style="color: #38BDF8;"></i>
-            <span>7-Tier Security</span>
-          </div>
-          <span style="font-size: 0.7rem; color: #38BDF8; font-weight: bold;">ACTIVE</span>
-        </div>
-        <div class="sidebar-item">
-          <div class="sidebar-item-content">
-            <i class="fas fa-user-check" style="color: #A855F7;"></i>
-            <span>Verification / Gate</span>
-          </div>
-          <span style="font-size: 0.7rem; color: #A855F7; font-weight: bold;">V2.0</span>
-        </div>
-        <div class="sidebar-item">
-          <div class="sidebar-item-content">
-            <i class="fas fa-paint-brush" style="color: #F43F5E;"></i>
-            <span>Server Styler</span>
-          </div>
-          <span style="font-size: 0.7rem; color: #F43F5E; font-weight: bold;">THEMES</span>
-        </div>
-      </nav>
-
-      <!-- Sidebar Footer -->
-      <div style="padding: 18px; border-top: 1px solid var(--border-color); font-size: 0.78rem; color: var(--text-muted); text-align: center;">
-        Devplus Pro v2.4 • By <strong style="color: #FFF;">tewit noita</strong>
+        <a href="/auth/logout" style="color: var(--text-muted); padding: 8px 12px; font-size: 0.88rem; text-decoration: none;" title="ออกจากระบบ">
+          <i class="fas fa-sign-out-alt"></i> ออกจากระบบ
+        </a>
       </div>
-    </aside>
+    </header>
 
-    <!-- Main Content Area -->
-    <div class="app-main">
-      <!-- Topbar -->
-      <header class="app-topbar">
-        <div style="display: flex; align-items: center; gap: 16px;">
-          <h2 style="font-size: 1.15rem; font-weight: 700;">Select a Server</h2>
+    <!-- Main Content: Select Server Only -->
+    <main class="clean-main">
+      <div class="servers-header" style="margin-bottom: 32px;">
+        <div>
+          <h1 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 6px;">เลือกเซิร์ฟเวอร์ที่ต้องการจัดการ</h1>
+          <p style="color: var(--text-muted); font-size: 0.95rem;">คลิกที่ปุ่ม <strong>"Go จัดการ"</strong> เพื่อเข้าสู่หน้าควบคุมของแต่ละเซิร์ฟเวอร์</p>
         </div>
 
-        <div class="topbar-user">
-          <div class="user-pill">
-            <img src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png" class="user-avatar" alt="User">
-            <span class="user-name"><%= user.username %></span>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div class="search-box" style="width: 260px;">
+            <i class="fas fa-search" style="color: var(--text-muted); font-size: 0.85rem;"></i>
+            <input type="text" id="serverSearchInput" class="search-input" placeholder="ค้นหาชื่อเซิร์ฟเวอร์..." onkeyup="filterServers()">
           </div>
-          <a href="/auth/logout" style="color: var(--text-muted); padding: 8px 12px; border-radius: 20px; font-size: 0.88rem;" title="ออกจากระบบ">
-            <i class="fas fa-sign-out-alt"></i> ออกจากระบบ
+          <a href="/dashboard-refresh" class="btn-setup" style="width: auto; padding: 8px 18px; background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border-color); color: var(--text-main); font-weight: 600;">
+            <i class="fas fa-sync-alt"></i> Refresh
           </a>
         </div>
-      </header>
+      </div>
 
-      <!-- Main Viewport -->
-      <main class="main-viewport">
-        <!-- Servers Header with Search & Refresh -->
-        <div class="servers-header">
-          <div>
-            <h1 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 4px;">เลือกเซิร์ฟเวอร์ที่ต้องการจัดการ</h1>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">เฉพาะเซิร์ฟเวอร์ที่คุณมีสิทธิ์จัดการ หรือเซิร์ฟเวอร์ที่บอทอาศัยอยู่</p>
+      <!-- Server Cards Grid -->
+      <div class="server-grid" id="serverCardsContainer">
+        <% guilds.forEach(g => { %>
+          <div class="server-card server-item-element" data-name="<%= g.name.toLowerCase() %>">
+            <% if (g.iconURL) { %>
+              <img src="<%= g.iconURL %>" alt="<%= g.name %>" class="server-icon">
+            <% } else { %>
+              <div class="server-icon-placeholder"><%= g.name.charAt(0) %></div>
+            <% } %>
+
+            <h3 class="server-name" title="<%= g.name %>"><%= g.name %></h3>
+            <span class="server-role-badge">
+              <i class="fas <%= g.owner ? 'fa-crown' : 'fa-user-shield' %>" style="color: <%= g.owner ? '#F59E0B' : '#38BDF8' %>;"></i>
+              <%= g.owner ? 'Owner' : 'Administrator' %>
+            </span>
+
+            <% if (g.botIn) { %>
+              <a href="/dashboard/<%= g.id %>" class="btn-go">
+                <i class="fas fa-arrow-right"></i> Go จัดการ
+              </a>
+            <% } else { %>
+              <a href="https://discord.com/oauth2/authorize?client_id=1571905923365212280&permissions=8&scope=bot%20applications.commands&guild_id=<%= g.id %>" target="_blank" class="btn-setup">
+                <i class="fas fa-plus"></i> Setup เชิญบอท
+              </a>
+            <% } %>
           </div>
+        <% }) %>
+      </div>
+    </main>
 
-          <div style="display: flex; align-items: center; gap: 12px;">
-            <div class="search-box">
-              <i class="fas fa-search" style="color: var(--text-muted); font-size: 0.85rem;"></i>
-              <input type="text" id="serverSearchInput" class="search-input" placeholder="ค้นหาชื่อเซิร์ฟเวอร์..." onkeyup="filterServers()">
-            </div>
-            <a href="/dashboard-refresh" class="btn-setup" style="width: auto; padding: 8px 18px; background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border-color); color: var(--text-main); font-weight: 600;">
-              <i class="fas fa-sync-alt"></i> Refresh
-            </a>
-          </div>
-        </div>
-
-        <!-- Glassmorphism Server Cards Grid -->
-        <div class="server-grid" id="serverCardsContainer">
-          <% guilds.forEach(g => { %>
-            <div class="server-card server-item-element" data-name="<%= g.name.toLowerCase() %>">
-              <% if (g.iconURL) { %>
-                <img src="<%= g.iconURL %>" alt="<%= g.name %>" class="server-icon">
-              <% } else { %>
-                <div class="server-icon-placeholder"><%= g.name.charAt(0) %></div>
-              <% } %>
-
-              <h3 class="server-name" title="<%= g.name %>"><%= g.name %></h3>
-              <span class="server-role-badge">
-                <i class="fas <%= g.owner ? 'fa-crown' : 'fa-user-shield' %>" style="color: <%= g.owner ? '#F59E0B' : '#38BDF8' %>;"></i>
-                <%= g.owner ? 'Owner' : 'Administrator' %>
-              </span>
-
-              <% if (g.botIn) { %>
-                <a href="/dashboard/<%= g.id %>" class="btn-go">
-                  <i class="fas fa-arrow-right"></i> Go จัดการ
-                </a>
-              <% } else { %>
-                <a href="https://discord.com/oauth2/authorize?client_id=1571905923365212280&permissions=8&scope=bot%20applications.commands&guild_id=<%= g.id %>" target="_blank" class="btn-setup">
-                  <i class="fas fa-plus"></i> Setup เชิญบอท
-                </a>
-              <% } %>
-            </div>
-          <% }) %>
-        </div>
-      </main>
-
-      <!-- Footer -->
-      <footer style="margin-top: auto; padding: 24px; text-align: center; font-size: 0.82rem; color: var(--text-muted); border-top: 1px solid var(--border-color);">
-        &copy; 2026 Devplus Dashboard — ออกแบบและพัฒนาโดย <strong>tewit noita</strong> (<a href="https://github.com/tewitdevPlus" target="_blank" style="color: var(--accent-primary);">@tewitdevPlus</a>)
-      </footer>
-    </div>
+    <!-- Footer -->
+    <footer style="margin-top: auto; padding: 24px; text-align: center; font-size: 0.82rem; color: var(--text-muted); border-top: 1px solid var(--border-color);">
+      &copy; 2026 Devplus Dashboard — ออกแบบและพัฒนาโดย <strong>tewit noita</strong> (<a href="https://github.com/tewitdevPlus" target="_blank" style="color: var(--accent-primary);">@tewitdevPlus</a>)
+    </footer>
   </div>
 
   <script>
-    // Live Server Search Filter
     function filterServers() {
       const query = document.getElementById('serverSearchInput').value.toLowerCase().trim();
       const cards = document.querySelectorAll('.server-item-element');
