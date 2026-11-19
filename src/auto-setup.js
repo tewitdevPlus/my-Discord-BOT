@@ -264,7 +264,7 @@ async function executeFullAutoSetup(guild, themeKey = 'gaming', options = { with
   // Auto Role (ให้ยศสมาชิกตอนเข้าเซิร์ฟทันทีถ้าไม่มี verify หรือจะใช้คู่กัน)
   if (memberRole) {
     dbUpdates.autorole_enabled = 1;
-    dbUpdates.autorole_role = memberRole.id;
+    dbUpdates.autorole_id = memberRole.id;
   }
 
   // Verify System
