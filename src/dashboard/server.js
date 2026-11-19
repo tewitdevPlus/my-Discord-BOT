@@ -180,51 +180,52 @@ function startDashboard(client) {
   });
 
   app.get('/dashboard', isAuthenticated, async (req, res) => {
-    // Auto-refresh guilds directly from Discord API if accessToken exists
-    if (req.user && req.user.accessToken) {
-      try {
-        const fetch = global.fetch || require('node-fetch');
-        const discordRes = await fetch('https://discord.com/api/v10/users/@me/guilds', {
-          headers: { Authorization: `Bearer ${req.user.accessToken}` }
-        });
-        if (discordRes.ok) {
-          const freshGuilds = await discordRes.json();
-          req.user.guilds = freshGuilds;
-        }
-      } catch (err) {
-        console.warn('Could not auto-refresh Discord guilds:', err.message);
+    // 1. Get guilds from user profile
+    let userGuilds = Array.isArray(req.user.guilds) ? req.user.guilds : [];
+
+    // 2. Also include all guilds where the bot is currently in (ensures server never disappears)
+    const botGuilds = client.guilds.cache.map(g => ({
+      id: g.id,
+      name: g.name,
+      icon: g.icon,
+      permissions: 0x8, // Admin access if bot is present and user is owner
+      owner: g.ownerId === req.user.id
+    }));
+
+    // Merge bot guilds with user guilds (avoid duplicates)
+    const allGuildsMap = new Map();
+    for (const g of userGuilds) {
+      allGuildsMap.set(g.id, g);
+    }
+    for (const bg of botGuilds) {
+      if (!allGuildsMap.has(bg.id)) {
+        allGuildsMap.set(bg.id, bg);
       }
     }
 
-    // Filter guilds where user has MANAGE_GUILD permission
-    const userGuilds = (req.user.guilds || []).filter(g =>
-      (parseInt(g.permissions) & 0x20) === 0x20 || // MANAGE_GUILD
-      (parseInt(g.permissions) & 0x8) === 0x8       // ADMINISTRATOR
+    const mergedList = Array.from(allGuildsMap.values());
+
+    // Filter guilds where user has MANAGE_GUILD (0x20) or ADMIN (0x8) or is guild owner
+    const manageableGuilds = mergedList.filter(g =>
+      g.owner ||
+      (parseInt(g.permissions) & 0x20) === 0x20 ||
+      (parseInt(g.permissions) & 0x8) === 0x8
     );
 
-    const mutualGuilds = userGuilds.map(g => ({
+    const mutualGuilds = manageableGuilds.map(g => ({
       ...g,
       botIn: client.guilds.cache.has(g.id),
-      iconURL: g.icon ? `https://cdn.discordapp.com/icons/${g.id}/${g.icon}.png` : null,
+      iconURL: g.icon ? (g.icon.startsWith('http') ? g.icon : `https://cdn.discordapp.com/icons/${g.id}/${g.icon}.png`) : null,
     }));
 
     res.render('dashboard', { guilds: mutualGuilds });
   });
 
-  // Manual refresh guilds route
-  app.get('/dashboard-refresh', isAuthenticated, async (req, res) => {
-    if (req.user && req.user.accessToken) {
-      try {
-        const fetch = global.fetch || require('node-fetch');
-        const discordRes = await fetch('https://discord.com/api/v10/users/@me/guilds', {
-          headers: { Authorization: `Bearer ${req.user.accessToken}` }
-        });
-        if (discordRes.ok) {
-          req.user.guilds = await discordRes.json();
-        }
-      } catch (err) {}
-    }
-    res.redirect('/dashboard');
+  // Manual refresh guilds route: force Discord re-auth to refresh guilds list without logging out
+  app.get('/dashboard-refresh', (req, res, next) => {
+    passport.authenticate('discord', {
+      prompt: 'none'
+    })(req, res, next);
   });
 
   app.get('/dashboard/:guildId', isAuthenticated, async (req, res) => {
