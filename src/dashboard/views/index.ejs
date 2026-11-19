@@ -7,326 +7,430 @@
   <link rel="stylesheet" href="/css/modern-pro.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
-    /* Specific Home Styles for Modern Landing */
-    .landing-hero {
-      text-align: center;
-      padding: 70px 20px 40px;
-      max-width: 900px;
-      margin: 0 auto;
+    /* =============================================
+       Landing Page — CEO KAITAN Cyberpunk Style
+       ============================================= */
+
+    /* Loader */
+    #loader {
+      position: fixed; inset: 0; z-index: 99999;
+      background: #000;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      transition: opacity .4s, visibility .4s;
+    }
+    #loader.done { opacity: 0; visibility: hidden; }
+    .loader-mark {
+      font-family: 'Bebas Neue', 'Kanit', sans-serif;
+      font-size: 60px; letter-spacing: 8px; color: #fff;
       position: relative;
     }
-    .landing-avatar {
-      width: 120px;
-      height: 120px;
-      border-radius: 36px;
-      box-shadow: 0 0 40px rgba(139, 92, 246, 0.5), 0 0 80px rgba(88, 101, 242, 0.25);
-      margin-bottom: 24px;
-      border: 3px solid rgba(255, 255, 255, 0.15);
-      animation: float 4s ease-in-out infinite;
+    .loader-mark::after {
+      content: ''; position: absolute;
+      left: 50%; bottom: -16px;
+      transform: translateX(-50%);
+      width: 0; height: 2px;
+      background: linear-gradient(90deg, var(--neon-cyan), var(--purple), var(--neon-cyan));
+      animation: loadBar 1.4s ease-in-out infinite;
     }
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-8px); }
+    @keyframes loadBar {
+      0% { width: 0; opacity: 0; }
+      50% { width: 110px; opacity: 1; }
+      100% { width: 0; opacity: 0; }
     }
-    .landing-title {
-      font-size: 3rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      background: linear-gradient(135deg, #FFFFFF 30%, #A855F7 70%, #38BDF8 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 12px;
-    }
-    .landing-subtitle {
-      font-size: 1.15rem;
-      color: var(--text-muted);
-      line-height: 1.6;
-      margin-bottom: 30px;
-    }
-    .hero-stats-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 28px;
-      padding: 12px 32px;
-      background: rgba(22, 27, 38, 0.7);
-      border: 1px solid var(--border-color);
-      border-radius: 40px;
-      backdrop-filter: blur(12px);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-      margin-bottom: 36px;
-    }
-    .stat-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .stat-num-val {
-      font-size: 1.3rem;
-      font-weight: 800;
-      color: #FFF;
-    }
-    .stat-label-val {
-      font-size: 0.85rem;
-      color: var(--text-muted);
+    .loader-sub {
+      font-size: 11px; letter-spacing: 6px;
+      color: var(--text-faint); margin-top: 32px;
       text-transform: uppercase;
-      font-weight: 600;
-      letter-spacing: 0.05em;
     }
-    .hero-btn-row {
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      flex-wrap: wrap;
-      margin-bottom: 60px;
+
+    /* Floating Orbs */
+    .orb {
+      position: fixed; border-radius: 50%;
+      filter: blur(80px); pointer-events: none; z-index: 0;
     }
-    .btn-hero-primary {
-      padding: 14px 34px;
-      border-radius: 30px;
-      background: linear-gradient(135deg, #5865F2, #8B5CF6);
-      color: #FFF;
-      font-size: 1rem;
-      font-weight: 700;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      box-shadow: 0 8px 25px rgba(88, 101, 242, 0.4);
-      transition: all 0.25s;
+    .orb-1 { width: 600px; height: 600px; background: radial-gradient(circle, rgba(0,240,255,0.18), transparent 70%); top: -200px; left: -100px; animation: orbFloat1 14s ease-in-out infinite; }
+    .orb-2 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(139,92,246,0.14), transparent 70%); top: 100px; right: -150px; animation: orbFloat2 16s ease-in-out infinite; }
+    .orb-3 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(0,240,255,0.12), transparent 70%); bottom: -100px; left: 30%; animation: orbFloat3 18s ease-in-out infinite; }
+    @keyframes orbFloat1 { 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(80px,40px) scale(1.15);} }
+    @keyframes orbFloat2 { 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(-60px,60px) scale(1.1);} }
+    @keyframes orbFloat3 { 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(40px,-50px) scale(1.2);} }
+
+    /* Hero */
+    .hero {
+      position: relative; z-index: 2;
+      padding: 130px 24px 80px;
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center; overflow: hidden;
     }
-    .btn-hero-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 32px rgba(88, 101, 242, 0.6);
-      color: #FFF;
+
+    .hero-pill {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--surface); border: 1px solid var(--border-2);
+      backdrop-filter: blur(12px);
+      border-radius: var(--radius-pill);
+      padding: 7px 18px 7px 10px;
+      font-size: 12px; color: var(--text-dim); font-weight: 500;
+      margin-bottom: 24px; letter-spacing: .3px;
+      animation: fadeInDown .8s ease both;
     }
-    .btn-hero-secondary {
-      padding: 14px 34px;
-      border-radius: 30px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid var(--border-color);
-      color: #FFF;
-      font-size: 1rem;
-      font-weight: 700;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      backdrop-filter: blur(10px);
-      transition: all 0.25s;
+    .hero-pill .pill-tag {
+      background: var(--neon-cyan); color: #000;
+      font-size: 10px; font-weight: 700;
+      padding: 3px 10px; border-radius: var(--radius-pill);
+      letter-spacing: .5px;
     }
-    .btn-hero-secondary:hover {
-      background: rgba(255, 255, 255, 0.12);
-      border-color: rgba(255, 255, 255, 0.3);
-      transform: translateY(-2px);
-      color: #FFF;
+    .hero-pill .pill-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #22c55e; box-shadow: 0 0 8px #22c55e;
     }
-    /* Feature Grid */
-    .feature-grid-pro {
+    @keyframes fadeInDown { from{opacity:0;transform:translateY(-14px);} to{opacity:1;transform:translateY(0);} }
+    @keyframes fadeInUp { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
+    @keyframes titleUp { from{opacity:0;transform:translateY(40px);} to{opacity:1;transform:translateY(0);} }
+    @keyframes gradientShift { 0%,100%{background-position:0% 50%;} 50%{background-position:100% 50%;} }
+
+    .hero-title {
+      font-family: 'Bebas Neue', 'Kanit', sans-serif;
+      font-size: clamp(64px, 10vw, 130px);
+      line-height: .9; font-weight: 700;
+      letter-spacing: -0.02em; margin-bottom: 10px;
+    }
+    .hero-title .l1 {
+      display: block;
+      background: linear-gradient(180deg, #fff 0%, #aaa 100%);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: titleUp 1s cubic-bezier(.2,.8,.2,1) .15s both;
+    }
+    .hero-title .l2 {
+      display: block;
+      background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--purple) 50%, var(--neon-cyan) 100%);
+      background-size: 200% 200%;
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: titleUp 1s cubic-bezier(.2,.8,.2,1) .3s both, gradientShift 4s ease infinite;
+      filter: drop-shadow(0 0 40px rgba(0,240,255,0.4));
+    }
+
+    .hero-sub {
+      font-size: clamp(14px, 1.6vw, 17px);
+      color: var(--text-dim); max-width: 580px;
+      margin: 16px 0 28px; line-height: 1.65; font-weight: 400;
+      animation: fadeInUp 1s ease .55s both;
+    }
+
+    /* Stats Row */
+    .hero-stats {
+      display: flex; gap: 32px;
+      justify-content: center; flex-wrap: nowrap;
+      margin-top: 36px; padding-top: 28px;
+      border-top: 1px solid var(--border);
+      animation: fadeInUp 1s ease .9s both;
+    }
+    .hero-stat { flex-shrink: 0; text-align: center; }
+    .hero-stat-val {
+      font-family: 'Bebas Neue', 'Kanit', sans-serif;
+      font-size: 36px; font-weight: 700;
+      color: var(--neon-cyan); letter-spacing: 1px; line-height: 1;
+    }
+    .hero-stat-lbl {
+      font-size: 11px; color: var(--text-faint);
+      text-transform: uppercase; letter-spacing: 2px; margin-top: 6px;
+    }
+
+    /* CTA Row */
+    .hero-ctas {
+      display: flex; gap: 14px;
+      justify-content: center; flex-wrap: wrap;
+      animation: fadeInUp 1s ease .7s both;
+    }
+
+    /* Section */
+    .section { position: relative; z-index: 2; padding: 60px 24px; }
+    .section-inner { max-width: 1200px; margin: 0 auto; }
+    .section-head { text-align: center; margin-bottom: 36px; }
+    .section-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 11px; color: var(--neon-cyan);
+      text-transform: uppercase; letter-spacing: 3px;
+      margin-bottom: 10px; font-weight: 600;
+    }
+    .section-eyebrow::before, .section-eyebrow::after {
+      content: ''; width: 24px; height: 1px;
+      background: var(--neon-cyan); opacity: .5;
+    }
+    .section-title {
+      font-family: 'Bebas Neue', 'Kanit', sans-serif;
+      font-size: clamp(36px, 6vw, 72px);
+      line-height: 1; letter-spacing: -0.01em;
+      margin-bottom: 8px; font-weight: 700;
+      background: linear-gradient(105deg, #666 0%, #AAA 25%, #FFF 44%, var(--neon-cyan) 50%, #FFF 56%, #AAA 75%, #666 100%);
+      background-size: 250% 100%; background-position: 150% 0;
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: lightSweepScroll 4.5s ease-in-out infinite;
+    }
+    @keyframes lightSweepScroll {
+      0%   { background-position: 150% 0; }
+      50%  { background-position: -50% 0; }
+      100% { background-position: 150% 0; }
+    }
+    .section-sub { font-size: 15px; color: var(--text-dim); max-width: 500px; margin: 0 auto; line-height: 1.5; }
+
+    /* Feature Bento Grid */
+    .feature-bento {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 20px;
-      max-width: 1100px;
-      margin: 0 auto 60px;
-      padding: 0 20px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
     }
-    .feature-box {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg);
-      padding: 26px 20px;
-      text-align: left;
+    @media(max-width: 880px) { .feature-bento { grid-template-columns: repeat(2, 1fr); } }
+    @media(max-width: 480px) { .feature-bento { grid-template-columns: 1fr 1fr; gap: 10px; } }
+
+    .feature-tile {
       position: relative;
-      overflow: hidden;
-      transition: all 0.3s;
-      box-shadow: var(--shadow-glow);
+      border-radius: 20px; overflow: hidden;
+      border: 1px solid var(--border);
+      text-decoration: none;
+      display: flex; flex-direction: column;
+      background: var(--surface-card);
+      backdrop-filter: blur(16px);
+      padding: 24px 20px;
+      transition: all .3s cubic-bezier(.2,.8,.2,1);
+      cursor: pointer;
     }
-    .feature-box:hover {
-      border-color: rgba(139, 92, 246, 0.4);
-      transform: translateY(-4px);
+    .feature-tile::before {
+      content: ''; position: absolute;
+      top: 0; left: 0; right: 0; height: 70px;
+      background: linear-gradient(180deg, rgba(0,240,255,0.08), transparent);
     }
-    .feature-icon-badge {
-      width: 48px;
-      height: 48px;
-      border-radius: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.3rem;
-      margin-bottom: 18px;
+    .feature-tile:hover {
+      transform: translateY(-5px);
+      border-color: rgba(0, 240, 255, 0.4);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 20px rgba(0,240,255,0.15);
     }
+    .feature-tile-icon {
+      font-size: 2rem; margin-bottom: 14px; z-index: 2;
+    }
+    .feature-tile-title {
+      font-size: 1.1rem; font-weight: 700;
+      color: #FFF; margin-bottom: 8px; z-index: 2;
+    }
+    .feature-tile-desc {
+      font-size: 0.84rem; color: var(--text-dim);
+      line-height: 1.55; z-index: 2; flex: 1;
+    }
+
+    /* Reviews */
+    .review-card {
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: 20px; padding: 20px;
+      backdrop-filter: blur(16px);
+    }
+
+    /* Reveal animation */
+    .reveal { opacity: 0; transform: translateY(32px); transition: opacity .9s cubic-bezier(.2,.8,.2,1), transform .9s cubic-bezier(.2,.8,.2,1); }
+    .reveal.in { opacity: 1; transform: translateY(0); }
   </style>
 </head>
 <body>
-  <!-- Pro Top Navbar -->
-  <header class="app-topbar" style="background: rgba(11, 14, 20, 0.7);">
-    <div style="display: flex; align-items: center; gap: 12px;">
-      <% if (botAvatar) { %>
-        <img src="<%= botAvatar %>" style="width: 36px; height: 36px; border-radius: 10px; box-shadow: 0 0 12px rgba(88, 101, 242, 0.5);" alt="Bot">
-      <% } %>
-      <span style="font-weight: 800; font-size: 1.2rem; letter-spacing: -0.01em;"><%= botName %></span>
-    </div>
+  <!-- Loader -->
+  <div id="loader">
+    <div class="loader-mark">DEVPLUS BOT</div>
+    <div class="loader-sub">กำลังโหลดระบบ...</div>
+  </div>
 
-    <div class="topbar-user">
+  <!-- Background Orbs -->
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <!-- Floating CEO KAITAN Nav -->
+  <nav class="ceo-nav">
+    <div class="ceo-nav-inner">
+      <a href="/" class="ceo-nav-brand">
+        <% if (botAvatar) { %>
+          <img src="<%= botAvatar %>" alt="Bot">
+        <% } %>
+        <div class="dot"></div>
+        DEVPLUS
+      </a>
+
+      <div class="ceo-nav-links">
+        <a href="/" class="active">🏠 หน้าหลัก</a>
+        <a href="/dashboard">📊 Dashboard</a>
+        <a href="<%= inviteURL %>" target="_blank">🤖 เชิญบอท</a>
+      </div>
+
       <% if (user) { %>
-        <a href="/dashboard" class="btn-hero-primary" style="padding: 8px 20px; font-size: 0.88rem;">
-          <i class="fas fa-th-large"></i> Dashboard
-        </a>
-        <a href="/auth/logout" style="color: var(--text-muted); font-size: 0.88rem; padding: 6px 12px;">
-          <i class="fas fa-sign-out-alt"></i> ออกจากระบบ
-        </a>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div class="user-pill">
+            <img src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png" class="user-avatar" alt="User">
+            <span class="user-name"><%= user.username %></span>
+          </div>
+          <a href="/auth/logout" style="color: var(--text-dim); font-size: 0.82rem; padding: 6px 10px; text-decoration: none;">
+            <i class="fas fa-sign-out-alt"></i>
+          </a>
+        </div>
       <% } else { %>
-        <a href="/auth/login" class="btn-hero-primary" style="padding: 8px 22px; font-size: 0.88rem;">
+        <a href="/auth/login" class="btn-primary" style="font-size: 13px; padding: 9px 20px;">
           <i class="fab fa-discord"></i> เข้าสู่ระบบ
         </a>
       <% } %>
     </div>
-  </header>
+  </nav>
 
   <!-- Hero Section -->
-  <main>
-    <section class="landing-hero">
-      <% if (botAvatar) { %>
-        <img src="<%= botAvatar %>" alt="Bot Logo" class="landing-avatar">
-      <% } %>
+  <section class="hero">
+    <!-- Status Pill -->
+    <div class="hero-pill">
+      <div class="pill-dot"></div>
+      <span class="pill-tag">LIVE</span>
+      ระบบพร้อมใช้งาน 24/7
+    </div>
 
-      <h1 class="landing-title"><%= botName %></h1>
-      <p class="landing-subtitle">
-        ยกระดับ Discord Server ของคุณด้วยระบบอัตโนมัติครบวงจร<br>
-        Full Auto Setup • 7-Tier Security • Verify Gate • Welcome • Modern Dashboard
-      </p>
+    <!-- Main Title -->
+    <h1 class="hero-title">
+      <span class="l1">DEVPLUS</span>
+      <span class="l2">BOT</span>
+    </h1>
 
-      <!-- Stats Bar -->
-      <div class="hero-stats-pill">
-        <div class="stat-item">
-          <i class="fas fa-server" style="color: #38BDF8; font-size: 1.1rem;"></i>
-          <div>
-            <div class="stat-num-val"><%= serverCount %></div>
-            <div class="stat-label-val">Servers</div>
-          </div>
-        </div>
-        <div style="width: 1px; height: 30px; background: var(--border-color);"></div>
-        <div class="stat-item">
-          <i class="fas fa-users" style="color: #A855F7; font-size: 1.1rem;"></i>
-          <div>
-            <div class="stat-num-val"><%= userCount %></div>
-            <div class="stat-label-val">Users</div>
-          </div>
-        </div>
-      </div>
+    <p class="hero-sub">
+      ยกระดับ Discord Server ของคุณด้วยระบบอัตโนมัติครบวงจร<br>
+      Full Auto Setup • 7-Tier Security • Verify Gate • Welcome • Modern Dashboard
+    </p>
 
-      <!-- Action Buttons -->
-      <div class="hero-btn-row">
-        <% if (user) { %>
-          <a href="/dashboard" class="btn-hero-primary">
-            <i class="fas fa-tachometer-alt"></i> ไปที่ Dashboard
-          </a>
-        <% } else { %>
-          <a href="/auth/login" class="btn-hero-primary">
-            <i class="fab fa-discord"></i> เข้าสู่ระบบด้วย Discord
-          </a>
-        <% } %>
-        <a href="<%= inviteURL %>" target="_blank" class="btn-hero-secondary">
-          <i class="fas fa-plus-circle"></i> เชิญบอทเข้าเซิร์ฟเวอร์
+    <!-- CTA Buttons -->
+    <div class="hero-ctas">
+      <% if (user) { %>
+        <a href="/dashboard" class="btn-primary" style="font-size: 15px; padding: 14px 32px;">
+          <i class="fas fa-tachometer-alt"></i> <span>ไปที่ Dashboard</span>
         </a>
-      </div>
-    </section>
+      <% } else { %>
+        <a href="/auth/login" class="btn-primary" style="font-size: 15px; padding: 14px 32px;">
+          <i class="fab fa-discord"></i> <span>เข้าสู่ระบบด้วย Discord</span>
+        </a>
+      <% } %>
+      <a href="<%= inviteURL %>" target="_blank" class="btn-ghost" style="font-size: 15px; padding: 14px 32px;">
+        <i class="fas fa-plus-circle"></i> เชิญบอทเข้าเซิร์ฟเวอร์
+      </a>
+    </div>
 
-    <!-- Key Features Grid -->
-    <section class="feature-grid-pro">
-      <div class="feature-box">
-        <div class="feature-icon-badge" style="background: rgba(16, 185, 129, 0.15); color: #10B981;">
-          <i class="fas fa-bolt"></i>
+    <!-- Stats Row -->
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-val"><%= serverCount %></div>
+        <div class="hero-stat-lbl">Servers</div>
+      </div>
+      <div style="width:1px; background: var(--border); align-self: stretch;"></div>
+      <div class="hero-stat">
+        <div class="hero-stat-val"><%= userCount %></div>
+        <div class="hero-stat-lbl">Users</div>
+      </div>
+      <div style="width:1px; background: var(--border); align-self: stretch;"></div>
+      <div class="hero-stat">
+        <div class="hero-stat-val">20+</div>
+        <div class="hero-stat-lbl">Commands</div>
+      </div>
+      <div style="width:1px; background: var(--border); align-self: stretch;"></div>
+      <div class="hero-stat">
+        <div class="hero-stat-val">24/7</div>
+        <div class="hero-stat-lbl">Uptime</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="section reveal" id="features">
+    <div class="section-inner">
+      <div class="section-head">
+        <div class="section-eyebrow">ฟีเจอร์</div>
+        <h2 class="section-title">ระบบครบ ทำได้ทุกอย่าง</h2>
+        <p class="section-sub">บอทอัตโนมัติที่จัดการ Discord Server ได้ครบวงจรในคลิกเดียว</p>
+      </div>
+
+      <div class="feature-bento">
+        <div class="feature-tile">
+          <div class="feature-tile-icon" style="color: #10B981;">⚡</div>
+          <div class="feature-tile-title">Full Auto Setup</div>
+          <p class="feature-tile-desc">คลิกเดียวสร้างยศ ห้อง หมวดหมู่ ล็อกสิทธิ์ และผูกระบบต้อนรับ-ยืนยันตัวตนพร้อมใช้ทันที</p>
         </div>
-        <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 8px;">Full Auto Setup</h3>
-        <p style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.6;">
-          คลิกเดียวสร้างยศ ห้อง หมวดหมู่ ล็อกสิทธิ์ และผูกระบบต้อนรับกับยืนยันตัวตนพร้อมใช้ทันที
-        </p>
-      </div>
 
-      <div class="feature-box">
-        <div class="feature-icon-badge" style="background: rgba(56, 189, 248, 0.15); color: #38BDF8;">
-          <i class="fas fa-shield-alt"></i>
+        <div class="feature-tile">
+          <div class="feature-tile-icon" style="color: #38BDF8;">🛡️</div>
+          <div class="feature-tile-title">7-Tier Security</div>
+          <p class="feature-tile-desc">จัดระเบียบ 7 ระดับสิทธิ์ Founder, Admin, Staff, VIP, Bot, Verified, Member ซ่อนห้องสแปม 100%</p>
         </div>
-        <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 8px;">7-Tier Security</h3>
-        <p style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.6;">
-          จัดระเบียบ 7 ระดับสิทธิ์ Founder, Admin, Staff, VIP, Bot, Verified, Member ซ่อนห้องสแปม 100%
-        </p>
-      </div>
 
-      <div class="feature-box">
-        <div class="feature-icon-badge" style="background: rgba(168, 85, 247, 0.15); color: #A855F7;">
-          <i class="fas fa-user-check"></i>
+        <div class="feature-tile">
+          <div class="feature-tile-icon" style="color: #A855F7;">✅</div>
+          <div class="feature-tile-title">Verify & Welcome</div>
+          <p class="feature-tile-desc">แผงกดยืนยันตัวตนรับยศอัตโนมัติ และการ์ดต้อนรับสมาชิกใหม่แบบ Embed สวยงามแบบกำหนดเอง</p>
         </div>
-        <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 8px;">Verify & Welcome</h3>
-        <p style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.6;">
-          แผงกดยืนยันตัวตนรับยศอัตโนมัติ และการ์ดต้อนรับสมาชิกใหม่แบบ Embed สวยงาม
-        </p>
-      </div>
 
-      <div class="feature-box">
-        <div class="feature-icon-badge" style="background: rgba(244, 63, 94, 0.15); color: #F43F5E;">
-          <i class="fas fa-paint-brush"></i>
+        <div class="feature-tile">
+          <div class="feature-tile-icon" style="color: #F43F5E;">🎨</div>
+          <div class="feature-tile-title">Server Styler & Clone</div>
+          <p class="feature-tile-desc">ตกแต่งห้องด้วยธีมเกมมิ่ง คอมมูนิตี้ คาเฟ่ พร้อมระบบโคลนห้อง 1:1 และเคาน์เตอร์สถิติสด</p>
         </div>
-        <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 8px;">Server Styler & Clone</h3>
-        <p style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.6;">
-          ตกแต่งห้องด้วยธีมเกมมิ่ง คอมมูนิตี้ คาเฟ่ พร้อมระบบโคลนห้อง 1:1 และเคาน์เตอร์สถิติ
-        </p>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- Reviews Section -->
-    <section style="max-width: 1000px; margin: 40px auto 80px; padding: 0 20px;">
+  <!-- Reviews Section -->
+  <section class="section reveal" id="reviews">
+    <div class="section-inner">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 14px;">
         <div>
-          <h2 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 4px;">
-            <i class="fas fa-star" style="color: #F59E0B;"></i> รีวิวและการให้คะแนน
+          <div class="section-eyebrow" style="justify-content: flex-start; margin-bottom: 6px;">รีวิว</div>
+          <h2 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 4px; color: #FFF;">
+            <i class="fas fa-star" style="color: #F59E0B;"></i> <%= reviewStats.avgRating %> / 5.0 ดาว
           </h2>
-          <p style="color: var(--text-muted); font-size: 0.88rem;">
-            คะแนนเฉลี่ย <%= reviewStats.avgRating %> / 5.0 ดาว (ทั้งหมด <%= reviewStats.total %> รีวิว)
-          </p>
+          <p style="color: var(--text-dim); font-size: 0.88rem;">ทั้งหมด <%= reviewStats.total %> รีวิว</p>
         </div>
         <% if (user) { %>
-          <button class="btn-hero-primary" onclick="openReviewModal()" style="padding: 10px 22px; font-size: 0.88rem; cursor: pointer; border: none;">
-            <i class="fas fa-pen"></i> เขียนรีวิวของคุณ
+          <button class="btn-primary" onclick="openReviewModal()" style="cursor: pointer; border: none; font-size: 14px; padding: 11px 24px;">
+            <i class="fas fa-pen"></i> <span>เขียนรีวิวของคุณ</span>
           </button>
         <% } else { %>
-          <a href="/auth/login" class="btn-hero-secondary" style="padding: 10px 22px; font-size: 0.88rem;">
-            <i class="fab fa-discord"></i> เข้าสู่ระบบเพื่อเขียนรีวิว
+          <a href="/auth/login" class="btn-ghost" style="font-size: 14px; padding: 11px 24px;">
+            <i class="fab fa-discord"></i> เข้าสู่ระบบเพื่อรีวิว
           </a>
         <% } %>
       </div>
 
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
         <% if (reviews.length === 0) { %>
-          <div style="grid-column: 1/-1; text-align: center; padding: 36px; background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
-            <p style="color: var(--text-muted);">ยังไม่มีรีวิว ร่วมเป็นคนแรกที่ให้คะแนนและรีวิวบอทตัวนี้!</p>
+          <div style="grid-column: 1/-1; text-align: center; padding: 40px; background: var(--surface-card); border-radius: 20px; border: 1px solid var(--border);">
+            <p style="color: var(--text-dim);">ยังไม่มีรีวิว ร่วมเป็นคนแรกที่ให้คะแนนบอทนี้!</p>
           </div>
         <% } else { %>
           <% reviews.forEach(r => { %>
-            <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow-glow);">
+            <div class="review-card">
               <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-                <img src="<%= r.avatar ? `https://cdn.discordapp.com/avatars/${r.user_id}/${r.avatar}.png` : 'https://cdn.discordapp.com/embed/avatars/0.png' %>" style="width: 38px; height: 38px; border-radius: 50%;" alt="Avatar">
+                <img src="<%= r.avatar ? `https://cdn.discordapp.com/avatars/${r.user_id}/${r.avatar}.png` : 'https://cdn.discordapp.com/embed/avatars/0.png' %>" style="width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--border-2);" alt="Avatar">
                 <div>
-                  <div style="font-weight: 700; font-size: 0.92rem;"><%= r.username %></div>
+                  <div style="font-weight: 700; font-size: 0.92rem; color: #FFF;"><%= r.username %></div>
                   <div style="color: #F59E0B; font-size: 0.8rem;">
                     <% for(let i=0; i<r.rating; i++) { %>★<% } %><% for(let i=r.rating; i<5; i++) { %>☆<% } %>
                   </div>
                 </div>
               </div>
-              <p style="color: #CBD5E1; font-size: 0.88rem; line-height: 1.5;"><%= r.comment || 'ไม่มีความคิดเห็นเพิ่มเติม' %></p>
+              <p style="color: var(--text-dim); font-size: 0.88rem; line-height: 1.55;"><%= r.comment || 'ไม่มีความคิดเห็นเพิ่มเติม' %></p>
             </div>
           <% }) %>
         <% } %>
       </div>
-    </section>
-  </main>
+    </div>
+  </section>
 
   <!-- Review Modal -->
-  <div id="reviewModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); z-index: 1000; align-items: center; justify-content: center;">
-    <div style="background: #161B26; border: 1px solid var(--border-color); border-radius: var(--radius-lg); width: 90%; max-width: 450px; padding: 26px; box-shadow: var(--shadow-glow);">
-      <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 16px;">⭐ เขียนรีวิวให้ Devplus BOT</h3>
+  <div id="reviewModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(10px); z-index: 1000; align-items: center; justify-content: center;">
+    <div style="background: #0E0F16; border: 1px solid var(--border-2); border-radius: 24px; width: 90%; max-width: 450px; padding: 28px; box-shadow: 0 20px 60px rgba(0,0,0,0.8);">
+      <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 20px; color: #FFF;">⭐ เขียนรีวิวให้ Devplus BOT</h3>
       <div style="margin-bottom: 16px;">
-        <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px;">ให้คะแนนดาว:</label>
-        <select id="reviewRating" style="width: 100%; padding: 10px; background: #0F131C; border: 1px solid var(--border-color); border-radius: 8px; color: #FFF;">
+        <label style="display: block; font-size: 0.85rem; color: var(--text-dim); margin-bottom: 8px;">ให้คะแนนดาว:</label>
+        <select id="reviewRating" class="form-control-pro">
           <option value="5">⭐⭐⭐⭐⭐ 5 ดาว (ยอดเยี่ยมมาก)</option>
           <option value="4">⭐⭐⭐⭐ 4 ดาว (ดีมาก)</option>
           <option value="3">⭐⭐⭐ 3 ดาว (ปานกลาง)</option>
@@ -335,43 +439,50 @@
         </select>
       </div>
       <div style="margin-bottom: 20px;">
-        <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px;">ความคิดเห็น:</label>
-        <textarea id="reviewComment" rows="3" style="width: 100%; padding: 10px; background: #0F131C; border: 1px solid var(--border-color); border-radius: 8px; color: #FFF; outline: none;" placeholder="บอกเล่าความรู้สึกและฟีเจอร์ที่ชอบ..."></textarea>
+        <label style="display: block; font-size: 0.85rem; color: var(--text-dim); margin-bottom: 8px;">ความคิดเห็น:</label>
+        <textarea id="reviewComment" rows="3" class="form-control-pro" placeholder="บอกเล่าความรู้สึกและฟีเจอร์ที่ชอบ..."></textarea>
       </div>
       <div style="display: flex; justify-content: flex-end; gap: 10px;">
-        <button onclick="closeReviewModal()" style="padding: 10px 18px; border-radius: 20px; background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); cursor: pointer;">ยกเลิก</button>
-        <button onclick="submitReview()" style="padding: 10px 22px; border-radius: 20px; background: var(--accent-primary); border: none; color: #FFF; font-weight: 700; cursor: pointer;">ส่งรีวิว</button>
+        <button onclick="closeReviewModal()" class="btn-ghost" style="padding: 10px 20px; font-size: 14px;">ยกเลิก</button>
+        <button onclick="submitReview()" class="btn-primary" style="padding: 10px 24px; font-size: 14px; border: none; cursor: pointer;"><span>ส่งรีวิว</span></button>
       </div>
     </div>
   </div>
 
-  <footer style="padding: 30px; text-align: center; font-size: 0.85rem; color: var(--text-muted); border-top: 1px solid var(--border-color);">
-    &copy; 2026 Devplus BOT — พัฒนาโดย <strong>tewit noita</strong> (<a href="https://github.com/tewitdevPlus" target="_blank" style="color: var(--accent-primary);">@tewitdevPlus</a>)
+  <footer style="position: relative; z-index: 2; padding: 30px 24px; text-align: center; font-size: 0.84rem; color: var(--text-dim); border-top: 1px solid var(--border);">
+    &copy; 2026 Devplus BOT — พัฒนาโดย <strong style="color: #FFF;">tewit noita</strong>
+    (<a href="https://github.com/tewitdevPlus" target="_blank" style="color: var(--neon-cyan); text-decoration: none;">@tewitdevPlus</a>)
   </footer>
 
   <script>
-    function openReviewModal() {
-      document.getElementById('reviewModal').style.display = 'flex';
-    }
-    function closeReviewModal() {
-      document.getElementById('reviewModal').style.display = 'none';
-    }
+    // Loader
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.getElementById('loader').classList.add('done');
+      }, 600);
+    });
+
+    // Reveal on scroll
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+    }, { threshold: 0.1 });
+    reveals.forEach(r => observer.observe(r));
+
+    // Review Modal
+    function openReviewModal() { document.getElementById('reviewModal').style.display = 'flex'; }
+    function closeReviewModal() { document.getElementById('reviewModal').style.display = 'none'; }
     async function submitReview() {
       const rating = document.getElementById('reviewRating').value;
       const comment = document.getElementById('reviewComment').value.trim();
-
       const res = await fetch('/api/reviews', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ rating, comment })
       });
       const data = await res.json();
-      if (data.success) {
-        alert('ขอบคุณสำหรับรีวิวของคุณ!');
-        window.location.reload();
-      } else {
-        alert('เกิดข้อผิดพลาด: ' + (data.error || 'ไม่สามารถส่งรีวิวได้'));
-      }
+      if (data.success) { alert('ขอบคุณสำหรับรีวิวของคุณ!'); window.location.reload(); }
+      else { alert('เกิดข้อผิดพลาด: ' + (data.error || 'ไม่สามารถส่งรีวิวได้')); }
     }
   </script>
 </body>
