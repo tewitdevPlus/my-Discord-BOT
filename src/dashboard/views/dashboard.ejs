@@ -3,85 +3,326 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Devplus Dashboard — Select a Server</title>
+  <title>Devplus Dashboard — เลือกเซิร์ฟเวอร์</title>
   <link rel="stylesheet" href="/css/modern-pro.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
-    /* Clean Centered Server Selection Layout (No Sidebar) */
-    .clean-dashboard-wrapper {
+    /* =============================================
+       Dashboard Server Select — CEO KAITAN Style
+       ============================================= */
+
+    /* Loader */
+    #loader {
+      position: fixed; inset: 0; z-index: 99999;
+      background: #000;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      transition: opacity .4s, visibility .4s;
+    }
+    #loader.done { opacity: 0; visibility: hidden; }
+    .loader-mark {
+      font-family: 'Bebas Neue', 'Kanit', sans-serif;
+      font-size: 60px; letter-spacing: 8px; color: #fff;
+      position: relative;
+    }
+    .loader-mark::after {
+      content: ''; position: absolute;
+      left: 50%; bottom: -16px;
+      transform: translateX(-50%);
+      width: 0; height: 2px;
+      background: linear-gradient(90deg, var(--neon-cyan), var(--purple), var(--neon-cyan));
+      animation: loadBar 1.4s ease-in-out infinite;
+    }
+    @keyframes loadBar {
+      0% { width: 0; opacity: 0; }
+      50% { width: 110px; opacity: 1; }
+      100% { width: 0; opacity: 0; }
+    }
+    .loader-sub {
+      font-size: 11px; letter-spacing: 6px;
+      color: var(--text-faint); margin-top: 32px;
+      text-transform: uppercase;
+    }
+
+    /* Floating Orbs */
+    .orb {
+      position: fixed; border-radius: 50%;
+      filter: blur(80px); pointer-events: none; z-index: 0;
+    }
+    .orb-1 { width: 500px; height: 500px; background: rgba(0,240,255,.06); top: -100px; left: -100px; }
+    .orb-2 { width: 400px; height: 400px; background: rgba(139,92,246,.07); top: 40%; right: -80px; }
+    .orb-3 { width: 300px; height: 300px; background: rgba(0,240,255,.04); bottom: -60px; left: 40%; }
+
+    /* Nav */
+    .ceo-nav {
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+      z-index: 1000; padding: 10px 24px;
+      background: rgba(10,10,15,.75);
+      backdrop-filter: blur(24px);
+      border: 1px solid var(--border);
+      border-radius: 60px;
+      display: flex; align-items: center; gap: 24px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.4);
+    }
+    .ceo-nav-brand {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.3rem; letter-spacing: 2px; color: #fff;
+    }
+    .ceo-nav-brand img {
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 1px solid var(--neon-cyan);
+    }
+    .ceo-nav-actions {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .nav-user-pill {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid var(--border);
+      border-radius: 40px; padding: 5px 14px 5px 6px;
+    }
+    .nav-user-pill img {
+      width: 26px; height: 26px; border-radius: 50%;
+    }
+    .nav-user-pill span {
+      font-size: .82rem; color: var(--text-dim);
+    }
+    .nav-logout {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid var(--border);
+      border-radius: 40px; padding: 6px 14px;
+      color: var(--text-dim); font-size: .82rem;
+      text-decoration: none;
+      transition: color .2s, border-color .2s;
+    }
+    .nav-logout:hover { color: #fff; border-color: rgba(255,255,255,.25); }
+    .nav-admin-btn {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(236,72,153,.12);
+      border: 1px solid rgba(236,72,153,.35);
+      border-radius: 40px; padding: 6px 14px;
+      color: #EC4899; font-size: .82rem;
+      text-decoration: none;
+      transition: background .2s;
+    }
+    .nav-admin-btn:hover { background: rgba(236,72,153,.22); }
+
+    /* Page Layout */
+    .dash-wrapper {
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+      position: relative; z-index: 1;
+      padding-top: 110px;
     }
-    .clean-topbar {
-      height: 70px;
-      padding: 0 40px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid var(--border-color);
-      background: rgba(16, 20, 29, 0.7);
-      backdrop-filter: blur(20px);
-      position: sticky;
-      top: 0;
-      z-index: 50;
-    }
-    .clean-main {
-      flex: 1;
-      padding: 48px 32px;
+    .dash-main {
       max-width: 1200px;
       width: 100%;
       margin: 0 auto;
+      padding: 0 32px 80px;
     }
+
+    /* Section Header */
+    .dash-header {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      flex-wrap: wrap; gap: 16px;
+      margin-bottom: 36px;
+    }
+    .dash-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.4rem; letter-spacing: 3px;
+      background: linear-gradient(135deg, #fff 40%, var(--neon-cyan));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .dash-subtitle {
+      color: var(--text-dim); font-size: .93rem; margin-top: 4px;
+    }
+    .dash-controls {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .search-box {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 40px;
+      padding: 8px 16px;
+      width: 240px;
+    }
+    .search-box i { color: var(--text-faint); font-size: .82rem; }
+    .search-input {
+      background: none; border: none; outline: none;
+      color: var(--text); font-family: 'Kanit', sans-serif;
+      font-size: .88rem; width: 100%;
+    }
+    .search-input::placeholder { color: var(--text-faint); }
+    .btn-refresh {
+      display: flex; align-items: center; gap: 7px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid var(--border);
+      border-radius: 40px; padding: 8px 18px;
+      color: var(--text-dim); font-size: .88rem;
+      text-decoration: none; white-space: nowrap;
+      transition: color .2s, border-color .2s;
+    }
+    .btn-refresh:hover { color: #fff; border-color: rgba(255,255,255,.25); }
+
+    /* Server Cards */
+    .server-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 20px;
+    }
+    .server-card {
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px 20px 22px;
+      display: flex; flex-direction: column;
+      align-items: center; gap: 12px;
+      text-align: center;
+      transition: border-color .2s, transform .2s, box-shadow .2s;
+      position: relative; overflow: hidden;
+    }
+    .server-card::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at top, rgba(0,240,255,.04) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .server-card:hover {
+      border-color: rgba(0,240,255,.35);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 36px rgba(0,240,255,.1);
+    }
+    .server-icon {
+      width: 72px; height: 72px; border-radius: 50%;
+      border: 2px solid var(--border);
+      object-fit: cover;
+      transition: border-color .2s;
+    }
+    .server-card:hover .server-icon { border-color: var(--neon-cyan); }
+    .server-icon-placeholder {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--neon-cyan), var(--purple));
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem; color: #fff;
+    }
+    .server-name {
+      font-weight: 700; font-size: 1rem;
+      color: var(--text);
+      display: -webkit-box; -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical; overflow: hidden;
+      max-width: 180px;
+    }
+    .server-role-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: .78rem; color: var(--text-faint);
+      background: rgba(255,255,255,.05);
+      border: 1px solid var(--border);
+      border-radius: 40px; padding: 3px 10px;
+    }
+    .btn-go {
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+      width: 100%;
+      background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--purple) 100%);
+      color: #000; font-weight: 700; font-size: .88rem;
+      border-radius: 40px; padding: 10px 0;
+      text-decoration: none;
+      transition: opacity .2s, transform .15s;
+    }
+    .btn-go:hover { opacity: .88; transform: scale(1.02); }
+    .btn-setup {
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+      width: 100%;
+      background: rgba(255,255,255,.06);
+      color: var(--text-dim); font-weight: 600; font-size: .88rem;
+      border: 1px solid var(--border);
+      border-radius: 40px; padding: 10px 0;
+      text-decoration: none;
+      transition: color .2s, border-color .2s;
+    }
+    .btn-setup:hover { color: #fff; border-color: rgba(255,255,255,.3); }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 80px 20px;
+      color: var(--text-faint);
+    }
+    .empty-state i { font-size: 3rem; margin-bottom: 16px; color: var(--text-faint); }
+    .empty-state p { font-size: 1rem; }
+
+    /* Footer */
+    .dash-footer {
+      text-align: center;
+      font-size: .82rem;
+      color: var(--text-faint);
+      border-top: 1px solid var(--border);
+      padding: 24px 32px;
+      margin-top: 48px;
+    }
+    .dash-footer a { color: var(--neon-cyan); text-decoration: none; }
+    .dash-footer a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
-  <div class="clean-dashboard-wrapper">
-    <!-- Clean Topbar -->
-    <header class="clean-topbar">
-      <div style="display: flex; align-items: center; gap: 14px;">
-        <a href="/" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
-          <img src="https://cdn.discordapp.com/embed/avatars/0.png" class="sidebar-logo" alt="Logo">
-          <span style="font-weight: 800; font-size: 1.25rem; color: #FFF; letter-spacing: -0.01em;">Devplus BOT</span>
-        </a>
-      </div>
+  <!-- Loader -->
+  <div id="loader">
+    <div class="loader-mark">DEVPLUS</div>
+    <div class="loader-sub">Loading Dashboard</div>
+  </div>
 
-      <div class="topbar-user">
-        <% if (user.username === 'tewitplus_58868') { %>
-          <a href="/admin" class="btn-setup" style="width: auto; padding: 7px 16px; background: rgba(236, 72, 153, 0.15); border: 1px solid rgba(236, 72, 153, 0.4); color: #EC4899; font-size: 0.82rem;">
-            <i class="fas fa-crown"></i> Admin Secret
-          </a>
-        <% } %>
-        <div class="user-pill">
-          <img src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png" class="user-avatar" alt="User">
-          <span class="user-name"><%= user.username %></span>
-        </div>
-        <a href="/auth/logout" style="color: var(--text-muted); padding: 8px 12px; font-size: 0.88rem; text-decoration: none;" title="ออกจากระบบ">
-          <i class="fas fa-sign-out-alt"></i> ออกจากระบบ
-        </a>
-      </div>
-    </header>
+  <!-- Floating Orbs -->
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
 
-    <!-- Main Content: Select Server Only -->
-    <main class="clean-main">
-      <div class="servers-header" style="margin-bottom: 32px;">
+  <!-- Floating Pill Nav -->
+  <nav class="ceo-nav">
+    <a href="/" class="ceo-nav-brand">
+      <img src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Logo">
+      DEVPLUS
+    </a>
+    <div class="ceo-nav-actions">
+      <% if (user.username === 'tewitplus_58868') { %>
+        <a href="/admin" class="nav-admin-btn">
+          <i class="fas fa-crown"></i> Admin
+        </a>
+      <% } %>
+      <div class="nav-user-pill">
+        <img src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png" alt="<%= user.username %>">
+        <span><%= user.username %></span>
+      </div>
+      <a href="/auth/logout" class="nav-logout" title="ออกจากระบบ">
+        <i class="fas fa-sign-out-alt"></i> ออก
+      </a>
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <div class="dash-wrapper">
+    <main class="dash-main">
+      <!-- Header -->
+      <div class="dash-header">
         <div>
-          <h1 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 6px;">เลือกเซิร์ฟเวอร์ที่ต้องการจัดการ</h1>
-          <p style="color: var(--text-muted); font-size: 0.95rem;">คลิกที่ปุ่ม <strong>"Go จัดการ"</strong> เพื่อเข้าสู่หน้าควบคุมของแต่ละเซิร์ฟเวอร์</p>
+          <div class="dash-title">เลือกเซิร์ฟเวอร์</div>
+          <p class="dash-subtitle">คลิก <strong>"Go จัดการ"</strong> เพื่อเข้าสู่หน้าควบคุมของแต่ละเซิร์ฟเวอร์</p>
         </div>
-
-        <div style="display: flex; align-items: center; gap: 12px;">
-          <div class="search-box" style="width: 260px;">
-            <i class="fas fa-search" style="color: var(--text-muted); font-size: 0.85rem;"></i>
-            <input type="text" id="serverSearchInput" class="search-input" placeholder="ค้นหาชื่อเซิร์ฟเวอร์..." onkeyup="filterServers()">
+        <div class="dash-controls">
+          <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="serverSearchInput" class="search-input"
+              placeholder="ค้นหาเซิร์ฟเวอร์..." onkeyup="filterServers()">
           </div>
-          <a href="/dashboard-refresh" class="btn-setup" style="width: auto; padding: 8px 18px; background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border-color); color: var(--text-main); font-weight: 600;">
+          <a href="/dashboard-refresh" class="btn-refresh">
             <i class="fas fa-sync-alt"></i> Refresh
           </a>
         </div>
       </div>
 
-      <!-- Server Cards Grid -->
+      <!-- Server Grid -->
       <div class="server-grid" id="serverCardsContainer">
         <% guilds.forEach(g => { %>
           <div class="server-card server-item-element" data-name="<%= g.name.toLowerCase() %>">
@@ -93,7 +334,8 @@
 
             <h3 class="server-name" title="<%= g.name %>"><%= g.name %></h3>
             <span class="server-role-badge">
-              <i class="fas <%= g.owner ? 'fa-crown' : 'fa-user-shield' %>" style="color: <%= g.owner ? '#F59E0B' : '#38BDF8' %>;"></i>
+              <i class="fas <%= g.owner ? 'fa-crown' : 'fa-user-shield' %>"
+                style="color: <%= g.owner ? '#F59E0B' : '#38BDF8' %>;"></i>
               <%= g.owner ? 'Owner' : 'Administrator' %>
             </span>
 
@@ -102,33 +344,45 @@
                 <i class="fas fa-arrow-right"></i> Go จัดการ
               </a>
             <% } else { %>
-              <a href="https://discord.com/oauth2/authorize?client_id=1571905923365212280&permissions=8&scope=bot%20applications.commands&guild_id=<%= g.id %>" target="_blank" class="btn-setup">
-                <i class="fas fa-plus"></i> Setup เชิญบอท
+              <a href="https://discord.com/oauth2/authorize?client_id=1571905923365212280&permissions=8&scope=bot%20applications.commands&guild_id=<%= g.id %>"
+                target="_blank" class="btn-setup">
+                <i class="fas fa-plus"></i> Setup เพิ่มบอท
               </a>
             <% } %>
           </div>
         <% }) %>
       </div>
+
+      <!-- Empty State -->
+      <div id="emptyState" class="empty-state" style="display:none;">
+        <i class="fas fa-search"></i>
+        <p>ไม่พบเซิร์ฟเวอร์ที่ค้นหา</p>
+      </div>
     </main>
 
-    <!-- Footer -->
-    <footer style="margin-top: auto; padding: 24px; text-align: center; font-size: 0.82rem; color: var(--text-muted); border-top: 1px solid var(--border-color);">
-      &copy; 2026 Devplus Dashboard — ออกแบบและพัฒนาโดย <strong>tewit noita</strong> (<a href="https://github.com/tewitdevPlus" target="_blank" style="color: var(--accent-primary);">@tewitdevPlus</a>)
+    <footer class="dash-footer">
+      &copy; 2026 Devplus Dashboard &mdash; ออกแบบและพัฒนาโดย <strong>tewit noita</strong>
+      (<a href="https://github.com/tewitdevPlus" target="_blank">@tewitdevPlus</a>)
     </footer>
   </div>
 
   <script>
+    // Loader
+    window.addEventListener('load', () => {
+      setTimeout(() => document.getElementById('loader').classList.add('done'), 600);
+    });
+
+    // Server Search Filter
     function filterServers() {
       const query = document.getElementById('serverSearchInput').value.toLowerCase().trim();
       const cards = document.querySelectorAll('.server-item-element');
+      let visible = 0;
       cards.forEach(card => {
-        const name = card.getAttribute('data-name');
-        if (name.includes(query)) {
-          card.style.display = 'flex';
-        } else {
-          card.style.display = 'none';
-        }
+        const match = card.getAttribute('data-name').includes(query);
+        card.style.display = match ? '' : 'none';
+        if (match) visible++;
       });
+      document.getElementById('emptyState').style.display = visible === 0 ? 'block' : 'none';
     }
   </script>
 </body>
