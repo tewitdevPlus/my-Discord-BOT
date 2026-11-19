@@ -75,15 +75,92 @@
 
     <!-- Tab Navigation -->
     <div class="tabs">
+      <button class="tab" data-tab="auto-setup" style="color: #57F287; border-color: rgba(87, 242, 135, 0.4);"><i class="fas fa-bolt"></i> Full Auto Setup</button>
       <button class="tab active" data-tab="welcome"><i class="fas fa-hand-sparkles"></i> Welcome</button>
       <button class="tab" data-tab="verify"><i class="fas fa-check-circle"></i> Verify</button>
+      <button class="tab" data-tab="autorole"><i class="fas fa-user-tag"></i> Auto Role</button>
       <button class="tab" data-tab="stats-role"><i class="fas fa-chart-line"></i> สถิติ & ยศ</button>
       <button class="tab" data-tab="styler"><i class="fas fa-paint-brush"></i> แต่งห้องเซิร์ฟเวอร์</button>
       <button class="tab" data-tab="clone-channel"><i class="fas fa-copy"></i> สร้างห้องจากแม่แบบ</button>
       <button class="tab" data-tab="ideas"><i class="fas fa-lightbulb"></i> คลังไอเดีย & วิธีทำ</button>
-      <button class="tab" data-tab="moderation"><i class="fas fa-shield-halved"></i> Moderation</button>
-      <button class="tab" data-tab="logs"><i class="fas fa-clipboard-list"></i> Logs</button>
+      <button class="tab" data-tab="moderation"><i class="fas fa-shield-halved"></i> Moderation & Logs</button>
       <button class="tab" data-tab="danger" style="color: #ED4245; border-color: rgba(237, 66, 69, 0.4);"><i class="fas fa-biohazard"></i> โซนอันตราย (Danger)</button>
+    </div>
+
+    <!-- Full Auto Setup Tab -->
+    <div class="tab-content" id="tab-auto-setup">
+      <div class="card" style="border: 2px solid #57F287; background: rgba(87, 242, 135, 0.04);">
+        <div class="card-header" style="border-bottom: 1px solid rgba(87, 242, 135, 0.3);">
+          <h2 style="color: #57F287;"><i class="fas fa-bolt"></i> ติดตั้งระบบแบบ Full Auto Setup (คลิกเดียวครบทุกอย่าง)</h2>
+          <span class="badge" style="background: #57F287; color: #000; font-weight: bold;">แนะนำสูงสุด</span>
+        </div>
+        <div class="card-body">
+          <p class="text-muted" style="margin-bottom: 20px; font-size: 1rem; line-height: 1.6;">
+            ระบบจะทำการ <strong>สร้างยศ (Roles)</strong>, <strong>สร้างหมวดหมู่และห้องทั้งหมด</strong>, <strong>ตั้งค่าสิทธิ์อ่านอย่างเดียวและซ่อนห้อง Staff</strong>, <strong>เปิดระบบต้อนรับ (Welcome)</strong>, <strong>ส่งแผงยืนยันตัวตน (Verify)</strong>, และ <strong>ผูก Auto Role</strong> ให้อัตโนมัติทันทีในคลิกเดียว!
+          </p>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 24px;">
+            <div class="theme-card" onclick="selectAutoTheme('security')" id="autotheme-security" style="border: 2px solid #2ECC71; border-radius: 8px; padding: 18px; cursor: pointer; background: rgba(46, 204, 113, 0.08);">
+              <h3 style="color: #2ECC71; font-size: 1.15rem; margin-bottom: 8px;">🛡️ 7 ระดับสิทธิ์ความปลอดภัยสูง</h3>
+              <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 12px;">Founder, Admin, Staff, VIP, Bot, Verified, Member ล็อกและซ่อนห้องเด็ดขาด ป้องกันสแปม 100%</p>
+              <span class="badge" style="background: #2ECC71; color: #fff;">มาตรฐานความปลอดภัย</span>
+            </div>
+
+            <div class="theme-card" onclick="selectAutoTheme('gaming')" id="autotheme-gaming" style="border: 2px solid var(--border); border-radius: 8px; padding: 18px; cursor: pointer;">
+              <h3 style="font-size: 1.15rem; margin-bottom: 8px;">🎮 เกมมิ่ง & ตี้เกม</h3>
+              <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 12px;">ยศ Gamer/VIP พร้อมห้องแชทเกมเมอร์ หาเพื่อนเล่นเกม และห้องเสียง Duo/Squad จำกัดคน</p>
+              <span class="badge" style="background: rgba(235,69,158,0.2); color: var(--pink);">สำหรับสายเกม</span>
+            </div>
+
+            <div class="theme-card" onclick="selectAutoTheme('community')" id="autotheme-community" style="border: 2px solid var(--border); border-radius: 8px; padding: 18px; cursor: pointer;">
+              <h3 style="font-size: 1.15rem; margin-bottom: 8px;">🌟 คอมมูนิตี้มาตรฐาน</h3>
+              <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 12px;">ยศ Founder, Admin, Member ทั่วไป สะอาด ใช้งานง่าย เหมาะกับกลุ่มเพื่อน</p>
+              <span class="badge" style="background: rgba(88,101,242,0.2); color: var(--primary);">ยอดนิยม</span>
+            </div>
+          </div>
+
+          <input type="hidden" id="selected_auto_theme" value="security">
+
+          <div style="margin-bottom: 20px;">
+            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+              <input type="checkbox" id="auto_with_stats" checked style="width: 18px; height: 18px;">
+              <span>ติดตั้งห้องเสียงนับสถิติเซิร์ฟเวอร์ (Server Stats) บนสุดด้วย</span>
+            </label>
+          </div>
+
+          <button class="btn btn-success" id="btn-run-auto" onclick="runAutoSetupFromWeb()" style="padding: 12px 28px; font-size: 1.05rem; font-weight: bold; box-shadow: 0 4px 15px rgba(87, 242, 135, 0.4);">
+            <i class="fas fa-magic"></i> รันระบบ Full Auto Setup ทันที
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Auto Role Tab -->
+    <div class="tab-content" id="tab-autorole">
+      <div class="card">
+        <div class="card-header">
+          <h2><i class="fas fa-user-tag"></i> ระบบแจกยศอัตโนมัติ (Auto Role)</h2>
+          <label class="switch">
+            <input type="checkbox" id="autorole_enabled" <%= settings.autorole_enabled ? 'checked' : '' %>>
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="card-body">
+          <p class="text-muted" style="margin-bottom: 20px;">
+            เมื่อมีสมาชิกใหม่กดเข้าร่วมเซิร์ฟเวอร์ บอทจะทำการมอบยศที่เลือกนี้ให้โดยอัตโนมัติทันที
+          </p>
+          <div class="form-group">
+            <label><i class="fas fa-tag"></i> เลือกยศที่จะแจกอัตโนมัติ</label>
+            <select id="autorole_id" class="form-select">
+              <option value="">-- ไม่เลือก (ปิดใช้งาน Auto Role) --</option>
+              <% guild.roles.forEach(r => { %>
+                <option value="<%= r.id %>" <%= settings.autorole_id === r.id ? 'selected' : '' %> style="color:<%= r.color %>">@<%= r.name %></option>
+              <% }) %>
+            </select>
+          </div>
+          <button class="btn btn-primary" onclick="saveAutoRole()"><i class="fas fa-save"></i> บันทึกการตั้งค่า Auto Role</button>
+        </div>
+      </div>
     </div>
 
     <!-- Welcome Tab -->
@@ -386,28 +463,6 @@
             </select>
           </div>
           <button class="btn btn-primary" onclick="saveLog()"><i class="fas fa-save"></i> บันทึก</button>
-        </div>
-      </div>
-
-      <div class="card" style="margin-top:20px;">
-        <div class="card-header">
-          <h2><i class="fas fa-user-plus"></i> Auto Role</h2>
-          <label class="switch">
-            <input type="checkbox" id="autorole_enabled" <%= settings.autorole_enabled ? 'checked' : '' %>>
-            <span class="slider"></span>
-          </label>
-        </div>
-        <div class="card-body">
-          <div class="form-group">
-            <label><i class="fas fa-tag"></i> Role อัตโนมัติ</label>
-            <select id="autorole_id" class="form-select">
-              <option value="">-- เลือก Role --</option>
-              <% guild.roles.forEach(r => { %>
-                <option value="<%= r.id %>" <%= settings.autorole_id === r.id ? 'selected' : '' %> style="color:<%= r.color %>">@<%= r.name %></option>
-              <% }) %>
-            </select>
-          </div>
-          <button class="btn btn-primary" onclick="saveAutoRole()"><i class="fas fa-save"></i> บันทึก</button>
         </div>
       </div>
     </div>
@@ -834,6 +889,49 @@
         }
       });
     });
+    // Auto Setup Theme Selection
+    function selectAutoTheme(theme) {
+      document.querySelectorAll('#tab-auto-setup .theme-card').forEach(el => {
+        el.style.borderColor = 'var(--border)';
+        el.style.background = 'transparent';
+      });
+      const selected = document.getElementById('autotheme-' + theme);
+      if (selected) {
+        selected.style.borderColor = '#57F287';
+        selected.style.background = 'rgba(87, 242, 135, 0.08)';
+      }
+      document.getElementById('selected_auto_theme').value = theme;
+    }
+
+    async function runAutoSetupFromWeb() {
+      const theme = document.getElementById('selected_auto_theme').value;
+      const withStats = document.getElementById('auto_with_stats').checked;
+
+      if (!confirm('ยืนยันที่จะให้บอทเริ่มสร้างยศ ห้อง และติดตั้งระบบความปลอดภัยแบบ Full Auto ทันทีหรือไม่?')) {
+        return;
+      }
+
+      const btn = document.getElementById('btn-run-auto');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังติดตั้งระบบทั้งหมด...';
+
+      try {
+        const res = await apiCall('POST', '/auto-setup', { theme, withStats });
+        if (res.success) {
+          alert('⚡ ติดตั้งระบบ Full Auto Setup สำเร็จเรียบร้อย! ห้อง ยศ และสิทธิ์ทั้งหมดพร้อมใช้งานทันที');
+          window.location.reload();
+        } else {
+          alert('❌ เกิดข้อผิดพลาด: ' + (res.error || 'ไม่สามารถติดตั้งได้'));
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-magic"></i> รันระบบ Full Auto Setup ทันที';
+        }
+      } catch (err) {
+        alert('❌ เกิดข้อผิดพลาด: ' + err.message);
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-magic"></i> รันระบบ Full Auto Setup ทันที';
+      }
+    }
+
     // 3-Stage Nuke Process on Web Dashboard
     async function startNukeProcess() {
       // รอบที่ 1: ตรวจสอบความยินยอม

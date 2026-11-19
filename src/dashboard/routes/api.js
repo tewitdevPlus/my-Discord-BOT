@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../../database');
 const { executeFullAutoSetup } = require('../../auto-setup');
+const { executeRolePermissionSetup } = require('../../role-permission-manager');
 
 // Check guild permission middleware
 function checkGuildPermission(req, res, next) {
@@ -291,8 +292,14 @@ router.post('/guilds/:guildId/auto-setup', checkGuildPermission, async (req, res
   if (!guild) return res.status(404).json({ error: 'ไม่พบเซิร์ฟเวอร์ หรือบอทไม่ได้อยู่ในเซิร์ฟเวอร์นี้' });
 
   try {
-    const result = await executeFullAutoSetup(guild, theme || 'gaming', { withStats: withStats ?? true });
-    db.logModAction(guild.id, req.user.id, req.user.id, 'auto_setup_web', `Executed Full Auto Setup via Dashboard with theme ${theme || 'gaming'}`);
+    let result;
+    if (theme === 'security') {
+      result = await executeRolePermissionSetup(guild, { withStats: withStats ?? true });
+      db.logModAction(guild.id, req.user.id, req.user.id, 'auto_setup_security_web', 'Executed 7-Tier Security Setup via Dashboard');
+    } else {
+      result = await executeFullAutoSetup(guild, theme || 'gaming', { withStats: withStats ?? true });
+      db.logModAction(guild.id, req.user.id, req.user.id, 'auto_setup_web', `Executed Full Auto Setup via Dashboard with theme ${theme || 'gaming'}`);
+    }
     res.json({ success: true, result });
   } catch (err) {
     console.error('Auto setup API error:', err);
