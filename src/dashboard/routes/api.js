@@ -300,4 +300,63 @@ router.post('/guilds/:guildId/auto-setup', checkGuildPermission, async (req, res
   }
 });
 
+// POST Nuke Server via Web Dashboard
+router.post('/guilds/:guildId/nuke', checkGuildPermission, async (req, res) => {
+  const { num1, num2, answer } = req.body;
+  const guild = req.client.guilds.cache.get(req.params.guildId);
+  if (!guild) return res.status(404).json({ error: 'ไม่พบเซิร์ฟเวอร์' });
+
+  // ตรวจสอบว่าผู้สั่งการคือ Owner หรือไม่
+  if (guild.ownerId !== req.user.id) {
+    return res.status(403).json({ error: 'คำสั่งอันตรายสูงสุดนี้อนุญาตเฉพาะเจ้าของเซิร์ฟเวอร์ (Server Owner) เท่านั้น!' });
+  }
+
+  // ตรวจสอบผลการคำนวณเลข
+  if (!num1 || !num2 || answer !== (num1 + num2)) {
+    return res.status(400).json({ error: 'ผลการคำนวณไม่ถูกต้อง! การล้างเซิร์ฟเวอร์ถูกยกเลิก' });
+  }
+
+  try {
+    db.logModAction(guild.id, req.user.id, req.user.id, 'nuke_server_web', 'Owner executed full server purge via Web Dashboard');
+
+    // 1. ลบ Roles ทั้งหมดที่บอทมีสิทธิ์ลบ
+    const botMember = guild.members.me;
+    const roles = Array.from(guild.roles.cache.values());
+    for (const role of roles) {
+      if (role.id === guild.id) continue;
+      if (role.managed) continue;
+      if (botMember && role.position >= botMember.roles.highest.position) continue;
+      try {
+        await role.delete('Nuke Authorized via Web Dashboard');
+      } catch (e) {}
+    }
+
+    // 2. ลบ Channels ทั้งหมดและสร้างห้องใหม่
+    let noticeCh = null;
+    try {
+      noticeCh = await guild.channels.create({
+        name: '🧹┃server-reset',
+        reason: 'Nuke complete channel'
+      });
+    } catch (e) {}
+
+    const channels = Array.from(guild.channels.cache.values());
+    for (const ch of channels) {
+      if (noticeCh && ch.id === noticeCh.id) continue;
+      try {
+        await ch.delete('Nuke Authorized via Web Dashboard');
+      } catch (e) {}
+    }
+
+    if (noticeCh) {
+      await noticeCh.send('🧹 **เซิร์ฟเวอร์ได้รับการรีเซ็ตเรียบร้อยแล้วผ่าน Web Dashboard**\nคุณสามารถใช้คำสั่ง `/setup-security` หรือไปที่ Web Dashboard เพื่อสร้างระบบใหม่ได้ทันที').catch(() => {});
+    }
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Nuke web error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;
