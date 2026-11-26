@@ -737,6 +737,139 @@
     .master-footer a:hover {
       text-decoration: underline;
     }
+
+    /* ==========================================================================
+       Vercel Geist Micro-Interactions & Motion System
+       ========================================================================== */
+    @keyframes heroFadeUp {
+      0% {
+        opacity: 0;
+        transform: translateY(18px);
+        filter: blur(6px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+      }
+    }
+
+    @keyframes statusPulseRing {
+      0% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.55);
+      }
+      70% {
+        box-shadow: 0 0 0 7px rgba(16, 185, 129, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+      }
+    }
+
+    @keyframes borderBeamSweep {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(220%); }
+    }
+
+    @keyframes embedSwap {
+      0% {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .status-dot {
+      animation: statusPulseRing 2.4s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+    }
+
+    .hero-pill { animation: heroFadeUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both; }
+    .hero-headline { animation: heroFadeUp 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.14s both; }
+    .hero-subhead { animation: heroFadeUp 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.22s both; }
+    .hero-cta-group { animation: heroFadeUp 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.30s both; }
+    .telemetry-bar { animation: heroFadeUp 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.38s both; }
+    .discord-showcase {
+      position: relative;
+      animation: heroFadeUp 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.45s both;
+    }
+    .discord-showcase::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 45%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.65), transparent);
+      animation: borderBeamSweep 5s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .embed-animate {
+      animation: embedSwap 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* Tactile Button Motion */
+    .btn-vercel-primary,
+    .btn-vercel-secondary {
+      transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .btn-vercel-primary:hover,
+    .btn-vercel-secondary:hover {
+      transform: translateY(-1px);
+    }
+    .btn-vercel-primary:active,
+    .btn-vercel-secondary:active {
+      transform: scale(0.98);
+    }
+
+    /* Mouse-Tracking Spotlight Sheen on Cards */
+    .bento-box,
+    .review-item {
+      position: relative;
+      overflow: hidden;
+    }
+    .bento-box::after,
+    .review-item::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      background: radial-gradient(
+        420px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+        rgba(255, 255, 255, 0.06),
+        transparent 45%
+      );
+    }
+    .bento-box:hover::after,
+    .review-item:hover::after {
+      opacity: 1;
+    }
+
+    /* Scroll Reveal */
+    .reveal-on-scroll {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal-on-scroll.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .reveal-on-scroll { opacity: 1; transform: none; }
+    }
   </style>
 </head>
 <body>
@@ -1058,9 +1191,16 @@
         <h2 class="bento-title">เสียงตอบรับจากผู้ดูแลเซิร์ฟเวอร์</h2>
       </div>
       <% if (user) { %>
-        <button onclick="openReviewModal()" class="btn-vercel-secondary btn-sm">
-          <i class="fas fa-pen"></i> เขียนรีวิว
-        </button>
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+          <% if (user.username === 'tewitplus_58868') { %>
+            <button onclick="resetAllReviews()" class="btn-vercel-secondary btn-sm" style="color: #F87171; border-color: rgba(238, 0, 0, 0.3);">
+              <i class="fas fa-trash-alt"></i> รีเซ็ทรีวิว
+            </button>
+          <% } %>
+          <button onclick="openReviewModal()" class="btn-vercel-secondary btn-sm">
+            <i class="fas fa-pen"></i> เขียนรีวิว
+          </button>
+        </div>
       <% } %>
     </div>
 
@@ -1217,6 +1357,11 @@
         <button class="btn-discord-action green">${data.btn1}</button>
         <button class="btn-discord-action">${data.btn2}</button>
       `;
+
+      const embedBox = document.getElementById('embedContainer');
+      embedBox.classList.remove('embed-animate');
+      void embedBox.offsetWidth;
+      embedBox.classList.add('embed-animate');
     }
 
     function copyActiveCommand(btn) {
@@ -1251,6 +1396,50 @@
         alert('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้');
       }
     }
+
+    async function resetAllReviews() {
+      if (!confirm('ยืนยันการรีเซ็ทรีวิวทั้งหมด? ข้อมูลรีวิวในฐานข้อมูลจะถูกลบทั้งหมดและกลับไปแสดงรีวิวเริ่มต้น')) return;
+      try {
+        const res = await fetch('/api/reviews/reset', { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+          alert('รีเซ็ทรีวิวทั้งหมดเรียบร้อยแล้ว!');
+          location.reload();
+        } else {
+          alert(data.error || 'ไม่สามารถรีเซ็ทรีวิวได้');
+        }
+      } catch (err) {
+        alert('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้');
+      }
+    }
+
+    // Scroll Reveal & Mouse Spotlight Sheen
+    document.addEventListener('DOMContentLoaded', () => {
+      const revealTargets = document.querySelectorAll('.bento-header, .bento-box, .reviews-section .review-item');
+      revealTargets.forEach((el, idx) => {
+        el.classList.add('reveal-on-scroll');
+        el.style.transitionDelay = `${(idx % 4) * 60}ms`;
+      });
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12 });
+
+      revealTargets.forEach(el => observer.observe(el));
+
+      document.querySelectorAll('.bento-box, .review-item').forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+          card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+        });
+      });
+    });
   </script>
 </body>
 </html>

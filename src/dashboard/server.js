@@ -145,6 +145,23 @@ function startDashboard(client) {
     res.json({ success: true });
   });
 
+  // Reset all reviews (Owner only)
+  app.post('/api/reviews/reset', isAuthenticated, async (req, res) => {
+    const isOwner = req.user.username === 'tewitplus_58868' ||
+                    (process.env.BOT_OWNER_ID && req.user.id === process.env.BOT_OWNER_ID);
+    if (!isOwner) {
+      return res.status(403).json({ error: 'เฉพาะเจ้าของบอทเท่านั้นที่รีเซ็ทรีวิวได้' });
+    }
+    try {
+      const db = require('../database');
+      await db.clearReviews();
+      res.json({ success: true });
+    } catch (err) {
+      console.error('Reset reviews error:', err);
+      res.status(500).json({ error: 'ไม่สามารถรีเซ็ทรีวิวได้' });
+    }
+  });
+
   // === Admin Secret Page (Only Developer Can Access) ===
   app.get('/admin', isAuthenticated, (req, res) => {
     const isOwner = req.user.username === 'tewitplus_58868' || 

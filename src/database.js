@@ -358,6 +358,13 @@ async function getReviewStats() {
   };
 }
 
+async function clearReviews() {
+  if (isPostgres) {
+    return pool.query('DELETE FROM reviews');
+  }
+  return sqliteDb.prepare('DELETE FROM reviews').run();
+}
+
 // === Ideas ===
 async function addIdea(guildId, userId, username, content) {
   if (isPostgres) {
@@ -414,6 +421,7 @@ module.exports = {
   addReview,
   getReviews,
   getReviewStats,
+  clearReviews,
   addIdea,
   getIdeas,
   deleteIdea,
