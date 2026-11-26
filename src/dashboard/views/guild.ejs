@@ -253,13 +253,12 @@
     .vercel-tab-pane {
       display: none;
     }
-    @keyframes tabFadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-    .vercel-tab-pane.active { animation: tabFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    .vercel-tab-pane.active {
       display: block;
-      animation: tabFadeIn 0.15s ease;
+      animation: tabFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
     @keyframes tabFadeIn {
-      from { opacity: 0; transform: translateY(4px); }
+      from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
@@ -928,44 +927,35 @@
       });
     });
 
-    // Dismiss preloader
+    // Dismiss preloader (if present)
     window.addEventListener('load', () => {
-      setTimeout(() => document.getElementById('loader').classList.add('done'), 400);
+      const loader = document.getElementById('loader');
+      if (loader) setTimeout(() => loader.classList.add('done'), 400);
     });
 
     const GUILD_ID = '<%= guild.id %>';
 
-    // Sidebar Section Switcher (Like Reference Mockup)
+    // Vercel Tab Switcher
     function switchSection(secId, el) {
-      document.querySelectorAll('.tab-pill').forEach(item => item.classList.remove('active'));
-      document.querySelectorAll('.master-tab-pane').forEach(pane => pane.classList.remove('active'));
+      document.querySelectorAll('.vercel-tab-item').forEach(item => item.classList.remove('active'));
+      document.querySelectorAll('.vercel-tab-pane').forEach(pane => pane.classList.remove('active'));
 
       if (el) el.classList.add('active');
       else {
-        const activePill = document.querySelector(`[data-tab="${secId}"]`);
-        if (activePill) activePill.classList.add('active');
+        const activeTab = document.querySelector(`[data-tab="${secId}"]`);
+        if (activeTab) activeTab.classList.add('active');
       }
 
-      const targetPane = document.getElementById('pane-' + secId);
+      const targetPane = document.getElementById('tab-' + secId);
       if (targetPane) targetPane.classList.add('active');
 
-      const titleMap = {
-        'auto-setup': '⚡ ติดตั้งด่วน (Auto Setup)',
-        'security-verify': '🛡️ ยืนยันตัวตน & ยศ (Security & Verify)',
-        'welcome': '👋 ระบบต้อนรับ (Welcome)',
-        'styler-stats': '🎨 แต่งห้อง & สถิติ (Channels & Stats)',
-        'tools-logs': '⚙️ เครื่องมือ & บันทึก (Tools & Logs)'
-      };
-      const titleElem = document.getElementById('currentSectionTitle');
-      if (titleElem) titleElem.textContent = titleMap[secId] || 'Dashboard';
-
-      if (secId === 'tools-logs') loadLogs();
-      if (secId === 'styler-stats') loadRolesDetail();
-
-
-      if (secId === 'moderation') loadLogs();
-      if (secId === 'stats') loadRolesDetail();
-      if (secId === 'ideas') loadIdeas();
+      if (secId === 'logs') {
+        loadLogs();
+        loadIdeas();
+      }
+      if (secId === 'channels') {
+        loadRolesDetail();
+      }
     }
 
     function showToast(msg, isError) {
