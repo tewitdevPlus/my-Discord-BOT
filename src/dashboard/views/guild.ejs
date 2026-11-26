@@ -385,6 +385,105 @@
       display: flex;
       align-items: center;
       gap: 10px;
+      animation: toastSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* ==========================================================================
+       Vercel Geist Motion System (Dashboard Micro-Interactions)
+       ========================================================================== */
+    @keyframes envPulse {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.55); }
+      70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+    @keyframes tabUnderlineIn {
+      from { transform: scaleX(0); opacity: 0; }
+      to { transform: scaleX(1); opacity: 1; }
+    }
+    @keyframes cardStaggerIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes toastSlideUp {
+      from { opacity: 0; transform: translateY(12px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .env-dot {
+      animation: envPulse 2.4s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+    }
+
+    .vercel-tab-item {
+      transition: color 0.15s ease;
+    }
+    .vercel-tab-item.active::after {
+      transform-origin: left center;
+      animation: tabUnderlineIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .vercel-tab-pane.active .card-pro {
+      animation: cardStaggerIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    .vercel-tab-pane.active > div:nth-child(2) .card-pro {
+      animation-delay: 0.06s;
+    }
+    .vercel-tab-pane.active > div:nth-child(3) .card-pro {
+      animation-delay: 0.12s;
+    }
+
+    .card-pro {
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .card-pro::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      background: radial-gradient(480px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.045), transparent 45%);
+    }
+    .card-pro:hover::after {
+      opacity: 1;
+    }
+
+    .btn-vercel-white,
+    .btn-vercel-ghost,
+    .btn-save-master,
+    .btn-go,
+    .btn-setup {
+      transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.16s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+    .btn-vercel-white:hover,
+    .btn-vercel-ghost:hover,
+    .btn-save-master:hover,
+    .btn-go:hover,
+    .btn-setup:hover {
+      transform: translateY(-1px) !important;
+    }
+    .btn-vercel-white:active,
+    .btn-vercel-ghost:active,
+    .btn-save-master:active,
+    .btn-go:active,
+    .btn-setup:active {
+      transform: scale(0.98) !important;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #555555 !important;
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.08);
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
     }
   </style>
 </head>
@@ -1285,6 +1384,17 @@
         alert('❌ เกิดข้อผิดพลาดในการเชื่อมต่อ: ' + err.message);
       }
     }
+
+    // Spotlight Sheen on .card-pro
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.card-pro').forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+          card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+        });
+      });
+    });
   </script>
 </body>
 </html>
