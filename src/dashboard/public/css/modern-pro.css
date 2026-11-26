@@ -469,10 +469,11 @@ body::after {
   background: var(--surface-2);
 }
 .tab-pill.active {
-  background: linear-gradient(135deg, #5865F2, #8B5CF6);
-  color: #FFF;
-  border: 1px solid rgba(139, 92, 246, 0.5);
-  box-shadow: 0 4px 18px rgba(88, 101, 242, 0.45);
+  background: var(--neon-cyan);
+  color: #000;
+  font-weight: 700;
+  border: 1px solid var(--neon-cyan);
+  box-shadow: 0 4px 18px rgba(0, 240, 255, 0.4);
 }
 
 /* ==========================================================================
