@@ -135,7 +135,82 @@
       gap: 10px;
     }
 
-    /* Vercel Buttons */
+    /* Vercel Buttons - desktop */
+    .btn-vercel-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: var(--accent-white);
+      color: #000000;
+      border: 1px solid var(--accent-white);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 10px 20px;
+      border-radius: var(--radius);
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.2s ease;
+    }
+    .btn-vercel-primary:hover {
+      background: #E5E5E5;
+      border-color: #E5E5E5;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255,255,255,0.1);
+    }
+    .btn-vercel-primary:active {
+      transform: translateY(0) scale(0.96);
+    }
+    .btn-vercel-primary.touch-target {
+      padding: 14px 28px; /* larger tap area on mobile */
+      font-size: 16px;
+    }
+    .btn-vercel-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 10px 20px;
+      border-radius: var(--radius);
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+    }
+    .btn-vercel-secondary:hover {
+      background: #141414;
+      border-color: var(--border-hover);
+      color: var(--accent-white);
+      transform: translateY(-2px);
+    }
+    .btn-vercel-secondary:active {
+      transform: translateY(0) scale(0.96);
+    }
+    .btn-vercel-secondary.touch-target {
+      padding: 14px 28px;
+      font-size: 16px;
+    }
+    /* Responsive adjustments for mobile / touch */
+    @media (max-width: 600px) {
+      .hero-headline { font-size: clamp(28px, 8vw, 48px); }
+      .hero-subhead { font-size: clamp(14px, 4vw, 16px); }
+      .btn-vercel-primary, .btn-vercel-secondary {
+        padding: 14px 28px;
+        font-size: 16px;
+      }
+      .vercel-nav-links { display: none; }
+      .vercel-nav-actions {
+        gap: 12px;
+      }
+      .hero-cta-group { flex-direction: column; }
+    }
+    /* End of Vercel Buttons */
     .btn-vercel-primary {
       display: inline-flex;
       align-items: center;
@@ -944,6 +1019,22 @@
         transition-duration: 0.01ms !important;
       }
       .reveal-on-scroll { opacity: 1; transform: none; }
+    }
+  </style>
+<style>
+    /* Mobile hamburger toggle */
+    .nav-toggle {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: var(--accent-white);
+      cursor: pointer;
+    }
+    @media (max-width: 820px) {
+      .nav-toggle { display: block; }
+      .vercel-nav-links { display: none; flex-direction: column; background: var(--bg); position: absolute; top: 64px; left: 0; right: 0; padding: 12px 0; border-top: 1px solid var(--border); }
+      .vercel-nav-links.active { display: flex; }
     }
   </style>
 </head>
