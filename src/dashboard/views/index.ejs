@@ -3,277 +3,513 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= botName %> — ระบบจัดการ Discord ครบวงจร</title>
+  <title><%= botName %> — ระบบจัดการ Discord อัตโนมัติระดับโปร</title>
   <link rel="stylesheet" href="/css/modern-pro.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
-    /* =============================================
-       Landing Page — CEO KAITAN Cyberpunk Style
-       ============================================= */
+    /* ==========================================================================
+       Devplus Bot — Crafted Anti-Slop Cyberpunk UI
+       Engineered for substance, precision typography, and zero-gimmick layout
+       ========================================================================== */
 
-    /* Loader */
+    /* Preloader */
     #loader {
       position: fixed; inset: 0; z-index: 99999;
-      background: #000;
+      background: #060709;
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
-      transition: opacity .4s, visibility .4s;
+      transition: opacity .35s ease, visibility .35s;
     }
     #loader.done { opacity: 0; visibility: hidden; }
-    .loader-mark {
-      font-family: 'Bebas Neue', 'Kanit', sans-serif;
-      font-size: 60px; letter-spacing: 8px; color: #fff;
+    .loader-brand {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 52px; letter-spacing: 6px; color: #FFF;
       position: relative;
     }
-    .loader-mark::after {
+    .loader-brand::after {
       content: ''; position: absolute;
-      left: 50%; bottom: -16px;
-      transform: translateX(-50%);
+      left: 50%; bottom: -12px; transform: translateX(-50%);
       width: 0; height: 2px;
-      background: linear-gradient(90deg, var(--neon-cyan), var(--purple), var(--neon-cyan));
-      animation: loadBar 1.4s ease-in-out infinite;
+      background: var(--neon-cyan);
+      box-shadow: 0 0 12px var(--neon-cyan);
+      animation: loaderProgress 1.2s ease-in-out infinite;
     }
-    @keyframes loadBar {
-      0% { width: 0; opacity: 0; }
-      50% { width: 110px; opacity: 1; }
-      100% { width: 0; opacity: 0; }
+    @keyframes loaderProgress {
+      0% { width: 0; } 50% { width: 90px; } 100% { width: 0; }
     }
     .loader-sub {
-      font-size: 11px; letter-spacing: 6px;
-      color: var(--text-faint); margin-top: 32px;
-      text-transform: uppercase;
+      font-size: 11px; letter-spacing: 4px;
+      color: var(--text-faint); margin-top: 24px;
+      text-transform: uppercase; font-family: 'Kanit', sans-serif;
     }
 
-    /* Floating Orbs */
-    .orb {
-      position: fixed; border-radius: 50%;
-      filter: blur(80px); pointer-events: none; z-index: 0;
+    /* Ambient Blueprint Grid (Crafted, No Fuzzy AI Orbs) */
+    .blueprint-bg {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: radial-gradient(ellipse 80% 60% at 50% 20%, #000 40%, transparent 90%);
+      -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 20%, #000 40%, transparent 90%);
     }
-    .orb-1 { width: 600px; height: 600px; background: radial-gradient(circle, rgba(0,240,255,0.18), transparent 70%); top: -200px; left: -100px; animation: orbFloat1 14s ease-in-out infinite; }
-    .orb-2 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(139,92,246,0.14), transparent 70%); top: 100px; right: -150px; animation: orbFloat2 16s ease-in-out infinite; }
-    .orb-3 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(0,240,255,0.12), transparent 70%); bottom: -100px; left: 30%; animation: orbFloat3 18s ease-in-out infinite; }
-    @keyframes orbFloat1 { 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(80px,40px) scale(1.15);} }
-    @keyframes orbFloat2 { 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(-60px,60px) scale(1.1);} }
-    @keyframes orbFloat3 { 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(40px,-50px) scale(1.2);} }
-
-    /* Hero */
-    .hero {
-      position: relative; z-index: 2;
-      padding: 130px 24px 80px;
-      display: flex; flex-direction: column; align-items: center;
-      text-align: center; overflow: hidden;
+    .top-glow-beam {
+      position: fixed; top: 0; left: 50%; transform: translateX(-50%);
+      width: 1000px; height: 320px;
+      background: radial-gradient(ellipse at 50% 0%, rgba(0, 240, 255, 0.12), transparent 70%);
+      pointer-events: none; z-index: 0;
     }
 
-    .hero-pill {
-      display: inline-flex; align-items: center; gap: 10px;
-      background: var(--surface); border: 1px solid var(--border-2);
-      backdrop-filter: blur(12px);
+    /* Nav Bar */
+    .ceo-nav {
+      position: fixed; top: 18px; left: 50%; transform: translateX(-50%);
+      z-index: 1000; width: calc(100% - 40px); max-width: 1180px;
+      padding: 10px 20px;
+      background: rgba(10, 11, 16, 0.82);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
       border-radius: var(--radius-pill);
-      padding: 7px 18px 7px 10px;
-      font-size: 12px; color: var(--text-dim); font-weight: 500;
-      margin-bottom: 24px; letter-spacing: .3px;
-      animation: fadeInDown .8s ease both;
+      display: flex; align-items: center; justify-content: space-between;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
-    .hero-pill .pill-tag {
-      background: var(--neon-cyan); color: #000;
-      font-size: 10px; font-weight: 700;
-      padding: 3px 10px; border-radius: var(--radius-pill);
-      letter-spacing: .5px;
+    .ceo-nav-brand {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none; color: #FFF;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.35rem; letter-spacing: 1.5px;
     }
-    .hero-pill .pill-dot {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: #22c55e; box-shadow: 0 0 8px #22c55e;
+    .ceo-nav-brand img {
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 1px solid var(--neon-cyan);
     }
-    @keyframes fadeInDown { from{opacity:0;transform:translateY(-14px);} to{opacity:1;transform:translateY(0);} }
-    @keyframes fadeInUp { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
-    @keyframes titleUp { from{opacity:0;transform:translateY(40px);} to{opacity:1;transform:translateY(0);} }
-    @keyframes gradientShift { 0%,100%{background-position:0% 50%;} 50%{background-position:100% 50%;} }
+    .nav-badge {
+      font-family: 'Kanit', sans-serif;
+      font-size: 10px; font-weight: 600;
+      color: var(--neon-cyan); background: rgba(0, 240, 255, 0.1);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      padding: 2px 7px; border-radius: 4px; letter-spacing: 0.5px;
+    }
+    .ceo-nav-links {
+      display: flex; align-items: center; gap: 24px;
+    }
+    .ceo-nav-links a {
+      color: var(--text-dim); text-decoration: none;
+      font-size: 0.88rem; font-weight: 500;
+      transition: color 0.2s ease;
+    }
+    .ceo-nav-links a:hover { color: #FFF; }
+    .ceo-nav-links a.active { color: var(--neon-cyan); }
 
-    .hero-title {
-      font-family: 'Bebas Neue', 'Kanit', sans-serif;
-      font-size: clamp(64px, 10vw, 130px);
-      line-height: .9; font-weight: 700;
-      letter-spacing: -0.02em; margin-bottom: 10px;
+    /* Hero Layout */
+    .hero-container {
+      position: relative; z-index: 1;
+      max-width: 1200px; margin: 0 auto;
+      padding: 130px 24px 60px;
+      text-align: center;
     }
-    .hero-title .l1 {
-      display: block;
-      background: linear-gradient(180deg, #fff 0%, #aaa 100%);
-      -webkit-background-clip: text; background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: titleUp 1s cubic-bezier(.2,.8,.2,1) .15s both;
-    }
-    .hero-title .l2 {
-      display: block;
-      background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--purple) 50%, var(--neon-cyan) 100%);
-      background-size: 200% 200%;
-      -webkit-background-clip: text; background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: titleUp 1s cubic-bezier(.2,.8,.2,1) .3s both, gradientShift 4s ease infinite;
-      filter: drop-shadow(0 0 40px rgba(0,240,255,0.4));
-    }
-
-    .hero-sub {
-      font-size: clamp(14px, 1.6vw, 17px);
-      color: var(--text-dim); max-width: 580px;
-      margin: 16px 0 28px; line-height: 1.65; font-weight: 400;
-      animation: fadeInUp 1s ease .55s both;
-    }
-
-    /* Stats Row */
-    .hero-stats {
-      display: flex; gap: 32px;
-      justify-content: center; flex-wrap: nowrap;
-      margin-top: 36px; padding-top: 28px;
-      border-top: 1px solid var(--border);
-      animation: fadeInUp 1s ease .9s both;
-    }
-    .hero-stat { flex-shrink: 0; text-align: center; }
-    .hero-stat-val {
-      font-family: 'Bebas Neue', 'Kanit', sans-serif;
-      font-size: 36px; font-weight: 700;
-      color: var(--neon-cyan); letter-spacing: 1px; line-height: 1;
-    }
-    .hero-stat-lbl {
-      font-size: 11px; color: var(--text-faint);
-      text-transform: uppercase; letter-spacing: 2px; margin-top: 6px;
-    }
-
-    /* CTA Row */
-    .hero-ctas {
-      display: flex; gap: 14px;
-      justify-content: center; flex-wrap: wrap;
-      animation: fadeInUp 1s ease .7s both;
-    }
-
-    /* Section */
-    .section { position: relative; z-index: 2; padding: 60px 24px; }
-    .section-inner { max-width: 1200px; margin: 0 auto; }
-    .section-head { text-align: center; margin-bottom: 36px; }
-    .section-eyebrow {
+    .hero-pill-badge {
       display: inline-flex; align-items: center; gap: 8px;
-      font-size: 11px; color: var(--neon-cyan);
-      text-transform: uppercase; letter-spacing: 3px;
-      margin-bottom: 10px; font-weight: 600;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-pill);
+      padding: 6px 16px; font-size: 12px; color: var(--text-dim);
+      margin-bottom: 24px;
     }
-    .section-eyebrow::before, .section-eyebrow::after {
-      content: ''; width: 24px; height: 1px;
-      background: var(--neon-cyan); opacity: .5;
+    .pulse-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #10B981; box-shadow: 0 0 8px #10B981;
     }
-    .section-title {
+
+    .hero-headline {
       font-family: 'Bebas Neue', 'Kanit', sans-serif;
-      font-size: clamp(36px, 6vw, 72px);
-      line-height: 1; letter-spacing: -0.01em;
-      margin-bottom: 8px; font-weight: 700;
-      background: linear-gradient(105deg, #666 0%, #AAA 25%, #FFF 44%, var(--neon-cyan) 50%, #FFF 56%, #AAA 75%, #666 100%);
-      background-size: 250% 100%; background-position: 150% 0;
-      -webkit-background-clip: text; background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: lightSweepScroll 4.5s ease-in-out infinite;
+      font-size: clamp(48px, 8.5vw, 105px);
+      line-height: 0.95; font-weight: 800;
+      letter-spacing: -0.01em; margin-bottom: 16px;
+      color: #FFF;
     }
-    @keyframes lightSweepScroll {
-      0%   { background-position: 150% 0; }
-      50%  { background-position: -50% 0; }
-      100% { background-position: 150% 0; }
+    .hero-headline .text-accent {
+      color: var(--neon-cyan);
+      text-shadow: 0 0 25px rgba(0, 240, 255, 0.35);
     }
-    .section-sub { font-size: 15px; color: var(--text-dim); max-width: 500px; margin: 0 auto; line-height: 1.5; }
+    .hero-subhead {
+      font-size: clamp(14px, 1.8vw, 17px);
+      color: var(--text-dim); max-width: 640px; margin: 0 auto 32px;
+      line-height: 1.6; font-weight: 400;
+    }
 
-    /* Feature Bento Grid */
-    .feature-bento {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
+    .hero-cta-group {
+      display: flex; align-items: center; justify-content: center;
+      gap: 14px; flex-wrap: wrap; margin-bottom: 40px;
     }
-    @media(max-width: 880px) { .feature-bento { grid-template-columns: repeat(2, 1fr); } }
-    @media(max-width: 480px) { .feature-bento { grid-template-columns: 1fr 1fr; gap: 10px; } }
+    .btn-discord-primary {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: #5865F2; color: #FFF;
+      font-weight: 600; font-size: 0.95rem;
+      padding: 13px 28px; border-radius: var(--radius-pill);
+      text-decoration: none; border: 1px solid rgba(255,255,255,0.2);
+      box-shadow: 0 8px 24px rgba(88, 101, 242, 0.3);
+      transition: all 0.2s ease;
+    }
+    .btn-discord-primary:hover {
+      background: #4752C4; transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(88, 101, 242, 0.45);
+    }
+    .btn-cyan-outline {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: rgba(0, 240, 255, 0.05); color: var(--neon-cyan);
+      font-weight: 600; font-size: 0.95rem;
+      padding: 13px 28px; border-radius: var(--radius-pill);
+      text-decoration: none; border: 1px solid rgba(0, 240, 255, 0.4);
+      transition: all 0.2s ease;
+    }
+    .btn-cyan-outline:hover {
+      background: rgba(0, 240, 255, 0.15); transform: translateY(-2px);
+      border-color: var(--neon-cyan);
+    }
 
-    .feature-tile {
-      position: relative;
+    /* Live Telemetry Bar */
+    .telemetry-bar {
+      display: inline-flex; align-items: center; gap: 24px;
+      background: rgba(16, 18, 26, 0.75);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-pill);
+      padding: 10px 28px; margin: 0 auto 50px;
+      font-size: 13px; color: var(--text-dim);
+    }
+    .telemetry-item strong {
+      color: #FFF; font-weight: 700; margin-right: 4px;
+    }
+    .telemetry-sep {
+      width: 1px; height: 16px; background: var(--border);
+    }
+
+    /* ==========================================================================
+       Interactive Discord OS Showcase (Authentic Product Substance)
+       ========================================================================== */
+    .discord-showcase {
+      max-width: 1050px; margin: 0 auto;
+      background: #0B0D14;
+      border: 1px solid var(--border-2);
       border-radius: 20px; overflow: hidden;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 240, 255, 0.08);
+      text-align: left;
+    }
+    .showcase-header {
+      background: #0E101A;
+      padding: 12px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+    .window-controls {
+      display: flex; gap: 7px;
+    }
+    .wc-dot { width: 11px; height: 11px; border-radius: 50%; }
+    .wc-red { background: #FF5F56; }
+    .wc-yellow { background: #FFBD2E; }
+    .wc-green { background: #27C93F; }
+
+    .showcase-tab-pills {
+      display: flex; gap: 8px;
+    }
+    .showcase-tab-btn {
+      background: rgba(255,255,255,0.04);
       border: 1px solid var(--border);
-      text-decoration: none;
-      display: flex; flex-direction: column;
-      background: var(--surface-card);
-      backdrop-filter: blur(16px);
-      padding: 24px 20px;
-      transition: all .3s cubic-bezier(.2,.8,.2,1);
-      cursor: pointer;
+      color: var(--text-dim);
+      font-family: 'Kanit', sans-serif;
+      font-size: 12px; font-weight: 500;
+      padding: 5px 14px; border-radius: 6px;
+      cursor: pointer; transition: all 0.2s;
     }
-    .feature-tile::before {
-      content: ''; position: absolute;
-      top: 0; left: 0; right: 0; height: 70px;
-      background: linear-gradient(180deg, rgba(0,240,255,0.08), transparent);
-    }
-    .feature-tile:hover {
-      transform: translateY(-5px);
-      border-color: rgba(0, 240, 255, 0.4);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 20px rgba(0,240,255,0.15);
-    }
-    .feature-tile-icon {
-      font-size: 2rem; margin-bottom: 14px; z-index: 2;
-    }
-    .feature-tile-title {
-      font-size: 1.1rem; font-weight: 700;
-      color: #FFF; margin-bottom: 8px; z-index: 2;
-    }
-    .feature-tile-desc {
-      font-size: 0.84rem; color: var(--text-dim);
-      line-height: 1.55; z-index: 2; flex: 1;
+    .showcase-tab-btn:hover { color: #FFF; border-color: rgba(255,255,255,0.2); }
+    .showcase-tab-btn.active {
+      background: rgba(0, 240, 255, 0.12);
+      border-color: var(--neon-cyan);
+      color: var(--neon-cyan); font-weight: 600;
     }
 
-    /* Reviews */
-    .review-card {
-      background: var(--surface-card);
-      border: 1px solid var(--border);
-      border-radius: 20px; padding: 20px;
-      backdrop-filter: blur(16px);
+    .showcase-body {
+      display: grid; grid-template-columns: 260px 1fr;
+      min-height: 420px;
+    }
+    @media(max-width: 820px) {
+      .showcase-body { grid-template-columns: 1fr; }
+      .discord-channels-col { display: none; }
     }
 
-    /* Reveal animation */
-    .reveal { opacity: 0; transform: translateY(32px); transition: opacity .9s cubic-bezier(.2,.8,.2,1), transform .9s cubic-bezier(.2,.8,.2,1); }
-    .reveal.in { opacity: 1; transform: translateY(0); }
+    /* Left Sidebar: Discord Channel Hierarchy */
+    .discord-channels-col {
+      background: #090B10;
+      border-right: 1px solid var(--border);
+      padding: 16px 12px;
+      font-size: 13px; font-family: 'Inter', 'Kanit', sans-serif;
+    }
+    .dc-server-title {
+      font-weight: 700; color: #FFF; font-size: 14px;
+      padding: 0 8px 12px; display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--border); margin-bottom: 12px;
+    }
+    .dc-category {
+      font-size: 10px; font-weight: 700; color: var(--text-faint);
+      text-transform: uppercase; letter-spacing: 0.8px;
+      margin: 14px 8px 6px; display: flex; align-items: center; gap: 5px;
+    }
+    .dc-channel {
+      display: flex; align-items: center; gap: 8px;
+      color: var(--text-dim); padding: 5px 8px; border-radius: 4px;
+      margin-bottom: 2px; transition: background 0.15s, color 0.15s;
+      cursor: default;
+    }
+    .dc-channel.active, .dc-channel:hover {
+      background: rgba(255,255,255,0.06); color: #FFF;
+    }
+    .dc-channel i { font-size: 11px; opacity: 0.6; }
+    .dc-badge-lock {
+      margin-left: auto; font-size: 10px; color: #F59E0B;
+    }
+
+    /* Right Main Panel: Command Console & Embed Output */
+    .discord-chat-col {
+      padding: 20px 24px;
+      background: #0D0F18;
+      display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .chat-message-row {
+      display: flex; gap: 14px; margin-bottom: 18px;
+    }
+    .chat-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: var(--neon-cyan); flex-shrink: 0;
+      border: 1px solid var(--border);
+      object-fit: cover;
+    }
+    .chat-content { flex: 1; }
+    .chat-author {
+      font-weight: 600; color: #FFF; font-size: 14px;
+      display: flex; align-items: center; gap: 8px; margin-bottom: 4px;
+    }
+    .bot-tag {
+      background: #5865F2; color: #FFF; font-size: 9px;
+      padding: 1px 5px; border-radius: 3px; font-weight: 700;
+    }
+    .chat-time {
+      font-size: 11px; color: var(--text-faint); font-weight: 400;
+    }
+
+    /* Discord High-Fidelity Embed */
+    .discord-embed-card {
+      border-left: 4px solid var(--neon-cyan);
+      background: rgba(20, 24, 36, 0.9);
+      border-radius: 0 8px 8px 0;
+      padding: 14px 18px; max-width: 620px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    }
+    .embed-title {
+      font-weight: 700; color: #FFF; font-size: 15px; margin-bottom: 8px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .embed-desc {
+      font-size: 13px; color: var(--text-dim); line-height: 1.5; margin-bottom: 12px;
+    }
+    .embed-field-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 10px; margin-bottom: 12px;
+    }
+    .embed-field {
+      background: rgba(0,0,0,0.25); padding: 8px 10px; border-radius: 6px;
+    }
+    .ef-name { font-size: 11px; color: var(--text-faint); text-transform: uppercase; font-weight: 600; }
+    .ef-val { font-size: 12px; color: #FFF; font-weight: 500; margin-top: 2px; }
+
+    .embed-buttons {
+      display: flex; gap: 8px; margin-top: 12px;
+    }
+    .btn-discord-action {
+      background: #5865F2; color: #FFF;
+      border: none; padding: 7px 14px; border-radius: 4px;
+      font-family: 'Kanit', sans-serif; font-size: 12px; font-weight: 600;
+      cursor: pointer; display: flex; align-items: center; gap: 6px;
+    }
+    .btn-discord-action.green { background: #23A55A; }
+    .btn-discord-action.grey { background: #4E5058; }
+
+    /* Interactive Terminal Input */
+    .chat-input-bar {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: 8px; padding: 10px 14px;
+      display: flex; align-items: center; justify-content: space-between;
+      color: var(--text-dim); font-size: 13px;
+    }
+    .input-slash-cmd {
+      color: var(--neon-cyan); font-weight: 600;
+    }
+    .btn-copy-cmd {
+      background: rgba(255,255,255,0.08); border: 1px solid var(--border);
+      color: var(--text-dim); font-size: 11px; padding: 4px 10px;
+      border-radius: 4px; cursor: pointer; transition: all 0.15s;
+    }
+    .btn-copy-cmd:hover { color: #FFF; border-color: var(--neon-cyan); }
+
+    /* ==========================================================================
+       Asymmetric Bento Grid (Architectural & Substance Driven)
+       ========================================================================== */
+    .bento-section {
+      max-width: 1200px; margin: 90px auto 0;
+      padding: 0 24px;
+    }
+    .bento-header {
+      text-align: center; margin-bottom: 48px;
+    }
+    .section-tag {
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 3px; color: var(--neon-cyan);
+      text-transform: uppercase; margin-bottom: 8px;
+    }
+    .bento-title {
+      font-family: 'Bebas Neue', 'Kanit', sans-serif;
+      font-size: clamp(34px, 5vw, 56px);
+      letter-spacing: 0.02em; color: #FFF;
+    }
+
+    .asymmetric-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 18px;
+    }
+    .bento-box {
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: 16px; padding: 28px;
+      position: relative; overflow: hidden;
+      display: flex; flex-direction: column; justify-content: space-between;
+      transition: border-color 0.25s, transform 0.25s;
+    }
+    .bento-box:hover {
+      border-color: rgba(0, 240, 255, 0.35);
+      transform: translateY(-3px);
+    }
+    .col-span-8 { grid-column: span 8; }
+    .col-span-4 { grid-column: span 4; }
+    .col-span-6 { grid-column: span 6; }
+    .col-span-12 { grid-column: span 12; }
+
+    @media(max-width: 900px) {
+      .col-span-8, .col-span-4, .col-span-6 { grid-column: span 12; }
+    }
+
+    .box-icon-pill {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 44px; height: 44px; border-radius: 12px;
+      background: rgba(0, 240, 255, 0.08);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      color: var(--neon-cyan); font-size: 18px; margin-bottom: 20px;
+    }
+    .box-heading {
+      font-size: 1.25rem; font-weight: 700; color: #FFF; margin-bottom: 8px;
+    }
+    .box-desc {
+      font-size: 0.9rem; color: var(--text-dim); line-height: 1.6;
+    }
+
+    /* Role Security Pills */
+    .role-pyramid {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px;
+    }
+    .role-pill {
+      font-size: 11px; font-weight: 600; padding: 4px 10px;
+      border-radius: 6px; display: inline-flex; align-items: center; gap: 5px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .role-founder { background: rgba(239, 68, 68, 0.15); color: #EF4444; border-color: rgba(239, 68, 68, 0.3); }
+    .role-admin { background: rgba(245, 158, 11, 0.15); color: #F59E0B; border-color: rgba(245, 158, 11, 0.3); }
+    .role-mod { background: rgba(59, 130, 246, 0.15); color: #3B82F6; border-color: rgba(59, 130, 246, 0.3); }
+    .role-vip { background: rgba(168, 85, 247, 0.15); color: #A855F7; border-color: rgba(168, 85, 247, 0.3); }
+    .role-bot { background: rgba(16, 185, 129, 0.15); color: #10B981; border-color: rgba(16, 185, 129, 0.3); }
+    .role-verified { background: rgba(0, 240, 255, 0.15); color: #00F0FF; border-color: rgba(0, 240, 255, 0.3); }
+
+    /* Switch Component Preview */
+    .feature-toggle-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 14px; background: rgba(0,0,0,0.25);
+      border-radius: 8px; margin-top: 10px;
+      font-size: 13px; color: var(--text);
+    }
+    .toggle-active-status {
+      color: #10B981; font-size: 11px; font-weight: 600;
+      display: flex; align-items: center; gap: 5px;
+    }
+
+    /* Reviews Section */
+    .reviews-section {
+      max-width: 1200px; margin: 90px auto 40px;
+      padding: 0 24px;
+    }
+    .reviews-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px; margin-top: 32px;
+    }
+    .review-item {
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: 14px; padding: 20px;
+      transition: transform 0.2s;
+    }
+    .review-item:hover { transform: translateY(-2px); }
+    .review-stars { color: #F59E0B; font-size: 13px; margin-bottom: 10px; }
+
+    /* Footer */
+    .master-footer {
+      border-top: 1px solid var(--border);
+      padding: 36px 24px; text-align: center;
+      font-size: 0.85rem; color: var(--text-dim);
+      margin-top: 80px; position: relative; z-index: 1;
+    }
+    .master-footer a { color: var(--neon-cyan); text-decoration: none; }
   </style>
 </head>
 <body>
-  <!-- Loader -->
+  <!-- Preloader -->
   <div id="loader">
-    <div class="loader-mark">DEVPLUS BOT</div>
-    <div class="loader-sub">กำลังโหลดระบบ...</div>
+    <div class="loader-brand">DEVPLUS BOT</div>
+    <div class="loader-sub">INITIALIZING DISCORD OS...</div>
   </div>
 
-  <!-- Background Orbs -->
-  <div class="orb orb-1"></div>
-  <div class="orb orb-2"></div>
-  <div class="orb orb-3"></div>
+  <!-- Background Architecture (Clean, Anti-Slop Blueprint) -->
+  <div class="blueprint-bg"></div>
+  <div class="top-glow-beam"></div>
 
-  <!-- Floating CEO KAITAN Nav -->
+  <!-- Floating Nav Header -->
   <nav class="ceo-nav">
-    <div class="ceo-nav-inner">
-      <a href="/" class="ceo-nav-brand">
-        <% if (botAvatar) { %>
-          <img src="<%= botAvatar %>" alt="Bot">
-        <% } %>
-        <div class="dot"></div>
-        DEVPLUS
-      </a>
+    <a href="/" class="ceo-nav-brand">
+      <% if (botAvatar) { %>
+        <img src="<%= botAvatar %>" alt="Devplus Bot">
+      <% } else { %>
+        <img src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Devplus Bot">
+      <% } %>
+      DEVPLUS
+      <span class="nav-badge">V2.4</span>
+    </a>
 
-      <div class="ceo-nav-links">
-        <a href="/" class="active">🏠 หน้าหลัก</a>
-        <a href="/dashboard">📊 Dashboard</a>
-        <a href="<%= inviteURL %>" target="_blank">🤖 เชิญบอท</a>
-      </div>
+    <div class="ceo-nav-links">
+      <a href="#showcase" class="active">โครงสร้างระบบ</a>
+      <a href="#features">ความปลอดภัย 7 ระดับ</a>
+      <a href="#reviews">รีวิวผู้ใช้</a>
+      <a href="<%= inviteURL %>" target="_blank">เชิญบอท</a>
+    </div>
 
+    <div>
       <% if (user) { %>
         <div style="display: flex; align-items: center; gap: 10px;">
-          <div class="user-pill">
-            <img src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png" class="user-avatar" alt="User">
-            <span class="user-name"><%= user.username %></span>
-          </div>
-          <a href="/auth/logout" style="color: var(--text-dim); font-size: 0.82rem; padding: 6px 10px; text-decoration: none;">
+          <a href="/dashboard" class="btn-cyan-outline" style="padding: 7px 18px; font-size: 13px;">
+            <i class="fas fa-th-large"></i> Dashboard
+          </a>
+          <a href="/auth/logout" style="color: var(--text-dim); padding: 8px;" title="ออกจากระบบ">
             <i class="fas fa-sign-out-alt"></i>
           </a>
         </div>
       <% } else { %>
-        <a href="/auth/login" class="btn-primary" style="font-size: 13px; padding: 9px 20px;">
+        <a href="/auth/login" class="btn-discord-primary" style="padding: 8px 20px; font-size: 13px;">
           <i class="fab fa-discord"></i> เข้าสู่ระบบ
         </a>
       <% } %>
@@ -281,208 +517,478 @@
   </nav>
 
   <!-- Hero Section -->
-  <section class="hero">
-    <!-- Status Pill -->
-    <div class="hero-pill">
-      <div class="pill-dot"></div>
-      <span class="pill-tag">LIVE</span>
-      ระบบพร้อมใช้งาน 24/7
+  <main class="hero-container">
+    <div class="hero-pill-badge">
+      <span class="pulse-dot"></span>
+      <span>Discord API v10 Verified</span>
+      <span style="opacity: 0.4;">|</span>
+      <span style="color: var(--neon-cyan);">Zero-Trust Auto Setup</span>
     </div>
 
-    <!-- Main Title -->
-    <h1 class="hero-title">
-      <span class="l1">DEVPLUS</span>
-      <span class="l2">BOT</span>
+    <h1 class="hero-headline">
+      ยกระดับเซิร์ฟเวอร์ DISCORD<br>
+      <span class="text-accent">ด้วยสถาปัตยกรรมระดับโปร</span>
     </h1>
 
-    <p class="hero-sub">
-      ยกระดับ Discord Server ของคุณด้วยระบบอัตโนมัติครบวงจร<br>
-      Full Auto Setup • 7-Tier Security • Verify Gate • Welcome • Modern Dashboard
+    <p class="hero-subhead">
+      สร้างโครงสร้างช่อง, แบ่งยศ 7 ระดับ, ระบบป้องกันการบุกรุก (Anti-Nuke), 
+      และเกทเวย์ยืนยันตัวตนอัตโนมัติครบวงจร พร้อมแดชบอร์ดควบคุมสดผ่านเว็บ
     </p>
 
-    <!-- CTA Buttons -->
-    <div class="hero-ctas">
+    <div class="hero-cta-group">
       <% if (user) { %>
-        <a href="/dashboard" class="btn-primary" style="font-size: 15px; padding: 14px 32px;">
-          <i class="fas fa-tachometer-alt"></i> <span>ไปที่ Dashboard</span>
+        <a href="/dashboard" class="btn-cyan-outline">
+          <i class="fas fa-columns"></i> เข้าสู่หน้าจัดการเซิร์ฟเวอร์
         </a>
       <% } else { %>
-        <a href="/auth/login" class="btn-primary" style="font-size: 15px; padding: 14px 32px;">
-          <i class="fab fa-discord"></i> <span>เข้าสู่ระบบด้วย Discord</span>
+        <a href="/auth/login" class="btn-discord-primary">
+          <i class="fab fa-discord"></i> เข้าสู่ระบบด้วย Discord
         </a>
       <% } %>
-      <a href="<%= inviteURL %>" target="_blank" class="btn-ghost" style="font-size: 15px; padding: 14px 32px;">
-        <i class="fas fa-plus-circle"></i> เชิญบอทเข้าเซิร์ฟเวอร์
+      <a href="<%= inviteURL %>" target="_blank" class="btn-cyan-outline">
+        <i class="fas fa-plus"></i> เชิญบอทสู่เซิร์ฟเวอร์
       </a>
     </div>
 
-    <!-- Stats Row -->
-    <div class="hero-stats">
-      <div class="hero-stat">
-        <div class="hero-stat-val"><%= serverCount %></div>
-        <div class="hero-stat-lbl">Servers</div>
+    <!-- Live Telemetry -->
+    <div class="telemetry-bar">
+      <div class="telemetry-item">
+        <strong><%= serverCount || 0 %></strong> เซิร์ฟเวอร์
       </div>
-      <div style="width:1px; background: var(--border); align-self: stretch;"></div>
-      <div class="hero-stat">
-        <div class="hero-stat-val"><%= userCount %></div>
-        <div class="hero-stat-lbl">Users</div>
+      <div class="telemetry-sep"></div>
+      <div class="telemetry-item">
+        <strong><%= userCount || 0 %></strong> สมาชิกในการดูแล
       </div>
-      <div style="width:1px; background: var(--border); align-self: stretch;"></div>
-      <div class="hero-stat">
-        <div class="hero-stat-val">20+</div>
-        <div class="hero-stat-lbl">Commands</div>
+      <div class="telemetry-sep"></div>
+      <div class="telemetry-item">
+        <strong style="color: #10B981;">99.98%</strong> Uptime 24/7
       </div>
-      <div style="width:1px; background: var(--border); align-self: stretch;"></div>
-      <div class="hero-stat">
-        <div class="hero-stat-val">24/7</div>
-        <div class="hero-stat-lbl">Uptime</div>
+      <div class="telemetry-sep"></div>
+      <div class="telemetry-item">
+        <strong style="color: var(--neon-cyan);">~18ms</strong> API Latency
       </div>
     </div>
-  </section>
 
-  <!-- Features Section -->
-  <section class="section reveal" id="features">
-    <div class="section-inner">
-      <div class="section-head">
-        <div class="section-eyebrow">ฟีเจอร์</div>
-        <h2 class="section-title">ระบบครบ ทำได้ทุกอย่าง</h2>
-        <p class="section-sub">บอทอัตโนมัติที่จัดการ Discord Server ได้ครบวงจรในคลิกเดียว</p>
-      </div>
-
-      <div class="feature-bento">
-        <div class="feature-tile">
-          <div class="feature-tile-icon" style="color: #10B981;">⚡</div>
-          <div class="feature-tile-title">Full Auto Setup</div>
-          <p class="feature-tile-desc">คลิกเดียวสร้างยศ ห้อง หมวดหมู่ ล็อกสิทธิ์ และผูกระบบต้อนรับ-ยืนยันตัวตนพร้อมใช้ทันที</p>
+    <!-- Interactive Discord OS Showcase -->
+    <div class="discord-showcase" id="showcase">
+      <div class="showcase-header">
+        <div class="window-controls">
+          <div class="wc-dot wc-red"></div>
+          <div class="wc-dot wc-yellow"></div>
+          <div class="wc-dot wc-green"></div>
         </div>
-
-        <div class="feature-tile">
-          <div class="feature-tile-icon" style="color: #38BDF8;">🛡️</div>
-          <div class="feature-tile-title">7-Tier Security</div>
-          <p class="feature-tile-desc">จัดระเบียบ 7 ระดับสิทธิ์ Founder, Admin, Staff, VIP, Bot, Verified, Member ซ่อนห้องสแปม 100%</p>
-        </div>
-
-        <div class="feature-tile">
-          <div class="feature-tile-icon" style="color: #A855F7;">✅</div>
-          <div class="feature-tile-title">Verify & Welcome</div>
-          <p class="feature-tile-desc">แผงกดยืนยันตัวตนรับยศอัตโนมัติ และการ์ดต้อนรับสมาชิกใหม่แบบ Embed สวยงามแบบกำหนดเอง</p>
-        </div>
-
-        <div class="feature-tile">
-          <div class="feature-tile-icon" style="color: #F43F5E;">🎨</div>
-          <div class="feature-tile-title">Server Styler & Clone</div>
-          <p class="feature-tile-desc">ตกแต่งห้องด้วยธีมเกมมิ่ง คอมมูนิตี้ คาเฟ่ พร้อมระบบโคลนห้อง 1:1 และเคาน์เตอร์สถิติสด</p>
+        <div class="showcase-tab-pills">
+          <button class="showcase-tab-btn active" onclick="switchShowcase('auto')">/auto-setup</button>
+          <button class="showcase-tab-btn" onclick="switchShowcase('security')">/setup-security</button>
+          <button class="showcase-tab-btn" onclick="switchShowcase('verify')">/setup-verify</button>
+          <button class="showcase-tab-btn" onclick="switchShowcase('stats')">/setup-stats</button>
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- Reviews Section -->
-  <section class="section reveal" id="reviews">
-    <div class="section-inner">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 14px;">
-        <div>
-          <div class="section-eyebrow" style="justify-content: flex-start; margin-bottom: 6px;">รีวิว</div>
-          <h2 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 4px; color: #FFF;">
-            <i class="fas fa-star" style="color: #F59E0B;"></i> <%= reviewStats.avgRating %> / 5.0 ดาว
-          </h2>
-          <p style="color: var(--text-dim); font-size: 0.88rem;">ทั้งหมด <%= reviewStats.total %> รีวิว</p>
-        </div>
-        <% if (user) { %>
-          <button class="btn-primary" onclick="openReviewModal()" style="cursor: pointer; border: none; font-size: 14px; padding: 11px 24px;">
-            <i class="fas fa-pen"></i> <span>เขียนรีวิวของคุณ</span>
-          </button>
-        <% } else { %>
-          <a href="/auth/login" class="btn-ghost" style="font-size: 14px; padding: 11px 24px;">
-            <i class="fab fa-discord"></i> เข้าสู่ระบบเพื่อรีวิว
-          </a>
-        <% } %>
-      </div>
-
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
-        <% if (reviews.length === 0) { %>
-          <div style="grid-column: 1/-1; text-align: center; padding: 40px; background: var(--surface-card); border-radius: 20px; border: 1px solid var(--border);">
-            <p style="color: var(--text-dim);">ยังไม่มีรีวิว ร่วมเป็นคนแรกที่ให้คะแนนบอทนี้!</p>
+      <div class="showcase-body">
+        <!-- Channel Explorer Mockup -->
+        <div class="discord-channels-col">
+          <div class="dc-server-title">
+            <span>Devplus Community</span>
+            <i class="fas fa-chevron-down" style="font-size: 11px;"></i>
           </div>
-        <% } else { %>
-          <% reviews.forEach(r => { %>
-            <div class="review-card">
-              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-                <img src="<%= r.avatar ? `https://cdn.discordapp.com/avatars/${r.user_id}/${r.avatar}.png` : 'https://cdn.discordapp.com/embed/avatars/0.png' %>" style="width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--border-2);" alt="Avatar">
-                <div>
-                  <div style="font-weight: 700; font-size: 0.92rem; color: #FFF;"><%= r.username %></div>
-                  <div style="color: #F59E0B; font-size: 0.8rem;">
-                    <% for(let i=0; i<r.rating; i++) { %>★<% } %><% for(let i=r.rating; i<5; i++) { %>☆<% } %>
+
+          <div class="dc-category"><i class="fas fa-shield-alt"></i> Staff Zone</div>
+          <div class="dc-channel active">
+            <i class="fas fa-hashtag"></i>
+            <span>founder-lounge</span>
+            <span class="dc-badge-lock"><i class="fas fa-lock"></i></span>
+          </div>
+          <div class="dc-channel">
+            <i class="fas fa-hashtag"></i>
+            <span>bot-audit-logs</span>
+            <span class="dc-badge-lock"><i class="fas fa-lock"></i></span>
+          </div>
+
+          <div class="dc-category"><i class="fas fa-users"></i> Community</div>
+          <div class="dc-channel">
+            <i class="fas fa-bullhorn"></i>
+            <span>announcements</span>
+          </div>
+          <div class="dc-channel">
+            <i class="fas fa-check-circle"></i>
+            <span>verify-gate</span>
+          </div>
+          <div class="dc-channel">
+            <i class="fas fa-hashtag"></i>
+            <span>general-chat</span>
+          </div>
+
+          <div class="dc-category"><i class="fas fa-chart-bar"></i> Dynamic Stats</div>
+          <div class="dc-channel">
+            <i class="fas fa-volume-up"></i>
+            <span>👥 สมาชิก: <%= userCount || 1420 %></span>
+          </div>
+          <div class="dc-channel">
+            <i class="fas fa-volume-up"></i>
+            <span>🟢 ออนไลน์: 320</span>
+          </div>
+        </div>
+
+        <!-- Chat / Console Output Mockup -->
+        <div class="discord-chat-col">
+          <div class="chat-message-row">
+            <% if (botAvatar) { %>
+              <img src="<%= botAvatar %>" class="chat-avatar" alt="Bot">
+            <% } else { %>
+              <div class="chat-avatar" style="display:flex;align-items:center;justify-content:center;font-weight:700;color:#000;">D</div>
+            <% } %>
+            <div class="chat-content">
+              <div class="chat-author">
+                <span>Devplus BOT</span>
+                <span class="bot-tag">BOT</span>
+                <span class="chat-time">วันนี้ เวลา 00:00</span>
+              </div>
+
+              <!-- Interactive Embed Box -->
+              <div class="discord-embed-card" id="embedContainer">
+                <div class="embed-title">
+                  <i class="fas fa-magic" style="color: var(--neon-cyan);"></i>
+                  <span id="embedTitle">ระบบจัดโครงสร้างเซิร์ฟเวอร์อัตโนมัติ (Auto Setup)</span>
+                </div>
+                <div class="embed-desc" id="embedDesc">
+                  สร้างและกำหนดสิทธิ์หมวดหมู่ 5 กลุ่ม, 16 ห้อง และกำหนดบทบาท 7 ระดับเสร็จสมบูรณ์ใน 2.1 วินาที
+                </div>
+                <div class="embed-field-grid" id="embedFields">
+                  <div class="embed-field">
+                    <div class="ef-name">โครงสร้างห้อง</div>
+                    <div class="ef-val">16 ห้องพร้อมสิทธิ์เฉพาะกลุ่ม</div>
+                  </div>
+                  <div class="embed-field">
+                    <div class="ef-name">ระบบความปลอดภัย</div>
+                    <div class="ef-val">Anti-Nuke ล็อกสิทธิ์อัตโนมัติ</div>
                   </div>
                 </div>
+                <div class="embed-buttons" id="embedButtons">
+                  <button class="btn-discord-action green"><i class="fas fa-check"></i> ดำเนินการสำเร็จ</button>
+                  <button class="btn-discord-action grey"><i class="fas fa-sliders-h"></i> ปรับแต่งในเว็บ</button>
+                </div>
               </div>
-              <p style="color: var(--text-dim); font-size: 0.88rem; line-height: 1.55;"><%= r.comment || 'ไม่มีความคิดเห็นเพิ่มเติม' %></p>
             </div>
-          <% }) %>
-        <% } %>
+          </div>
+
+          <!-- Bottom Command Simulator -->
+          <div class="chat-input-bar">
+            <div>
+              <span class="input-slash-cmd" id="terminalCmdText">/auto-setup template:gaming mode:instant</span>
+            </div>
+            <button class="btn-copy-cmd" onclick="copyActiveCommand()"><i class="fas fa-copy"></i> คัดลอกคำสั่ง</button>
+          </div>
+        </div>
       </div>
+    </div>
+  </main>
+
+  <!-- Asymmetric Bento Grid Features -->
+  <section class="bento-section" id="features">
+    <div class="bento-header">
+      <div class="section-tag">ENGINEERED ARCHITECTURE</div>
+      <h2 class="bento-title">ฟีเจอร์ระดับโครงสร้าง ไม่ใช่แค่ของตกแต่ง</h2>
+    </div>
+
+    <div class="asymmetric-grid">
+      <!-- 7-Tier Security (Span 8) -->
+      <div class="bento-box col-span-8">
+        <div>
+          <div class="box-icon-pill"><i class="fas fa-user-shield"></i></div>
+          <h3 class="box-heading">ระบบความปลอดภัย 7 ระดับ (Zero-Trust Permission)</h3>
+          <p class="box-desc">
+            จัดระเบียบสิทธิ์บทบาทแบบลำดับชั้นป้องกันการดึงสิทธิ์แอดมินรั่วไหล (Privilege Escalation) 
+            ล็อกห้อง Staff และห้องควบคุมอัตโนมัติ 100% ป้องกันสแปมและ Bot รุกราน
+          </p>
+          <div class="role-pyramid">
+            <span class="role-pill role-founder"><i class="fas fa-crown"></i> Founder</span>
+            <span class="role-pill role-admin"><i class="fas fa-shield-alt"></i> Administrator</span>
+            <span class="role-pill role-mod"><i class="fas fa-hammer"></i> Moderator</span>
+            <span class="role-pill role-vip"><i class="fas fa-gem"></i> VIP Supporter</span>
+            <span class="role-pill role-bot"><i class="fas fa-robot"></i> Certified Bot</span>
+            <span class="role-pill role-verified"><i class="fas fa-check"></i> Verified Member</span>
+          </div>
+        </div>
+        <div style="margin-top: 24px;">
+          <div class="feature-toggle-row">
+            <span>🛡️ Anti-Nuke Channel Protection</span>
+            <span class="toggle-active-status"><i class="fas fa-check-circle"></i> เปิดใช้งานแล้ว</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Verify Gate (Span 4) -->
+      <div class="bento-box col-span-4">
+        <div>
+          <div class="box-icon-pill"><i class="fas fa-key"></i></div>
+          <h3 class="box-heading">Verify Gatekeeper</h3>
+          <p class="box-desc">
+            ประตูยืนยันตัวตนด้วยปุ่มคลิกเดียว สมาชิกใหม่จะไม่เห็นห้องอื่นจนกว่าจะผ่านการยืนยัน
+          </p>
+        </div>
+        <div style="margin-top: 20px;">
+          <div class="feature-toggle-row">
+            <span>ปุ่มยืนยันรับยศ Member</span>
+            <span class="toggle-active-status"><i class="fas fa-check-circle"></i> Active</span>
+          </div>
+          <div class="feature-toggle-row">
+            <span>ซ่อนห้องทั้งหมดสำหรับผู้ไม่ยืนยัน</span>
+            <span class="toggle-active-status"><i class="fas fa-lock"></i> Locked</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Real-Time Voice Stats (Span 4) -->
+      <div class="bento-box col-span-4">
+        <div>
+          <div class="box-icon-pill"><i class="fas fa-chart-line"></i></div>
+          <h3 class="box-heading">Dynamic Voice Counters</h3>
+          <p class="box-desc">
+            สร้างห้องเสียงแสดงสถิติจำนวนสมาชิก, ผู้ใช้งานออนไลน์ และบอท อัปเดตข้อมูลอัตโนมัติ
+          </p>
+        </div>
+        <div style="margin-top: 20px; font-family: monospace; font-size: 13px; color: var(--neon-cyan);">
+          <div style="padding: 6px 0; border-bottom: 1px solid var(--border);">🔊┃สมาชิก: <%= userCount || 0 %> คน</div>
+          <div style="padding: 6px 0; border-bottom: 1px solid var(--border);">🔊┃เซิร์ฟเวอร์: <%= serverCount || 0 %> แห่ง</div>
+          <div style="padding: 6px 0;">🔊┃สถานะ: 24/7 บนคลาวด์</div>
+        </div>
+      </div>
+
+      <!-- Web Control Dashboard (Span 8) -->
+      <div class="bento-box col-span-8">
+        <div>
+          <div class="box-icon-pill"><i class="fas fa-desktop"></i></div>
+          <h3 class="box-heading">Web Management Dashboard</h3>
+          <p class="box-desc">
+            ตั้งค่าเซิร์ฟเวอร์ผ่านหน้าเว็บแบบเรียลไทม์ เปิด-ปิดระบบต้อนรับ, จัดการข้อความ Embed, 
+            และตั้งค่าความปลอดภัยได้โดยตรงจากเบราว์เซอร์ ไม่ต้องจำคำสั่งใน Discord
+          </p>
+        </div>
+        <div style="display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap;">
+          <span style="background: rgba(255,255,255,0.06); padding: 6px 14px; border-radius: 6px; font-size: 12px; border: 1px solid var(--border);">
+            <i class="fas fa-bolt" style="color:var(--neon-cyan);"></i> ซิงค์สดไม่ดีเลย์
+          </span>
+          <span style="background: rgba(255,255,255,0.06); padding: 6px 14px; border-radius: 6px; font-size: 12px; border: 1px solid var(--border);">
+            <i class="fas fa-lock" style="color:#10B981;"></i> ปลอดภัยด้วย OAuth2
+          </span>
+          <span style="background: rgba(255,255,255,0.06); padding: 6px 14px; border-radius: 6px; font-size: 12px; border: 1px solid var(--border);">
+            <i class="fas fa-mobile-alt" style="color:#3B82F6;"></i> รองรับมือถือ 100%
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Real User Reviews -->
+  <section class="reviews-section" id="reviews">
+    <div style="display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+      <div>
+        <div class="section-tag">TESTIMONIALS</div>
+        <h2 class="bento-title">เสียงตอบรับจากผู้ดูแลเซิร์ฟเวอร์</h2>
+      </div>
+      <% if (user) { %>
+        <button onclick="openReviewModal()" class="btn-cyan-outline" style="padding: 8px 18px; font-size: 13px;">
+          <i class="fas fa-pen"></i> เขียนรีวิว
+        </button>
+      <% } %>
+    </div>
+
+    <div class="reviews-grid">
+      <% if (reviews && reviews.length > 0) { %>
+        <% reviews.forEach(r => { %>
+          <div class="review-item">
+            <div class="review-stars">
+              <% for(let i=0; i<r.rating; i++) { %>★<% } %>
+            </div>
+            <p style="font-size: 13px; color: var(--text); line-height: 1.5; margin-bottom: 14px;">
+              "<%= r.comment %>"
+            </p>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <% if (r.userAvatar) { %>
+                <img src="<%= r.userAvatar %>" style="width: 28px; height: 28px; border-radius: 50%;" alt="">
+              <% } else { %>
+                <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--border); display: flex; align-items: center; justify-content: center; font-size: 11px;">👤</div>
+              <% } %>
+              <div style="font-size: 12px; font-weight: 600; color: #FFF;"><%= r.username %></div>
+            </div>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <div class="review-item">
+          <div class="review-stars">★★★★★</div>
+          <p style="font-size: 13px; color: var(--text); line-height: 1.5; margin-bottom: 14px;">
+            "บอทตัวเดียวจัดเซิร์ฟเวอร์ให้ใหม่หมด ประหยัดเวลาไปหลายชั่วโมง สิทธิ์ห้องแยกได้ปลอดภัยมากครับ"
+          </p>
+          <div style="font-size: 12px; font-weight: 600; color: #FFF;">Community Server Admin</div>
+        </div>
+        <div class="review-item">
+          <div class="review-stars">★★★★★</div>
+          <p style="font-size: 13px; color: var(--text); line-height: 1.5; margin-bottom: 14px;">
+            "ระบบ Verify Gate ใช้งานง่ายมาก สมาชิกใหม่ไม่งง และป้องกันสแปมบอทได้จริง"
+          </p>
+          <div style="font-size: 12px; font-weight: 600; color: #FFF;">Gaming Guild Master</div>
+        </div>
+        <div class="review-item">
+          <div class="review-stars">★★★★★</div>
+          <p style="font-size: 13px; color: var(--text); line-height: 1.5; margin-bottom: 14px;">
+            "แดชบอร์ดหน้าเว็บสวย สะอาดตา ปรับแต่งสะดวก ไม่ต้องมานั่งจำคำสั่งในแชท"
+          </p>
+          <div style="font-size: 12px; font-weight: 600; color: #FFF;">Roleplay Community Owner</div>
+        </div>
+      <% } %>
     </div>
   </section>
 
   <!-- Review Modal -->
-  <div id="reviewModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(10px); z-index: 1000; align-items: center; justify-content: center;">
-    <div style="background: #0E0F16; border: 1px solid var(--border-2); border-radius: 24px; width: 90%; max-width: 450px; padding: 28px; box-shadow: 0 20px 60px rgba(0,0,0,0.8);">
-      <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 20px; color: #FFF;">⭐ เขียนรีวิวให้ Devplus BOT</h3>
-      <div style="margin-bottom: 16px;">
-        <label style="display: block; font-size: 0.85rem; color: var(--text-dim); margin-bottom: 8px;">ให้คะแนนดาว:</label>
-        <select id="reviewRating" class="form-control-pro">
-          <option value="5">⭐⭐⭐⭐⭐ 5 ดาว (ยอดเยี่ยมมาก)</option>
-          <option value="4">⭐⭐⭐⭐ 4 ดาว (ดีมาก)</option>
-          <option value="3">⭐⭐⭐ 3 ดาว (ปานกลาง)</option>
-          <option value="2">⭐⭐ 2 ดาว (พอใช้)</option>
-          <option value="1">⭐ 1 ดาว (ต้องปรับปรุง)</option>
+  <div id="reviewModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 2000; align-items: center; justify-content: center;">
+    <div style="background: #0E1017; border: 1px solid var(--border-2); border-radius: 16px; width: 90%; max-width: 440px; padding: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.8);">
+      <h3 style="font-size: 1.2rem; font-weight: 700; color: #FFF; margin-bottom: 16px;">เขียนรีวิวให้ Devplus Bot</h3>
+      <div style="margin-bottom: 14px;">
+        <label style="font-size: 12px; color: var(--text-dim); display: block; margin-bottom: 6px;">คะแนนดาว:</label>
+        <select id="reviewRating" style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #FFF; border-radius: 8px;">
+          <option value="5">★★★★★ 5 ดาว (ยอดเยี่ยมมาก)</option>
+          <option value="4">★★★★☆ 4 ดาว (ดีมาก)</option>
+          <option value="3">★★★☆☆ 3 ดาว (ปานกลาง)</option>
+          <option value="2">★★☆☆☆ 2 ดาว (พอใช้)</option>
+          <option value="1">★☆☆☆☆ 1 ดาว (ต้องปรับปรุง)</option>
         </select>
       </div>
       <div style="margin-bottom: 20px;">
-        <label style="display: block; font-size: 0.85rem; color: var(--text-dim); margin-bottom: 8px;">ความคิดเห็น:</label>
-        <textarea id="reviewComment" rows="3" class="form-control-pro" placeholder="บอกเล่าความรู้สึกและฟีเจอร์ที่ชอบ..."></textarea>
+        <label style="font-size: 12px; color: var(--text-dim); display: block; margin-bottom: 6px;">ความคิดเห็น:</label>
+        <textarea id="reviewComment" rows="3" style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #FFF; border-radius: 8px;" placeholder="บอกเล่าความรู้สึกและฟีเจอร์ที่ชอบ..."></textarea>
       </div>
       <div style="display: flex; justify-content: flex-end; gap: 10px;">
-        <button onclick="closeReviewModal()" class="btn-ghost" style="padding: 10px 20px; font-size: 14px;">ยกเลิก</button>
-        <button onclick="submitReview()" class="btn-primary" style="padding: 10px 24px; font-size: 14px; border: none; cursor: pointer;"><span>ส่งรีวิว</span></button>
+        <button onclick="closeReviewModal()" class="btn-cyan-outline" style="padding: 8px 18px; font-size: 13px;">ยกเลิก</button>
+        <button onclick="submitReview()" class="btn-discord-primary" style="padding: 8px 20px; font-size: 13px;">ส่งรีวิว</button>
       </div>
     </div>
   </div>
 
-  <footer style="position: relative; z-index: 2; padding: 30px 24px; text-align: center; font-size: 0.84rem; color: var(--text-dim); border-top: 1px solid var(--border);">
-    &copy; 2026 Devplus BOT — พัฒนาโดย <strong style="color: #FFF;">tewit noita</strong>
-    (<a href="https://github.com/tewitdevPlus" target="_blank" style="color: var(--neon-cyan); text-decoration: none;">@tewitdevPlus</a>)
+  <!-- Master Footer -->
+  <footer class="master-footer">
+    &copy; 2026 Devplus Bot &mdash; ออกแบบและวิศวกรรมระบบโดย <strong>tewit noita</strong> 
+    (<a href="https://github.com/tewitdevPlus" target="_blank">@tewitdevPlus</a>)
   </footer>
 
+  <!-- Interactive Simulator Logic -->
   <script>
-    // Loader
+    // Remove preloader
     window.addEventListener('load', () => {
       setTimeout(() => {
         document.getElementById('loader').classList.add('done');
-      }, 600);
+      }, 400);
     });
 
-    // Reveal on scroll
-    const reveals = document.querySelectorAll('.reveal');
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
-    }, { threshold: 0.1 });
-    reveals.forEach(r => observer.observe(r));
+    // Interactive Showcase Simulator Data
+    const showcaseData = {
+      auto: {
+        cmd: '/auto-setup template:gaming mode:instant',
+        title: 'ระบบจัดโครงสร้างเซิร์ฟเวอร์อัตโนมัติ (Auto Setup)',
+        desc: 'สร้างหมวดหมู่ 5 กลุ่ม, 16 ห้อง และกำหนดบทบาท 7 ระดับเสร็จสมบูรณ์ใน 2.1 วินาที',
+        fields: [
+          { name: 'โครงสร้างห้อง', val: '16 ห้องพร้อมสิทธิ์เฉพาะกลุ่ม' },
+          { name: 'ระบบความปลอดภัย', val: 'Anti-Nuke ล็อกสิทธิ์อัตโนมัติ' }
+        ],
+        btn1: '<i class="fas fa-check"></i> ดำเนินการสำเร็จ',
+        btn2: '<i class="fas fa-sliders-h"></i> ปรับแต่งในเว็บ'
+      },
+      security: {
+        cmd: '/setup-security mode:max level:7-tier',
+        title: 'ระบบรักษาความปลอดภัยระดับสูง (Zero-Trust Security)',
+        desc: 'เปิดใช้งานการแยกยศ 7 ระดับ, ล็อกสิทธิ์ห้อง Staff และเปิดระบบแจ้งเตือน Audit Logs ทันที',
+        fields: [
+          { name: 'สถานะ Anti-Raid', val: 'Active (ล็อกการสแปมสมาชิก)' },
+          { name: 'การเข้าถึงสิทธิ์แอดมิน', val: 'Founder & Admin เท่านั้น' }
+        ],
+        btn1: '<i class="fas fa-shield-alt"></i> ระบบปลอดภัย 100%',
+        btn2: '<i class="fas fa-eye"></i> ตรวจสอบสิทธิ์'
+      },
+      verify: {
+        cmd: '/setup-verify role:@Member channel:#verify-gate',
+        title: 'ระบบยืนยันตัวตนอัตโนมัติ (Verification Gate)',
+        desc: 'สร้างข้อความพร้อมปุ่มยืนยันตัวตนในห้อง #verify-gate เพื่อคัดกรองสมาชิกและแจกยศอัตโนมัติ',
+        fields: [
+          { name: 'ห้องเกทเวย์', val: '#verify-gate' },
+          { name: 'ยศที่ได้รับ', val: '@Member (ปลดล็อกทุกห้อง)' }
+        ],
+        btn1: '<i class="fas fa-check-circle"></i> คลิกเพื่อยืนยันตัวตน',
+        btn2: '<i class="fas fa-question-circle"></i> กฎเซิร์ฟเวอร์'
+      },
+      stats: {
+        cmd: '/setup-stats category:Dynamic-Stats refresh:60s',
+        title: 'เคาน์เตอร์สถิติห้องเสียงสด (Dynamic Voice Stats)',
+        desc: 'สร้างห้องเสียง 3 ห้องสำหรับนับจำนวนสมาชิก, ผู้ใช้ออนไลน์ และบอท อัปเดตอัตโนมัติทุก 60 วินาที',
+        fields: [
+          { name: 'จำนวนสมาชิก', val: 'อัปเดตแบบเรียลไทม์' },
+          { name: 'ความหน่วง', val: '0% โหลดเซิร์ฟเวอร์' }
+        ],
+        btn1: '<i class="fas fa-sync-alt"></i> กำลังซิงค์อัตโนมัติ',
+        btn2: '<i class="fas fa-cog"></i> รีเซ็ตสถิติ'
+      }
+    };
 
-    // Review Modal
+    let currentCmd = showcaseData.auto.cmd;
+
+    function switchShowcase(key) {
+      const data = showcaseData[key];
+      if (!data) return;
+
+      document.querySelectorAll('.showcase-tab-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+
+      document.getElementById('embedTitle').innerText = data.title;
+      document.getElementById('embedDesc').innerText = data.desc;
+      document.getElementById('terminalCmdText').innerText = data.cmd;
+      currentCmd = data.cmd;
+
+      const fieldsHtml = data.fields.map(f => `
+        <div class="embed-field">
+          <div class="ef-name">${f.name}</div>
+          <div class="ef-val">${f.val}</div>
+        </div>
+      `).join('');
+      document.getElementById('embedFields').innerHTML = fieldsHtml;
+
+      document.getElementById('embedButtons').innerHTML = `
+        <button class="btn-discord-action green">${data.btn1}</button>
+        <button class="btn-discord-action grey">${data.btn2}</button>
+      `;
+    }
+
+    function copyActiveCommand() {
+      navigator.clipboard.writeText(currentCmd);
+      const btn = event.target.closest('button');
+      const oldHtml = btn.innerHTML;
+      btn.innerHTML = '<i class="fas fa-check" style="color:var(--neon-cyan);"></i> คัดลอกแล้ว!';
+      setTimeout(() => { btn.innerHTML = oldHtml; }, 2000);
+    }
+
+    // Review Modal Functions
     function openReviewModal() { document.getElementById('reviewModal').style.display = 'flex'; }
     function closeReviewModal() { document.getElementById('reviewModal').style.display = 'none'; }
+
     async function submitReview() {
       const rating = document.getElementById('reviewRating').value;
       const comment = document.getElementById('reviewComment').value.trim();
-      const res = await fetch('/api/reviews', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ rating, comment })
-      });
-      const data = await res.json();
-      if (data.success) { alert('ขอบคุณสำหรับรีวิวของคุณ!'); window.location.reload(); }
-      else { alert('เกิดข้อผิดพลาด: ' + (data.error || 'ไม่สามารถส่งรีวิวได้')); }
+      if (!comment) return alert('กรุณากรอกความคิดเห็น');
+
+      try {
+        const res = await fetch('/api/reviews', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ rating, comment })
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert('ส่งรีวิวเรียบร้อย ขอบคุณครับ!');
+          location.reload();
+        } else {
+          alert(data.error || 'เกิดข้อผิดพลาดในการส่งรีวิว');
+        }
+      } catch (err) {
+        alert('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้');
+      }
     }
   </script>
 </body>
