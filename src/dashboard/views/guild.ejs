@@ -34,7 +34,12 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background-color: var(--bg);
+      background-color: #050506;
+      background-image:
+        radial-gradient(ellipse 80% 45% at 50% -10%, rgba(255, 255, 255, 0.06), transparent 70%),
+        linear-gradient(to right, rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+      background-size: 100% 100%, 64px 64px, 64px 64px;
       color: var(--text);
       font-family: 'Geist', 'Kanit', -apple-system, BlinkMacSystemFont, sans-serif;
       line-height: 1.5;
@@ -262,40 +267,44 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Vercel Card Specification */
+    /* Modern 2026 Elevated Card Specification */
     .card-pro {
-      background: var(--card-bg) !important;
-      border: 1px solid var(--border) !important;
-      border-radius: var(--radius-lg) !important;
+      background: rgba(12, 12, 14, 0.92) !important;
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+      border-radius: 14px !important;
       margin-bottom: 24px !important;
       overflow: hidden !important;
-      box-shadow: none !important;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 16px 40px rgba(0, 0, 0, 0.45) !important;
       padding: 0 !important;
     }
     .card-pro-header {
-      padding: 24px 24px 18px !important;
-      border-bottom: 1px solid var(--border) !important;
+      padding: 20px 24px !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
+      align-items: center;
       margin-bottom: 0 !important;
+      background: rgba(255, 255, 255, 0.015);
     }
     .card-pro-title {
-      font-size: 16px !important;
+      font-size: 15px !important;
       font-weight: 600 !important;
-      color: #FFF !important;
-      letter-spacing: -0.01em;
+      color: #F4F4F5 !important;
+      letter-spacing: -0.015em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
     .card-pro p {
       padding: 0 24px !important;
       margin-top: 18px !important;
-      font-size: 14px !important;
-      color: var(--text-secondary) !important;
-      line-height: 1.6 !important;
+      font-size: 13.5px !important;
+      color: #A1A1AA !important;
+      line-height: 1.65 !important;
     }
     .card-pro > div[style*="grid"] {
       padding: 0 24px 24px !important;
-      margin-top: 18px !important;
+      margin-top: 20px !important;
     }
     .card-pro > div:not([class]):not([style*="grid"]) {
       padding: 0 24px 24px !important;
@@ -305,59 +314,277 @@
       margin: 0 24px 24px !important;
     }
 
-    /* Vercel Card Option Grid (For Auto-Setup & Templates) */
+    /* Modern Option Cards */
     .server-card {
-      background: #000000 !important;
-      border: 1px solid var(--border) !important;
-      border-radius: var(--radius) !important;
-      padding: 18px !important;
-      transition: border-color 0.15s, background 0.15s !important;
+      background: rgba(255, 255, 255, 0.02) !important;
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+      border-radius: 12px !important;
+      padding: 20px !important;
+      transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
       text-align: left !important;
-      box-shadow: none !important;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03) !important;
     }
     .server-card:hover {
-      border-color: var(--border-hover) !important;
-      background: #0A0A0A !important;
-      transform: none !important;
+      border-color: rgba(255, 255, 255, 0.22) !important;
+      background: rgba(255, 255, 255, 0.04) !important;
+      transform: translateY(-2px) !important;
     }
     .server-card h3 {
       font-size: 15px !important;
       font-weight: 600 !important;
-      color: #FFF !important;
+      color: #FAFAFA !important;
       margin-bottom: 6px !important;
+      letter-spacing: -0.01em;
     }
     .server-card p {
       padding: 0 !important;
-      margin: 0 0 14px 0 !important;
+      margin: 0 0 16px 0 !important;
       font-size: 13px !important;
-      color: var(--text-secondary) !important;
+      color: #A1A1AA !important;
+    }
+    .theme-pill-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #D4D4D8;
     }
 
-    /* Vercel Form Controls */
+    /* ==========================================================================
+       Modern Animated Toggle Switches (Desktop & Mobile Touch)
+       ========================================================================== */
+    .switch-control-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    .toggle-status-pill {
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.04);
+      color: #71717A;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      user-select: none;
+    }
+    .toggle-status-pill.is-on {
+      color: #10B981;
+      background: rgba(16, 185, 129, 0.12);
+      border-color: rgba(16, 185, 129, 0.35);
+    }
+
+    .switch-sm {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      width: 48px;
+      height: 26px;
+      cursor: pointer;
+      flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .switch-sm input[type="checkbox"] {
+      opacity: 0 !important;
+      width: 0 !important;
+      height: 0 !important;
+      position: absolute !important;
+      pointer-events: none !important;
+    }
+    .slider-sm {
+      position: absolute;
+      inset: 0;
+      background: #27272A;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 9999px;
+      transition: background 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+                  border-color 0.28s ease,
+                  box-shadow 0.28s ease;
+    }
+    .slider-sm::before {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #A1A1AA;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+      transition: transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  width 0.18s ease,
+                  background 0.22s ease;
+    }
+    .switch-sm:hover .slider-sm {
+      border-color: rgba(255, 255, 255, 0.28);
+    }
+    .switch-sm:active .slider-sm::before {
+      width: 24px;
+    }
+    .switch-sm input[type="checkbox"]:checked + .slider-sm {
+      background: #10B981;
+      border-color: #10B981;
+      box-shadow: 0 0 14px rgba(16, 185, 129, 0.38);
+    }
+    .switch-sm input[type="checkbox"]:checked + .slider-sm::before {
+      transform: translateX(22px);
+      background: #FFFFFF;
+    }
+    .switch-sm:active input[type="checkbox"]:checked + .slider-sm::before {
+      transform: translateX(18px);
+    }
+    .switch-sm input[type="checkbox"]:focus-visible + .slider-sm {
+      outline: 2px solid #FFFFFF;
+      outline-offset: 2px;
+    }
+
+    /* Standalone Checkbox Toggle Fallback */
+    input[type="checkbox"]:not(.switch-input) {
+      -webkit-appearance: none !important;
+      appearance: none !important;
+      width: 46px !important;
+      height: 26px !important;
+      background: #27272A !important;
+      border: 1px solid rgba(255, 255, 255, 0.14) !important;
+      border-radius: 9999px !important;
+      position: relative !important;
+      cursor: pointer !important;
+      flex-shrink: 0 !important;
+      transition: background 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease !important;
+      vertical-align: middle !important;
+      -webkit-tap-highlight-color: transparent;
+    }
+    input[type="checkbox"]:not(.switch-input)::before {
+      content: '' !important;
+      position: absolute !important;
+      top: 2px !important;
+      left: 2px !important;
+      width: 20px !important;
+      height: 20px !important;
+      border-radius: 50% !important;
+      background: #A1A1AA !important;
+      transition: transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.22s ease !important;
+    }
+    input[type="checkbox"]:not(.switch-input):checked {
+      background: #10B981 !important;
+      border-color: #10B981 !important;
+      box-shadow: 0 0 14px rgba(16, 185, 129, 0.38) !important;
+    }
+    input[type="checkbox"]:not(.switch-input):checked::before {
+      transform: translateX(20px) !important;
+      background: #FFFFFF !important;
+    }
+
+    /* Form Groups & Labels */
+    .form-group-pro {
+      padding: 0 24px;
+      margin-top: 18px;
+    }
+    .form-label-pro {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #D4D4D8;
+      margin-bottom: 8px;
+    }
+    .color-input-swatch {
+      width: 44px;
+      height: 36px;
+      padding: 2px;
+      background: #070708;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .stat-badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #E4E4E7;
+      transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+    }
+    .stat-badge-pill:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.25);
+      transform: translateY(-1px);
+    }
+
+    /* Floating Save Bar */
+    #floatingSaveBar {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(12, 12, 14, 0.94);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      border-radius: 12px;
+      padding: 12px 20px;
+      z-index: 9500;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.75);
+      animation: toastSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      max-width: calc(100vw - 24px);
+    }
+    .btn-save-master {
+      background: #10B981;
+      color: #000000;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Sleek Form Controls */
     .form-control-pro {
-      background: #000000 !important;
-      border: 1px solid var(--border) !important;
-      border-radius: var(--radius) !important;
-      color: #FFF !important;
+      background: #070708 !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      border-radius: 8px !important;
+      color: #FAFAFA !important;
       font-family: inherit !important;
-      font-size: 14px !important;
-      padding: 9px 12px !important;
-      transition: border-color 0.15s !important;
+      font-size: 13.5px !important;
+      padding: 10px 14px !important;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
       width: 100% !important;
     }
     .form-control-pro:focus {
       outline: none !important;
-      border-color: #555555 !important;
+      border-color: rgba(255, 255, 255, 0.35) !important;
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.06) !important;
     }
 
-    /* Vercel Buttons */
+    /* Modern Pill-style Action Buttons */
     .btn-go, .btn-setup {
-      background: var(--accent-white) !important;
+      background: #FFFFFF !important;
       color: #000000 !important;
       font-weight: 600 !important;
-      font-size: 13px !important;
-      padding: 8px 18px !important;
-      border-radius: var(--radius) !important;
+      font-size: 13.5px !important;
+      padding: 10px 20px !important;
+      border-radius: 8px !important;
       border: none !important;
       box-shadow: none !important;
       cursor: pointer !important;
@@ -478,6 +705,100 @@
       transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
 
+    /* ==========================================================================
+       Desktop & Mobile Touch Ergonomics
+       ========================================================================== */
+    .toggle-row-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .toggle-row-box:hover {
+      background: rgba(255, 255, 255, 0.045);
+      border-color: rgba(255, 255, 255, 0.18);
+    }
+
+    @media (max-width: 768px) {
+      .vercel-nav {
+        padding: 0 14px;
+        height: 58px;
+      }
+      .vercel-badge-env {
+        display: none;
+      }
+      .vercel-nav-right {
+        gap: 8px;
+      }
+      .btn-vercel-ghost .nav-btn-text {
+        display: none;
+      }
+      .btn-vercel-white, .btn-vercel-ghost {
+        padding: 8px 12px;
+        font-size: 12.5px;
+      }
+      .vercel-subheader {
+        padding: 20px 14px 0;
+      }
+      .vercel-tabs-nav {
+        gap: 16px;
+        -webkit-overflow-scrolling: touch;
+      }
+      .vercel-tab-item {
+        padding: 12px 4px;
+        font-size: 13.5px;
+      }
+      .vercel-main-content {
+        padding: 20px 14px 96px;
+      }
+      .card-pro-header {
+        padding: 16px !important;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .card-pro p,
+      .form-group-pro,
+      .card-pro > div[style*="grid"],
+      .card-pro > div:not([class]):not([style*="grid"]) {
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+      }
+      .card-pro > button.btn-go,
+      .card-pro > button.btn-setup {
+        margin-left: 16px !important;
+        margin-right: 16px !important;
+        width: calc(100% - 32px) !important;
+        justify-content: center;
+      }
+      .btn-go, .btn-setup {
+        min-height: 44px;
+      }
+      .form-control-pro {
+        min-height: 42px;
+        font-size: 14px !important;
+      }
+      #floatingSaveBar {
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+        transform: none;
+        width: auto;
+        padding: 10px 14px;
+      }
+      .toast-pro {
+        left: 14px;
+        right: 14px;
+        bottom: 14px;
+      }
+    }
+
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: 0.01ms !important;
@@ -504,8 +825,8 @@
     </div>
 
     <div class="vercel-nav-right">
-      <a href="/dashboard" class="btn-vercel-ghost">
-        <i class="fas fa-th-large"></i> เซิร์ฟเวอร์ทั้งหมด
+      <a href="/dashboard" class="btn-vercel-ghost" title="เซิร์ฟเวอร์ทั้งหมด">
+        <i class="fas fa-th-large"></i> <span class="nav-btn-text">เซิร์ฟเวอร์ทั้งหมด</span>
       </a>
       <button class="btn-vercel-white" onclick="saveEverything()">
         <i class="fas fa-check"></i> บันทึกทุกอย่าง
@@ -575,43 +896,52 @@
     <!-- TAB 1: OVERVIEW & AUTO SETUP -->
     <div class="vercel-tab-pane active" id="tab-overview">
       <div style="display:block;" id="sec-auto-setup">
-          <div class="card-pro" style="border: 1px solid rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.04);">
+          <div class="card-pro">
             <div class="card-pro-header">
-              <div class="card-pro-title" style="color: #10B981;">
-                <i class="fas fa-bolt"></i> ติดตั้งระบบแบบ Full Auto Setup (คลิกเดียวครบทั้งเซิร์ฟเวอร์)
+              <div class="card-pro-title">
+                <i class="fas fa-bolt" style="color: #FFFFFF;"></i> ติดตั้งระบบแบบ Full Auto Setup (คลิกเดียวครบทั้งเซิร์ฟเวอร์)
               </div>
-              <span style="background: #10B981; color: #000; padding: 4px 10px; border-radius: 20px; font-weight: 800; font-size: 0.75rem;">ALL IN ONE</span>
+              <span class="theme-pill-tag" style="color: #10B981; border-color: rgba(16, 185, 129, 0.3); background: rgba(16, 185, 129, 0.08);">ALL IN ONE</span>
             </div>
-            <p style="color: var(--text-muted); margin-bottom: 22px; font-size: 0.92rem; line-height: 1.6;">
+            <p>
               ระบบจะทำการสร้าง <strong>ยศ (Roles)</strong>, <strong>ห้องและหมวดหมู่ (Channels)</strong>, <strong>ล็อกสิทธิ์ Read-Only และซ่อนห้อง Staff</strong>, <strong>เปิดระบบ Welcome</strong>, <strong>ส่งปุ่มยืนยันตัวตน (Verify)</strong>, และ <strong>ผูก Auto Role</strong> ให้อัตโนมัติทันที
             </p>
 
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 24px;">
-              <div class="server-card" onclick="selectAutoTheme('security')" id="autotheme-security" style="cursor: pointer; border: 2px solid #10B981; background: rgba(16, 185, 129, 0.08); text-align: left; padding: 20px;">
-                <h3 style="color: #10B981; font-size: 1.15rem; margin-bottom: 8px;">🛡️ 7 ระดับสิทธิ์ความปลอดภัย</h3>
-                <p style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.5; margin-bottom: 12px;">Founder, Admin, Staff, VIP, Bot, Verified, Member ล็อกและซ่อนห้องเด็ดขาด ป้องกันสแปม 100%</p>
-                <span class="btn-go" style="width: auto; padding: 4px 12px; font-size: 0.75rem;">มาตรฐานความปลอดภัย</span>
+              <div class="server-card" onclick="selectAutoTheme('security')" id="autotheme-security" style="cursor: pointer; border-color: #FFFFFF !important; background: rgba(255, 255, 255, 0.04) !important;">
+                <h3><i class="fas fa-shield-alt" style="color: #10B981; margin-right: 6px;"></i> 7 ระดับสิทธิ์ความปลอดภัย</h3>
+                <p>Founder, Admin, Staff, VIP, Bot, Verified, Member ล็อกและซ่อนห้องเด็ดขาด ป้องกันสแปม 100%</p>
+                <span class="theme-pill-tag"><i class="fas fa-check-circle" style="color: #10B981;"></i> มาตรฐานความปลอดภัย</span>
               </div>
 
-              <div class="server-card" onclick="selectAutoTheme('gaming')" id="autotheme-gaming" style="cursor: pointer; text-align: left; padding: 20px;">
-                <h3 style="font-size: 1.15rem; margin-bottom: 8px; color: #FFF;">🎮 เกมมิ่ง & ตี้เกม</h3>
-                <p style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.5; margin-bottom: 12px;">ห้องแชทเกมเมอร์ หาเพื่อนเล่นเกม คลิปไฮไลท์ และห้อง Duo/Squad จำกัดคน</p>
-                <span class="btn-setup" style="width: auto; padding: 4px 12px; font-size: 0.75rem;">สำหรับสายเกม</span>
+              <div class="server-card" onclick="selectAutoTheme('gaming')" id="autotheme-gaming" style="cursor: pointer;">
+                <h3><i class="fas fa-gamepad" style="color: #A855F7; margin-right: 6px;"></i> เกมมิ่ง & ตี้เกม</h3>
+                <p>ห้องแชทเกมเมอร์ หาเพื่อนเล่นเกม คลิปไฮไลท์ และห้อง Duo/Squad จำกัดคน</p>
+                <span class="theme-pill-tag">สำหรับสายเกม</span>
               </div>
 
-              <div class="server-card" onclick="selectAutoTheme('community')" id="autotheme-community" style="cursor: pointer; text-align: left; padding: 20px;">
-                <h3 style="font-size: 1.15rem; margin-bottom: 8px; color: #FFF;">🌟 คอมมูนิตี้มาตรฐาน</h3>
-                <p style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.5; margin-bottom: 12px;">ยศ Founder, Admin, Member ทั่วไป สบายตา ใช้งานง่าย เหมาะกับกลุ่มเพื่อน</p>
-                <span class="btn-setup" style="width: auto; padding: 4px 12px; font-size: 0.75rem; background: #38BDF8;">ยอดนิยม</span>
+              <div class="server-card" onclick="selectAutoTheme('community')" id="autotheme-community" style="cursor: pointer;">
+                <h3><i class="fas fa-users" style="color: #3B82F6; margin-right: 6px;"></i> คอมมูนิตี้มาตรฐาน</h3>
+                <p>ยศ Founder, Admin, Member ทั่วไป สบายตา ใช้งานง่าย เหมาะกับกลุ่มเพื่อน</p>
+                <span class="theme-pill-tag">ยอดนิยม</span>
               </div>
             </div>
 
             <input type="hidden" id="selected_auto_theme" value="security">
 
             <div style="margin-bottom: 22px;">
-              <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; color: #FFF; font-size: 0.9rem;">
-                <input type="checkbox" id="auto_with_stats" checked style="width: 18px; height: 18px; accent-color: var(--accent-emerald);">
-                <span>ติดตั้งห้องเสียงนับสถิติเซิร์ฟเวอร์ (Server Stats Counters) ด้านบนสุดด้วย</span>
+              <label class="toggle-row-box" for="auto_with_stats">
+                <div style="display: flex; align-items: center; gap: 10px; color: #FFF; font-size: 0.9rem;">
+                  <i class="fas fa-chart-bar" style="color: #10B981;"></i>
+                  <span>ติดตั้งห้องเสียงนับสถิติเซิร์ฟเวอร์ (Server Stats Counters) ด้านบนสุดด้วย</span>
+                </div>
+                <div class="switch-control-group">
+                  <span class="toggle-status-pill is-on">เปิดใช้งาน</span>
+                  <span class="switch-sm">
+                    <input type="checkbox" class="switch-input" id="auto_with_stats" checked>
+                    <span class="slider-sm"></span>
+                  </span>
+                </div>
               </label>
             </div>
 
@@ -679,7 +1009,10 @@
           <div class="card-pro">
             <div class="card-pro-header">
               <div class="card-pro-title"><i class="fas fa-check-circle" style="color: #10B981;"></i> ระบบยืนยันตัวตน (Verification Gate)</div>
-              <label class="switch-sm"><input type="checkbox" id="verify_enabled" <%= settings.verify_enabled ? 'checked' : '' %>><span class="slider-sm"></span></label>
+              <div class="switch-control-group">
+                <span class="toggle-status-pill <%= settings.verify_enabled ? 'is-on' : '' %>"><%= settings.verify_enabled ? 'เปิดใช้งาน' : 'ปิดอยู่' %></span>
+                <label class="switch-sm"><input type="checkbox" class="switch-input" id="verify_enabled" <%= settings.verify_enabled ? 'checked' : '' %>><span class="slider-sm"></span></label>
+              </div>
             </div>
 
             <div class="form-group-pro">
@@ -720,7 +1053,10 @@
           <div class="card-pro">
             <div class="card-pro-header">
               <div class="card-pro-title"><i class="fas fa-user-tag" style="color: #38BDF8;"></i> ระบบแจกยศอัตโนมัติ (Auto Role on Member Join)</div>
-              <label class="switch-sm"><input type="checkbox" id="autorole_enabled" <%= settings.autorole_enabled ? 'checked' : '' %>><span class="slider-sm"></span></label>
+              <div class="switch-control-group">
+                <span class="toggle-status-pill <%= settings.autorole_enabled ? 'is-on' : '' %>"><%= settings.autorole_enabled ? 'เปิดใช้งาน' : 'ปิดอยู่' %></span>
+                <label class="switch-sm"><input type="checkbox" class="switch-input" id="autorole_enabled" <%= settings.autorole_enabled ? 'checked' : '' %>><span class="slider-sm"></span></label>
+              </div>
             </div>
             <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.88rem;">เมื่อสมาชิกใหม่ก้าวเข้าสู่เซิร์ฟเวอร์ บอทจะมอบยศนี้ให้โดยอัตโนมัติทันที</p>
 
@@ -752,7 +1088,10 @@
           <div class="card-pro">
             <div class="card-pro-header">
               <div class="card-pro-title"><i class="fas fa-hand-sparkles" style="color: #8B5CF6;"></i> ระบบต้อนรับสมาชิกใหม่ (Welcome System)</div>
-              <label class="switch-sm"><input type="checkbox" id="welcome_enabled" <%= settings.welcome_enabled ? 'checked' : '' %>><span class="slider-sm"></span></label>
+              <div class="switch-control-group">
+                <span class="toggle-status-pill <%= settings.welcome_enabled ? 'is-on' : '' %>"><%= settings.welcome_enabled ? 'เปิดใช้งาน' : 'ปิดอยู่' %></span>
+                <label class="switch-sm"><input type="checkbox" class="switch-input" id="welcome_enabled" <%= settings.welcome_enabled ? 'checked' : '' %>><span class="slider-sm"></span></label>
+              </div>
             </div>
 
             <div class="form-group-pro">
@@ -920,7 +1259,10 @@
           <div class="card-pro">
             <div class="card-pro-header">
               <div class="card-pro-title"><i class="fas fa-clipboard-list"></i> ระบบบันทึก Log การลงโทษ</div>
-              <label class="switch-sm"><input type="checkbox" id="log_enabled" <%= settings.log_enabled ? 'checked' : '' %>><span class="slider-sm"></span></label>
+              <div class="switch-control-group">
+                <span class="toggle-status-pill <%= settings.log_enabled ? 'is-on' : '' %>"><%= settings.log_enabled ? 'เปิดใช้งาน' : 'ปิดอยู่' %></span>
+                <label class="switch-sm"><input type="checkbox" class="switch-input" id="log_enabled" <%= settings.log_enabled ? 'checked' : '' %>><span class="slider-sm"></span></label>
+              </div>
             </div>
             <div class="form-group-pro">
               <label class="form-label-pro">ห้อง Log</label>
@@ -1023,6 +1365,19 @@
     document.addEventListener('DOMContentLoaded', () => {
       document.querySelectorAll('input, select, textarea').forEach(el => {
         el.addEventListener('change', markUnsaved);
+      });
+
+      // Live Toggle Switch Status Pill Animation
+      document.querySelectorAll('.switch-input').forEach(cb => {
+        const group = cb.closest('.switch-control-group');
+        const pill = group ? group.querySelector('.toggle-status-pill') : null;
+        if (!pill) return;
+        cb.addEventListener('change', () => {
+          pill.textContent = cb.checked ? 'เปิดใช้งาน' : 'ปิดอยู่';
+          pill.classList.toggle('is-on', cb.checked);
+          pill.style.transform = 'scale(1.08)';
+          setTimeout(() => { pill.style.transform = ''; }, 180);
+        });
       });
     });
 
@@ -1208,6 +1563,8 @@
       await saveVerify();
       await saveAutoRole();
       await saveLog();
+      const bar = document.getElementById('floatingSaveBar');
+      if (bar) bar.style.display = 'none';
       showToast('✅ บันทึกทุกอย่างเรียบร้อยแล้ว!');
     }
 
